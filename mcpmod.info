@@ -1,0 +1,17 @@
+[
+{
+  "modid" : "twotility",
+  "name" : "TwoTility",
+  "version" : "131213",
+  "url" : "",
+  "credits" : "Made by Two.",
+  "authors": [
+    "Two"
+  ],
+  "description": "A set of utility items and blocks.",
+  "logoFile" : "",
+  "updateUrl" : "",
+  "parent" : "",
+  "screenshots": []
+}
+]
