@@ -44,27 +44,27 @@ public enum BlockSide {
           case 3:
             return BlockSide.east;
         }
-      case 4: // east side
+      case 4: // west side
         switch (blockDir & 3) {
           case 0:
-            return BlockSide.east;
-          case 1:
-            return BlockSide.south;
-          case 2:
             return BlockSide.west;
-          case 3:
+          case 1:
             return BlockSide.north;
+          case 2:
+            return BlockSide.east;
+          case 3:
+            return BlockSide.south;
         }
-      case 5: // west side
+      case 5: // east side
         switch (blockDir & 3) {
           case 0:
-            return BlockSide.west;
-          case 1:
-            return BlockSide.north;
-          case 2:
             return BlockSide.east;
-          case 3:
+          case 1:
             return BlockSide.south;
+          case 2:
+            return BlockSide.west;
+          case 3:
+            return BlockSide.north;
         }
     }
     throw new IllegalArgumentException("Illegal side " + side);
