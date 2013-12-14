@@ -56,14 +56,14 @@ public class BlockLavaFurnace extends Block {
     LanguageRegistry.addName(this, "Lava Furnace");
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
 
-    CraftingManager.getInstance().addRecipe(new ItemStack(this, 1, BlockSide.north.ordinal()),
+    CraftingManager.getInstance().addRecipe(new ItemStack(this, 1, amountToMetadata(0)),
             "CCC",
             "CBC",
             "CCC",
             'C', Block.cobblestone,
             'B', Item.bucketEmpty);
 
-    CraftingManager.getInstance().addRecipe(new ItemStack(this, 1, amountToMetadata(1) | BlockSide.north.ordinal()),
+    CraftingManager.getInstance().addRecipe(new ItemStack(this, 1, amountToMetadata(1)),
             "CCC",
             "CLC",
             "CCC",
@@ -89,8 +89,8 @@ public class BlockLavaFurnace extends Block {
     if (rotatedSide == BlockSide.north) {
       return amountFromMetadata(metadata) > 0 ? iconFrontFilled : iconFront;
     } else {
-//      return BlockList.sideTest.getBlockTextureFromSide(BlockSide.getRotatedSide(side, metadata).ordinal());
-      return Block.furnaceIdle.getBlockTextureFromSide(rotatedSide.ordinal());
+      return BlockList.sideTest.getBlockTextureFromSide(BlockSide.getRotatedSide(side, metadata).ordinal());
+//      return Block.furnaceIdle.getBlockTextureFromSide(rotatedSide.ordinal());
     }
   }
 
