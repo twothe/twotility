@@ -85,11 +85,12 @@ public class BlockLavaFurnace extends Block {
   @SideOnly(Side.CLIENT)
   @Override
   public Icon getIcon(final int side, final int metadata) {
-    final int frontSide = BlockSide.getSideFacingPlacer(metadata);
-    if (frontSide == side) {
+    final BlockSide rotatedSide = BlockSide.getRotatedSide(side, metadata);
+    if (rotatedSide == BlockSide.north) {
       return amountFromMetadata(metadata) > 0 ? iconFrontFilled : iconFront;
     } else {
-      return Block.furnaceIdle.getBlockTextureFromSide(BlockSide.getRelativeSide(side, metadata).ordinal());
+//      return BlockList.sideTest.getBlockTextureFromSide(BlockSide.getRotatedSide(side, metadata).ordinal());
+      return Block.furnaceIdle.getBlockTextureFromSide(rotatedSide.ordinal());
     }
   }
 
@@ -117,7 +118,7 @@ public class BlockLavaFurnace extends Block {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = amountToMetadata(itemStack.getItemDamage()) | BlockSide.getLookDirection(entity);
+    final int metadata = amountToMetadata(itemStack.getItemDamage()) | BlockSide.getDirectionFacing(entity);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
   }
 
