@@ -1,5 +1,3 @@
-/*
- */
 package two.util;
 
 import net.minecraft.entity.EntityLivingBase;
