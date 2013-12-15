@@ -43,7 +43,6 @@ public class TileLavaTank extends TileEntity implements IFluidHandler {
     final int metadataCurrent = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
     final int metadataNew = tank.getAmountInBuckets();
     if (metadataCurrent != metadataNew) {
-      System.out.println("Amount of storage changed to " + metadataNew + " buckets");
       worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, metadataNew, 2);
     }
   }
@@ -52,7 +51,6 @@ public class TileLavaTank extends TileEntity implements IFluidHandler {
   public int fill(final ForgeDirection from, final FluidStack resource, final boolean doFill) {
     final int amountTaken = this.tank.fill(resource, doFill);
     if (doFill && (amountTaken > 0)) {
-      System.out.println("Added " + amountTaken + " mB.");
       onInventoryChanged();
       FluidEvent.fireEvent(new FluidEvent.FluidFillingEvent(this.tank.getFluid(), worldObj, xCoord, yCoord, zCoord, this.tank));
     }
@@ -63,7 +61,6 @@ public class TileLavaTank extends TileEntity implements IFluidHandler {
   public FluidStack drain(final ForgeDirection from, final FluidStack resource, final boolean doDrain) {
     final FluidStack result = this.tank.drain(resource, doDrain);
     if (doDrain && (result != null)) {
-      System.out.println("Removed " + result.amount + " mB.");
       onInventoryChanged();
       FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(this.tank.getFluid(), worldObj, xCoord, yCoord, zCoord, this.tank));
     }
@@ -74,7 +71,6 @@ public class TileLavaTank extends TileEntity implements IFluidHandler {
   public FluidStack drain(final ForgeDirection from, final int maxDrain, final boolean doDrain) {
     final FluidStack result = this.tank.drain(maxDrain, doDrain);
     if (doDrain && (result != null)) {
-      System.out.println("Removed " + result.amount + " mB.");
       onInventoryChanged();
       FluidEvent.fireEvent(new FluidEvent.FluidDrainingEvent(this.tank.getFluid(), worldObj, xCoord, yCoord, zCoord, this.tank));
     }

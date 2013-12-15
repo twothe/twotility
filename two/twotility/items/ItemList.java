@@ -8,10 +8,10 @@ package two.twotility.items;
  */
 public class ItemList {
   
-  public static ItemLavaForge lavaForge;
+  public static ItemLavaTank lavaTank;
   
   public static void initialize() {
     // the order here determines the IDs!
-    lavaForge = new ItemLavaForge().initialize();
+    lavaTank = new ItemLavaTank().initialize();
   }
 }

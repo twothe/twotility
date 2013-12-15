@@ -88,28 +88,18 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
       if (tileEntity instanceof TileLavaTank) {
         final TileLavaTank lavaTank = (TileLavaTank) tileEntity;
         if (event.current.itemID == Item.bucketLava.itemID) {
-          System.out.println("Trying to add bucket of lava...");
           if (lavaTank.fill(ForgeDirection.UNKNOWN, new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME), true) > 0) {
             event.result = new ItemStack(Item.bucketEmpty);
             event.setCanceled(false);
             event.setResult(Event.Result.ALLOW);
-            System.out.println("Bucket of lava added, new amount: " + lavaTank.getAmountInBuckets());
-          } else {
-            System.out.println("Not possible.");
           }
         } else if (event.current.itemID == FluidContainerRegistry.EMPTY_BUCKET.itemID) {
-          System.out.println("Trying to drain bucket of lava...");
           final FluidStack drainedFluid = lavaTank.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
           if ((drainedFluid != null) && (drainedFluid.amount >= FluidContainerRegistry.BUCKET_VOLUME)) {
             event.result = new ItemStack(Item.bucketLava);
             event.setCanceled(false);
             event.setResult(Event.Result.ALLOW);
-            System.out.println("Bucket of lava drained, new amount: " + lavaTank.getAmountInBuckets());
-          } else {
-            System.out.println("Not possible.");
           }
-        } else {
-          System.out.println("Unknown bucket fluid. Denied.");
         }
       } else {
         Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a LavaTank, but was {3}", new Object[]{target.blockX, target.blockY, target.blockZ, tileEntity.getClass().getName()});

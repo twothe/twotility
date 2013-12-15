@@ -23,6 +23,6 @@ public class TwoTilityCreativeTab extends CreativeTabs {
   @SideOnly(Side.CLIENT)
   @Override
   public int getTabIconItemIndex() {
-    return BlockList.lavaForge.blockID;
+    return BlockList.advancedFurnace.blockID;
   }
 }

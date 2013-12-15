@@ -9,28 +9,28 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
-import two.twotility.blocks.BlockLavaFurnace;
+import two.twotility.blocks.BlockAdvancedFurnace;
 
 /**
  * @author Two
  */
-public class TileLavaFurnace extends TileEntity {
+public class TileAdvancedFurnace extends TileEntity {
 
   protected static final int TICKS_BETWEEN_UPDATE = 10;
   protected static final int LAVA_PER_OPERATION = FluidContainerRegistry.BUCKET_VOLUME / 100; // 1 bucket = 100 operations
   protected static final int STORED_OPERATIONS_MAX = 8; // this is not a limit, depending on the fuel used, this can be exceeded by a lot
-  protected static final String NBT_TAG_AMOUNT = "LavaFurnace_amount";
+  protected static final String NBT_TAG_OPERATIONS_STORED = "AdvancedFurnace_operationsStored";
 
   /**
    * Storage class for the nearest lava tank
    */
-  protected class LavaTankTarget {
+  protected class LavaDrainTarget {
 
     final IFluidHandler fluidHandler;
     final TileEntity tileEntity;
     final ForgeDirection direction;
 
-    public LavaTankTarget(IFluidHandler fluidHandler, TileEntity tileEntity, ForgeDirection direction) {
+    public LavaDrainTarget(IFluidHandler fluidHandler, TileEntity tileEntity, ForgeDirection direction) {
       this.fluidHandler = fluidHandler;
       this.tileEntity = tileEntity;
       this.direction = direction;
@@ -39,19 +39,19 @@ public class TileLavaFurnace extends TileEntity {
   //--- Class ------------------------------------------------------------------
   protected final FluidStack lavaStack = new FluidStack(FluidRegistry.LAVA, LAVA_PER_OPERATION);
   protected int nextUpdate = 0;
-  protected LavaTankTarget lavaTank = null;
+  protected LavaDrainTarget lavaDrainTarget = null;
   protected int storedOperations = 0; // internal buffer for prepared fuel
 
   @Override
   public void readFromNBT(final NBTTagCompound tag) {
     super.readFromNBT(tag);
-    storedOperations = tag.getByte(NBT_TAG_AMOUNT);
+    storedOperations = tag.getByte(NBT_TAG_OPERATIONS_STORED);
   }
 
   @Override
   public void writeToNBT(final NBTTagCompound tag) {
     super.writeToNBT(tag);
-    tag.setByte(NBT_TAG_AMOUNT, (byte) (storedOperations & 0xFF)); // any excess operations will be lost, but >255 requires some strange mod-fuel
+    tag.setByte(NBT_TAG_OPERATIONS_STORED, (byte) (storedOperations & 0xFF)); // any excess operations will be lost, but >255 requires some strange mod-fuel
   }
 
   public boolean doSomething() {
@@ -74,7 +74,6 @@ public class TileLavaFurnace extends TileEntity {
       if (refillWithLava() == false) {
         refillWithInternalFuel();
       }
-      System.out.println("LavaFurnace currently stores " + storedOperations + " operations");
     }
   }
 
@@ -84,7 +83,7 @@ public class TileLavaFurnace extends TileEntity {
       return;
     }
     final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-    final int newMetadata = BlockLavaFurnace.createState(currentMetadata, lavaTank != null, false);
+    final int newMetadata = BlockAdvancedFurnace.createState(currentMetadata, this.storedOperations > 0, false);
     if (newMetadata != currentMetadata) {
       worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 2);
     }
@@ -102,13 +101,15 @@ public class TileLavaFurnace extends TileEntity {
   }
 
   protected boolean refillWithLava() {
-    if ((lavaTank == null) || lavaTank.tileEntity.isInvalid() || (tryDrainLava(lavaTank) == false)) {
-      this.lavaTank = tryDrainFromNearestLavaTank(); // returns null if none is available
+    if ((lavaDrainTarget != null) && (lavaDrainTarget.tileEntity.isInvalid() == false) && tryDrainLava(lavaDrainTarget)) {
+      return true;
+    } else {
+      lavaDrainTarget = null; // this has become invalid somehow
+      return tryDrainFromNearestLavaSource();
     }
-    return (this.lavaStack != null);
   }
 
-  protected boolean tryDrainLava(final LavaTankTarget target) {
+  protected boolean tryDrainLava(final LavaDrainTarget target) {
     return tryDrainLava(target.fluidHandler, target.direction);
   }
 
@@ -117,23 +118,23 @@ public class TileLavaFurnace extends TileEntity {
       final FluidStack drainedFluid = fluidHandler.drain(direction, lavaStack, true);
       if ((drainedFluid != null) && drainedFluid.isFluidStackIdentical(lavaStack)) {
         changeStoredOperations(1); // successfully drained enough lava for one operation
-        System.out.println("Valid FluidHandler at [" + (xCoord + direction.offsetX) + ", " + (yCoord + direction.offsetY) + "," + (zCoord + direction.offsetZ) + "] returned " + drainedFluid.amount + " mB Lava");
         return true;
       }
     }
     return false;
   }
 
-  protected LavaTankTarget tryDrainFromNearestLavaTank() {
+  protected boolean tryDrainFromNearestLavaSource() {
     TileEntity tileEntity;
     for (final ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
       tileEntity = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
       if (tileEntity instanceof IFluidHandler) {
         if (tryDrainLava((IFluidHandler) tileEntity, direction)) {
-          return new LavaTankTarget((IFluidHandler) tileEntity, tileEntity, direction);
+          this.lavaDrainTarget = new LavaDrainTarget((IFluidHandler) tileEntity, tileEntity, direction);
+          return true;
         }
       }
     }
-    return null;
+    return false;
   }
 }

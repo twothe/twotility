@@ -13,7 +13,7 @@ import net.minecraft.util.Icon;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.Config;
 import two.twotility.TwoTility;
-import static two.twotility.blocks.BlockLavaFurnace.NAME;
+import static two.twotility.blocks.BlockAdvancedFurnace.NAME;
 import two.util.BlockSide;
 
 /**

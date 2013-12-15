@@ -24,19 +24,19 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.Config;
 import two.twotility.TwoTility;
-import two.twotility.tiles.TileLavaFurnace;
+import two.twotility.tiles.TileAdvancedFurnace;
 import two.util.BlockSide;
 
 /**
  * @author Two
  */
-public class BlockLavaFurnace extends Block implements ITileEntityProvider  {
+public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
 
-  public static final String NAME = "lavafurnace";
+  public static final String NAME = "advancedfurnace";
   protected static final int STATE_EMPTY = 0;
   protected static final int STATE_FILLED = STATE_EMPTY + 1;
-  protected static final int STATE_LAVA = STATE_FILLED + 1;
-  protected static final int STATE_WORKING = STATE_LAVA + 1;
+  protected static final int STATE_HAS_FUEL = STATE_FILLED + 1;
+  protected static final int STATE_WORKING = STATE_HAS_FUEL + 1;
   protected static final int NUM_STATES = STATE_WORKING + 1;
   //-- Class -------------------------------------------------------------------
   @SideOnly(Side.CLIENT)
@@ -46,11 +46,11 @@ public class BlockLavaFurnace extends Block implements ITileEntityProvider  {
   @SideOnly(Side.CLIENT)
   protected Icon iconTop;
 
-  public BlockLavaFurnace() {
-    super(Config.getBlockID(BlockLavaFurnace.class), Material.rock);
+  public BlockAdvancedFurnace() {
+    super(Config.getBlockID(BlockAdvancedFurnace.class), Material.rock);
   }
 
-  public BlockLavaFurnace initialize() {
+  public BlockAdvancedFurnace initialize() {
     setHardness(5F);
     setStepSound(soundStoneFootstep);
     setUnlocalizedName(NAME);
@@ -58,9 +58,9 @@ public class BlockLavaFurnace extends Block implements ITileEntityProvider  {
     setCreativeTab(TwoTility.creativeTab);
 
     MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
-    LanguageRegistry.addName(this, "Lava Furnace");
+    LanguageRegistry.addName(this, "Advanced Furnace");
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
-    GameRegistry.registerTileEntity(TileLavaFurnace.class, TileLavaFurnace.class.getName());
+    GameRegistry.registerTileEntity(TileAdvancedFurnace.class, TileAdvancedFurnace.class.getName());
 
     CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
             " R ",
@@ -79,7 +79,7 @@ public class BlockLavaFurnace extends Block implements ITileEntityProvider  {
   public void registerIcons(final IconRegister iconRegister) {
     stateIcons[STATE_EMPTY] = iconRegister.registerIcon(TwoTility.getTextureName(NAME));
     stateIcons[STATE_FILLED] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_filled");
-    stateIcons[STATE_LAVA] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_lava");
+    stateIcons[STATE_HAS_FUEL] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_fuel");
     stateIcons[STATE_WORKING] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_working");
 
     iconSide = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_side");
@@ -115,20 +115,20 @@ public class BlockLavaFurnace extends Block implements ITileEntityProvider  {
   public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
     if (world.isRemote == false) {
       final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-      if (tileEntity instanceof TileLavaFurnace) {
-        final TileLavaFurnace lavaFurnace = (TileLavaFurnace) tileEntity;
+      if (tileEntity instanceof TileAdvancedFurnace) {
+        final TileAdvancedFurnace lavaFurnace = (TileAdvancedFurnace) tileEntity;
         return lavaFurnace.doSomething(); // TODO: display GUI
       } else {
-        Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a LavaFurnace, but was {3}", new Object[]{x, y, z, tileEntity.getClass().getName()});
+        Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a " + TileAdvancedFurnace.class.getSimpleName() + ", but was {3}", new Object[]{x, y, z, tileEntity.getClass().getName()});
         world.removeBlockTileEntity(x, y, z);
       }
     }
-    return false; 
+    return false;
   }
 
   @Override
   public TileEntity createNewTileEntity(World world) {
-    return new TileLavaFurnace();
+    return new TileAdvancedFurnace();
   }
 
   protected static int getStateFromMetadata(final int metadata) {
@@ -139,7 +139,7 @@ public class BlockLavaFurnace extends Block implements ITileEntityProvider  {
     return ((state & 3) << 2) | (metaCurrent & 3);
   }
 
-  public static int createState(final int metaCurrent, final boolean hasLava, final boolean hasWork) {
-    return createState(metaCurrent, (hasLava ? STATE_LAVA : 0) | (hasWork ? STATE_FILLED : 0));
+  public static int createState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {
+    return createState(metaCurrent, (hasFuel ? STATE_HAS_FUEL : 0) | (hasWork ? STATE_FILLED : 0));
   }
 }
