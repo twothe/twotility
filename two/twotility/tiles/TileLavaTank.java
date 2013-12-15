@@ -2,27 +2,23 @@
  */
 package two.twotility.tiles;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import two.twotility.fluid.BucketFluidTank;
+import two.twotility.fluid.FluidTank;
 
 /**
  * @author Two
  */
 public class TileLavaTank extends TileEntity implements IFluidHandler {
 
-  protected final BucketFluidTank tank = new BucketFluidTank(FluidRegistry.LAVA, 4);
+  protected final FluidTank tank = new FluidTank(FluidRegistry.LAVA, 4);
 
   public TileLavaTank() {
   }

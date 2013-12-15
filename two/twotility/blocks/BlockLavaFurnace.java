@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import static net.minecraft.block.Block.soundStoneFootstep;
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,7 +30,7 @@ import two.util.BlockSide;
 /**
  * @author Two
  */
-public class BlockLavaFurnace extends BlockContainer {
+public class BlockLavaFurnace extends Block implements ITileEntityProvider  {
 
   public static final String NAME = "lavafurnace";
   protected static final int STATE_EMPTY = 0;
@@ -117,13 +117,13 @@ public class BlockLavaFurnace extends BlockContainer {
       final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
       if (tileEntity instanceof TileLavaFurnace) {
         final TileLavaFurnace lavaFurnace = (TileLavaFurnace) tileEntity;
-        return lavaFurnace.doSomething();
+        return lavaFurnace.doSomething(); // TODO: display GUI
       } else {
         Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a LavaFurnace, but was {3}", new Object[]{x, y, z, tileEntity.getClass().getName()});
         world.removeBlockTileEntity(x, y, z);
       }
     }
-    return false; // TODO: display GUI
+    return false; 
   }
 
   @Override

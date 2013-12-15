@@ -12,17 +12,17 @@ import net.minecraftforge.fluids.IFluidTank;
 /**
  * @author Two
  */
-public class BucketFluidTank implements IFluidTank {
+public class FluidTank implements IFluidTank {
 
   protected final String NBT_TAG_CAPACITY = "BucketFluidTank_capacity";
   protected final FluidStack internalStorage;
   protected int capacity;
 
-  public BucketFluidTank(final Fluid fluid, final int capacityInBuckets) {
+  public FluidTank(final Fluid fluid, final int capacityInBuckets) {
     this(fluid.getID(), capacityInBuckets);
   }
 
-  public BucketFluidTank(final int fluidID, final int capacityInBuckets) {
+  public FluidTank(final int fluidID, final int capacityInBuckets) {
     this.internalStorage = new FluidStack(fluidID, 0);
     this.capacity = capacityInBuckets * FluidContainerRegistry.BUCKET_VOLUME;
   }

@@ -9,8 +9,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockGlass;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -38,7 +36,7 @@ import static two.util.BlockSide.top;
 /**
  * @author Two
  */
-public class BlockLavaTank extends BlockContainer {
+public class BlockLavaTank extends Block implements ITileEntityProvider {
 
   public static final String NAME = "lavatank";
   protected static final int STATE_EMPTY = 0;
@@ -118,6 +116,11 @@ public class BlockLavaTank extends BlockContainer {
         event.world.removeBlockTileEntity(target.blockX, target.blockY, target.blockZ);
       }
     }
+  }
+
+  @Override
+  public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6) {
+    super.breakBlock(par1World, par2, par3, par4, par5, par6); // TODO
   }
 
   @SideOnly(Side.CLIENT)
