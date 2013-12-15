@@ -2,6 +2,8 @@
  */
 package two.twotility.tiles;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -17,7 +19,8 @@ import two.twotility.blocks.BlockAdvancedFurnace;
 public class TileAdvancedFurnace extends TileEntity {
 
   protected static final int TICKS_BETWEEN_UPDATE = 10;
-  protected static final int LAVA_PER_OPERATION = FluidContainerRegistry.BUCKET_VOLUME / 100; // 1 bucket = 100 operations
+  protected static final int OPERATIONS_PER_LAVA_BLOCK = 100;// 1 lava source block = 100 operations
+  protected static final int LAVA_PER_OPERATION = FluidContainerRegistry.BUCKET_VOLUME / OPERATIONS_PER_LAVA_BLOCK;  // 1 bucket contains 1 lava source block
   protected static final int STORED_OPERATIONS_MAX = 8; // this is not a limit, depending on the fuel used, this can be exceeded by a lot
   protected static final String NBT_TAG_OPERATIONS_STORED = "AdvancedFurnace_operationsStored";
 
@@ -94,10 +97,12 @@ public class TileAdvancedFurnace extends TileEntity {
     if (change != 0) {
       this.storedOperations += change;
       onInventoryChanged();
+//      System.out.println("Advanced Furnace now has fuel for " + this.storedOperations + " operations");
     }
   }
 
   protected void refillWithInternalFuel() {
+    //TODO
   }
 
   protected boolean refillWithLava() {
@@ -105,7 +110,11 @@ public class TileAdvancedFurnace extends TileEntity {
       return true;
     } else {
       lavaDrainTarget = null; // this has become invalid somehow
-      return tryDrainFromNearestLavaSource();
+      if (tryDrainFromNearestLavaTank()) {
+        return true;
+      } else {
+        return tryUseNearestLavaSourceBlock();
+      }
     }
   }
 
@@ -124,7 +133,7 @@ public class TileAdvancedFurnace extends TileEntity {
     return false;
   }
 
-  protected boolean tryDrainFromNearestLavaSource() {
+  protected boolean tryDrainFromNearestLavaTank() {
     TileEntity tileEntity;
     for (final ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
       tileEntity = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
@@ -132,6 +141,22 @@ public class TileAdvancedFurnace extends TileEntity {
         if (tryDrainLava((IFluidHandler) tileEntity, direction)) {
           this.lavaDrainTarget = new LavaDrainTarget((IFluidHandler) tileEntity, tileEntity, direction);
           return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  protected boolean tryUseNearestLavaSourceBlock() {
+    for (int x = -1; x <= 1; ++x) {
+      for (int y = -1; y <= 1; ++y) {
+        for (int z = -1; z <= 1; ++z) {
+          if ((worldObj.getBlockMaterial(xCoord + x, yCoord + y, zCoord + z) == Material.lava) && // is it lava?
+                  (worldObj.getBlockMetadata(xCoord + x, yCoord + y, zCoord + z) == 0)) { // is this a source block?
+            worldObj.setBlockToAir(xCoord + x, yCoord + y, zCoord + z);
+            changeStoredOperations(OPERATIONS_PER_LAVA_BLOCK); // successfully drained a lava block
+            return true;
+          }
         }
       }
     }
