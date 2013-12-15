@@ -18,13 +18,13 @@ public class FluidTank implements IFluidTank {
   protected final FluidStack internalStorage;
   protected int capacity;
 
-  public FluidTank(final Fluid fluid, final int capacityInBuckets) {
-    this(fluid.getID(), capacityInBuckets);
+  public FluidTank(final Fluid fluid, final int amount, final int capacity) {
+    this(fluid.getID(), amount, capacity);
   }
 
-  public FluidTank(final int fluidID, final int capacityInBuckets) {
-    this.internalStorage = new FluidStack(fluidID, 0);
-    this.capacity = capacityInBuckets * FluidContainerRegistry.BUCKET_VOLUME;
+  public FluidTank(final int fluidID, final int amount, final int capacity) {
+    this.internalStorage = new FluidStack(fluidID, amount);
+    this.capacity = capacity;
   }
 
   public void readFromNBT(final NBTTagCompound tag) {

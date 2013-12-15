@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -18,9 +19,14 @@ import two.twotility.fluid.FluidTank;
  */
 public class TileLavaTank extends TileEntity implements IFluidHandler {
 
-  protected final FluidTank tank = new FluidTank(FluidRegistry.LAVA, 4);
+  protected final FluidTank tank;
 
   public TileLavaTank() {
+    this(0, 4 * FluidContainerRegistry.BUCKET_VOLUME);
+  }
+
+  public TileLavaTank(final int amount, final int capacity) {
+    tank = new FluidTank(FluidRegistry.LAVA, amount, capacity);
   }
 
   @Override

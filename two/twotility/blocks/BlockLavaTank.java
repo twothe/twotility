@@ -6,24 +6,31 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlowing;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlockWithMetadata;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -71,6 +78,8 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
 
     MinecraftForge.EVENT_BUS.register(this);
 
+    Item.itemsList[blockID] = (new ItemBlockWithMetadata(blockID - 256, this)).setUnlocalizedName(NAME);
+
     return this;
   }
 
@@ -109,8 +118,54 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
   }
 
   @Override
-  public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6) {
-    super.breakBlock(par1World, par2, par3, par4, par5, par6); // TODO
+  public void getSubBlocks(final int itemID, final CreativeTabs creativeTab, final List itemlist) {
+    itemlist.add(new ItemStack(itemID, 1, STATE_EMPTY));
+    itemlist.add(new ItemStack(itemID, 1, STATE_4_4));
+  }
+
+  @Override
+  public void onBlockExploded(World world, int x, int y, int z, Explosion explosion) {
+    final int metadata = world.getBlockMetadata(x, y, z);
+    if (metadata == STATE_EMPTY) {
+      world.setBlockToAir(x, y, z);
+    } else {
+      final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+      if (tileEntity instanceof TileLavaTank) {
+        final TileLavaTank lavaTank = (TileLavaTank) tileEntity;
+        final FluidStack content = lavaTank.drain(ForgeDirection.UNKNOWN, Integer.MAX_VALUE, false);
+        final Block block = Block.blocksList[content.getFluid().getBlockID()];
+        if (block instanceof BlockFluid) { // vanilla block
+          world.setBlock(x, y, z, getVanillaFluidBlock(block), metadata == STATE_4_4 ? 0 : 2, 3); // a full tank will create a lava source block
+        } else if (block instanceof BlockFluidBase) {
+          world.setBlock(x, y, z, block.blockID, 0, 3);
+        } else {
+          world.setBlockToAir(x, y, z);
+        }
+      } else {
+        Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a LavaTank, but was {3}", new Object[]{x, y, z, tileEntity.getClass().getName()});
+      }
+    }
+
+    onBlockDestroyedByExplosion(world, x, y, z, explosion);
+  }
+
+  protected static int getVanillaFluidBlock(final Block block) {
+    if (block.blockMaterial == Material.water) {
+      return Block.waterMoving.blockID;
+    } else if (block.blockMaterial == Material.lava) {
+      return Block.lavaMoving.blockID;
+    }
+    return 0; // air seems safe
+  }
+
+  @Override
+  public boolean canDropFromExplosion(Explosion par1Explosion) {
+    return false;
+  }
+
+  @Override
+  public int damageDropped(final int metadata) {
+    return metadata;
   }
 
   @SideOnly(Side.CLIENT)
@@ -136,7 +191,12 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
   }
 
   @Override
+  public TileEntity createTileEntity(final World world, final int metadata) {
+    return new TileLavaTank(metadata * FluidContainerRegistry.BUCKET_VOLUME, 4 * FluidContainerRegistry.BUCKET_VOLUME);
+  }
+
+  @Override
   public TileEntity createNewTileEntity(World world) {
-    return new TileLavaTank();
+    return new TileLavaTank(); // this should never be called in theory
   }
 }
