@@ -110,11 +110,7 @@ public class TileAdvancedFurnace extends TileEntity {
       return true;
     } else {
       lavaDrainTarget = null; // this has become invalid somehow
-      if (tryDrainFromNearestLavaTank()) {
-        return true;
-      } else {
-        return tryUseNearestLavaSourceBlock();
-      }
+      return tryDrainFromNearestLavaSource();
     }
   }
 
@@ -133,30 +129,20 @@ public class TileAdvancedFurnace extends TileEntity {
     return false;
   }
 
-  protected boolean tryDrainFromNearestLavaTank() {
+  protected boolean tryDrainFromNearestLavaSource() {
     TileEntity tileEntity;
     for (final ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+      if ((worldObj.getBlockMaterial(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ) == Material.lava) && // is it lava?
+              (worldObj.getBlockMetadata(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ) == 0)) { // is this a source block?
+        worldObj.setBlockToAir(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+        changeStoredOperations(OPERATIONS_PER_LAVA_BLOCK); // successfully drained a lava block
+        return true;
+      }
       tileEntity = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
       if (tileEntity instanceof IFluidHandler) {
         if (tryDrainLava((IFluidHandler) tileEntity, direction)) {
           this.lavaDrainTarget = new LavaDrainTarget((IFluidHandler) tileEntity, tileEntity, direction);
           return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  protected boolean tryUseNearestLavaSourceBlock() {
-    for (int x = -1; x <= 1; ++x) {
-      for (int y = -1; y <= 1; ++y) {
-        for (int z = -1; z <= 1; ++z) {
-          if ((worldObj.getBlockMaterial(xCoord + x, yCoord + y, zCoord + z) == Material.lava) && // is it lava?
-                  (worldObj.getBlockMetadata(xCoord + x, yCoord + y, zCoord + z) == 0)) { // is this a source block?
-            worldObj.setBlockToAir(xCoord + x, yCoord + y, zCoord + z);
-            changeStoredOperations(OPERATIONS_PER_LAVA_BLOCK); // successfully drained a lava block
-            return true;
-          }
         }
       }
     }
