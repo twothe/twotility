@@ -160,7 +160,7 @@ public class FluidTank implements IFluidTank {
   }
 
   public boolean canFill(final FluidStack fluid) {
-    return ((fluid != null) && canFill(fluid.fluidID));
+    return ((fluid != null) && canFill(fluid.fluidID) && (fluid.amount > 0));
   }
 
   public boolean canFill(final int fluidID) {
@@ -179,7 +179,7 @@ public class FluidTank implements IFluidTank {
   }
 
   public boolean canDrain(final FluidStack fluid) {
-    return ((fluid != null) && canDrain(fluid.fluidID));
+    return ((fluid != null) && canDrain(fluid.fluidID) && (fluid.amount > 0));
   }
 
   public boolean canDrain(final int fluidID) {

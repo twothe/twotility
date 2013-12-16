@@ -7,18 +7,20 @@ import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import two.twotility.blocks.BlockAdvancedFurnace;
 
 /**
  * @author Two
  */
-public class TileAdvancedFurnace extends TileEntity {
+public class TileAdvancedFurnace extends TileEntity implements IFluidHandler {
 
-  protected static final int TICKS_BETWEEN_UPDATE = 10;
+  protected static final int REFILL_TICK_RATE = 20;
   protected static final int OPERATIONS_PER_LAVA_BLOCK = 100;// 1 lava source block = 100 operations
   protected static final int LAVA_PER_OPERATION = FluidContainerRegistry.BUCKET_VOLUME / OPERATIONS_PER_LAVA_BLOCK;  // 1 bucket contains 1 lava source block
   protected static final int STORED_OPERATIONS_MAX = 8; // this is not a limit, depending on the fuel used, this can be exceeded by a lot
@@ -40,8 +42,8 @@ public class TileAdvancedFurnace extends TileEntity {
     }
   }
   //--- Class ------------------------------------------------------------------
-  protected final FluidStack lavaStack = new FluidStack(FluidRegistry.LAVA, LAVA_PER_OPERATION);
-  protected int nextUpdate = 0;
+  protected final FluidStack lavaStack = new FluidStack(FluidRegistry.LAVA, STORED_OPERATIONS_MAX * LAVA_PER_OPERATION);
+  protected int nextRefillAttempt = 0;
   protected LavaDrainTarget lavaDrainTarget = null;
   protected int storedOperations = 0; // internal buffer for prepared fuel
 
@@ -66,8 +68,8 @@ public class TileAdvancedFurnace extends TileEntity {
     if (worldObj.isRemote) {
       return;
     }
-    if (--nextUpdate <= 0) {
-      nextUpdate = TICKS_BETWEEN_UPDATE;
+    if (--nextRefillAttempt <= 0) {
+      nextRefillAttempt = REFILL_TICK_RATE;
       refill(); // if neccessary
     }
   }
@@ -121,8 +123,8 @@ public class TileAdvancedFurnace extends TileEntity {
   protected boolean tryDrainLava(final IFluidHandler fluidHandler, final ForgeDirection direction) {
     if (fluidHandler.canDrain(direction, FluidRegistry.LAVA)) {
       final FluidStack drainedFluid = fluidHandler.drain(direction, lavaStack, true);
-      if ((drainedFluid != null) && drainedFluid.isFluidStackIdentical(lavaStack)) {
-        changeStoredOperations(1); // successfully drained enough lava for one operation
+      if (lavaStack.isFluidEqual(drainedFluid) && (drainedFluid.amount > 0)) {
+        changeStoredOperations((drainedFluid.amount / LAVA_PER_OPERATION) * LAVA_PER_OPERATION); // successfully drained enough lava for this many operations
         return true;
       }
     }
@@ -147,5 +149,45 @@ public class TileAdvancedFurnace extends TileEntity {
       }
     }
     return false;
+  }
+
+  //--- IFluidHandler ----------------------------------------------------------
+  @Override
+  public boolean canFill(final ForgeDirection from, final Fluid fluid) {
+    return ((fluid != null) && (fluid.getID() == lavaStack.fluidID));
+  }
+
+  @Override
+  public int fill(final ForgeDirection from, final FluidStack resource, final boolean doFill) {
+    int amountTaken = 0;
+    if (lavaStack.isFluidEqual(resource) && (this.storedOperations < STORED_OPERATIONS_MAX) && (resource.amount > 0)) {
+      final int amountRequired = (STORED_OPERATIONS_MAX * 2 - storedOperations) * LAVA_PER_OPERATION; // get some extra free lava here to not have to refill every tick
+      amountTaken = Math.min((resource.amount / LAVA_PER_OPERATION) * LAVA_PER_OPERATION, amountRequired);
+      if (doFill) {
+        this.changeStoredOperations(amountTaken);
+      }
+    }
+    return amountTaken;
+  }
+
+  //--- U NO TAKE MY LAVA!! ----------------------------------------------------
+  @Override
+  public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+    return null;
+  }
+
+  @Override
+  public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+    return null;
+  }
+
+  @Override
+  public boolean canDrain(ForgeDirection from, Fluid fluid) {
+    return false;
+  }
+
+  @Override
+  public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+    return new FluidTankInfo[]{new FluidTankInfo(lavaStack.copy(), STORED_OPERATIONS_MAX * LAVA_PER_OPERATION)};
   }
 }
