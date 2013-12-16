@@ -15,7 +15,6 @@ public class Config {
 
   public static final AtomicInteger blockIDs = new AtomicInteger(500);
   public static final AtomicInteger itemIDs = new AtomicInteger(5000);
-  
   protected static Configuration configuration;
 
   public static int getBlockID(final Class<? extends Block> block) {
@@ -32,5 +31,14 @@ public class Config {
     final int defaultID = itemIDs.getAndIncrement();
     final Property property = configuration.getItem(key, defaultID);
     return property.getInt(defaultID);
+  }
+
+  public static boolean isCraftingEnabled(final String key) {
+    return isCraftingEnabled(key, true);
+  }
+
+  public static boolean isCraftingEnabled(final String key, final boolean defaultValue) {
+    final Property property = configuration.get("Allowed Recipes", key, defaultValue);
+    return property.getBoolean(defaultValue);
   }
 }

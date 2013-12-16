@@ -2,15 +2,14 @@
  */
 package two.twotility.blocks;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFlowing;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -45,7 +44,7 @@ import static two.util.BlockSide.top;
  */
 public class BlockLavaTank extends Block implements ITileEntityProvider {
 
-  public static final String NAME = "lavatank";
+  public static final String NAME = "LavaTank";
   protected static final int STATE_EMPTY = 0;
   protected static final int STATE_1_4 = STATE_EMPTY + 1;
   protected static final int STATE_2_4 = STATE_1_4 + 1;
@@ -69,16 +68,18 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
     GameRegistry.registerTileEntity(TileLavaTank.class, TileLavaTank.class.getName());
 
-    CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
-            "IGI",
-            "G G",
-            "IGI",
-            'G', Block.thinGlass,
-            'I', Item.ingotIron);
+    if (Config.isCraftingEnabled(NAME)) {
+      CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
+              "IGI",
+              "G G",
+              "IGI",
+              'G', Block.thinGlass,
+              'I', Item.ingotIron);
+    }
 
     MinecraftForge.EVENT_BUS.register(this);
 
-    Item.itemsList[blockID] = (new ItemBlockWithMetadata(blockID - 256, this)).setUnlocalizedName(NAME);
+    Item.itemsList[blockID] = (new ItemBlockWithMetadata(blockID - 256, this)).setUnlocalizedName(NAME); // TODO: this isn't allowed
 
     return this;
   }
@@ -111,7 +112,7 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
           }
         }
       } else {
-        Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a LavaTank, but was {3}", new Object[]{target.blockX, target.blockY, target.blockZ, tileEntity.getClass().getName()});
+        FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "TileEntity at %d, %d, %d should have been a %s, but was %s", target.blockX, target.blockY, target.blockZ, this.getClass().getSimpleName(), tileEntity.getClass().getName());
         event.world.removeBlockTileEntity(target.blockX, target.blockY, target.blockZ);
       }
     }
@@ -142,7 +143,7 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
           world.setBlockToAir(x, y, z);
         }
       } else {
-        Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a LavaTank, but was {3}", new Object[]{x, y, z, tileEntity.getClass().getName()});
+        FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "TileEntity at %d, %d, %d should have been a %s, but was %s", x, y, z, this.getClass().getSimpleName(), tileEntity.getClass().getName());
       }
     }
 

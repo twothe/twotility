@@ -2,6 +2,7 @@
  */
 package two.twotility.blocks;
 
+import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -24,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.Config;
 import two.twotility.TwoTility;
+import two.twotility.gui.GuiHandler;
 import two.twotility.tiles.TileAdvancedFurnace;
 import two.util.BlockSide;
 
@@ -32,7 +34,7 @@ import two.util.BlockSide;
  */
 public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
 
-  public static final String NAME = "advancedfurnace";
+  public static final String NAME = "AdvancedFurnace";
   protected static final int STATE_EMPTY = 0;
   protected static final int STATE_FILLED = STATE_EMPTY + 1;
   protected static final int STATE_HAS_FUEL = STATE_FILLED + 1;
@@ -62,15 +64,16 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
     GameRegistry.registerTileEntity(TileAdvancedFurnace.class, TileAdvancedFurnace.class.getName());
 
-    CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
-            " R ",
-            "CFC",
-            " B ",
-            'C', Block.chest,
-            'F', Block.furnaceIdle,
-            'R', Item.redstone,
-            'B', Item.bucketEmpty);
-
+    if (Config.isCraftingEnabled(NAME)) {
+      CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
+              " R ",
+              "CFC",
+              " B ",
+              'C', Block.chest,
+              'F', Block.furnaceIdle,
+              'R', Item.redstone,
+              'B', Item.bucketEmpty);
+    }
     return this;
   }
 
@@ -107,23 +110,17 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = BlockSide.getDirectionFacing(entity); // TODO: search for lava tank
+    final int metadata = BlockSide.getDirectionFacing(entity); 
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
   }
 
   @Override
   public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
     if (world.isRemote == false) {
-      final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-      if (tileEntity instanceof TileAdvancedFurnace) {
-        final TileAdvancedFurnace lavaFurnace = (TileAdvancedFurnace) tileEntity;
-        return lavaFurnace.doSomething(); // TODO: display GUI
-      } else {
-        Logger.getLogger(TwoTility.MOD_ID).log(Level.WARNING, "TileEntity at {0}, {1}, {2} should have been a " + TileAdvancedFurnace.class.getSimpleName() + ", but was {3}", new Object[]{x, y, z, tileEntity.getClass().getName()});
-        world.removeBlockTileEntity(x, y, z);
-      }
+      System.out.println("[Local] onBlockActivated, opening GUI...");
+      FMLNetworkHandler.openGui(player, TwoTility.instance, GuiHandler.ID_ADVANCED_FURNACE, world, x, y, z);
     }
-    return false;
+    return true;
   }
 
   @Override
