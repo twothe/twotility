@@ -23,7 +23,7 @@ public class ContainerAdvancedFurnace extends Container {
   
   final InventoryPlayer inventoryPlayer;
   final TileAdvancedFurnace tileAdvancedFurnace;
-  int lastStoredOperations;
+  int lastStoredFuel;
 
   public ContainerAdvancedFurnace(final InventoryPlayer inventoryPlayer, final TileAdvancedFurnace tileAdvancedFurnace) {
     this.inventoryPlayer = inventoryPlayer;
@@ -73,7 +73,7 @@ public class ContainerAdvancedFurnace extends Container {
   @Override
   public void addCraftingToCrafters(ICrafting par1ICrafting) {
     super.addCraftingToCrafters(par1ICrafting);
-    par1ICrafting.sendProgressBarUpdate(this, UPDATEID_STORED_OPERATIONS, this.tileAdvancedFurnace.getStoredOperations());
+    par1ICrafting.sendProgressBarUpdate(this, UPDATEID_STORED_OPERATIONS, this.tileAdvancedFurnace.getStoredFuel());
   }
 
   /**
@@ -83,12 +83,12 @@ public class ContainerAdvancedFurnace extends Container {
   public void detectAndSendChanges() {
     super.detectAndSendChanges();
 
-    final int newStoredOperations = this.tileAdvancedFurnace.getStoredOperations();
-    if (lastStoredOperations != newStoredOperations) {
-      this.lastStoredOperations = newStoredOperations;
+    final int newStoredFuel = this.tileAdvancedFurnace.getStoredFuel();
+    if (lastStoredFuel != newStoredFuel) {
+      this.lastStoredFuel = newStoredFuel;
       for (int i = 0; i < this.crafters.size(); ++i) {
         final ICrafting icrafting = (ICrafting) this.crafters.get(i);
-        icrafting.sendProgressBarUpdate(this, UPDATEID_STORED_OPERATIONS, newStoredOperations);
+        icrafting.sendProgressBarUpdate(this, UPDATEID_STORED_OPERATIONS, newStoredFuel);
       }
     }
   }
@@ -97,7 +97,7 @@ public class ContainerAdvancedFurnace extends Container {
   @Override
   public void updateProgressBar(final int updateID, final int newValue) {
     switch (updateID) {
-      case UPDATEID_STORED_OPERATIONS: tileAdvancedFurnace.setStoredOperationForGUI(newValue);
+      case UPDATEID_STORED_OPERATIONS: tileAdvancedFurnace.setStoredFuelForGUI(newValue);
     }
   }
 
