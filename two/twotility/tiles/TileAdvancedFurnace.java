@@ -153,6 +153,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
       final ItemStack smeltableItem = findSmeltableItem();
       if (smeltableItem != null) {
         setInventorySlotContents(INVENTORY_START_PROCESSING, smeltableItem);
+        updateMetadata();
       }
     } else {
       if (canSmelt(itemInProgress)) {
@@ -204,6 +205,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
     } else if (tryAddToOutput(smeltResult)) {
       setInventorySlotContents(INVENTORY_START_PROCESSING, null);
       onInventoryChanged();
+      updateMetadata();
       return true;
     } else {
       return false;
@@ -268,14 +270,18 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   protected void changeStoredFuel(final int change) {
     if (change != 0) {
       this.storedFuel += change;
-      if (worldObj.isRemote == false) {
-        final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        final int newMetadata = BlockAdvancedFurnace.createState(currentMetadata, this.storedFuel > 0, false);
-        if (newMetadata != currentMetadata) {
-          worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 2);
-        }
-      }
+      updateMetadata();
       onInventoryChanged();
+    }
+  }
+
+  protected void updateMetadata() {
+    if (worldObj.isRemote == false) {
+      final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+      final int newMetadata = BlockAdvancedFurnace.createState(currentMetadata, this.storedFuel > 0, this.inventory[INVENTORY_START_PROCESSING] != null);
+      if (newMetadata != currentMetadata) {
+        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 2);
+      }
     }
   }
 

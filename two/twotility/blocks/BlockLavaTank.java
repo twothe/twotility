@@ -51,7 +51,8 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
   protected static final int STATE_3_4 = STATE_2_4 + 1;
   protected static final int STATE_4_4 = STATE_3_4 + 1;
   protected static final int NUM_STATES = STATE_4_4 + 1;
-  protected Icon[] textures = new Icon[NUM_STATES];
+  protected Icon[] texturesSide = new Icon[NUM_STATES];
+  protected Icon textureTopBottom;
 
   public BlockLavaTank() {
     super(Config.getBlockID(BlockLavaTank.class), Material.glass);
@@ -172,22 +173,22 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
   @SideOnly(Side.CLIENT)
   @Override
   public void registerIcons(final IconRegister iconRegister) {
-    textures[STATE_EMPTY] = iconRegister.registerIcon(TwoTility.getTextureName(NAME));
-    textures[STATE_1_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_1_4");
-    textures[STATE_2_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_half");
-    textures[STATE_3_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_3_4");
-    textures[STATE_4_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_full");
+    textureTopBottom = iconRegister.registerIcon(TwoTility.getTextureName(NAME));
+    texturesSide[STATE_EMPTY] = iconRegister.registerIcon(TwoTility.getTextureName(NAME + "_empty"));
+    texturesSide[STATE_1_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_1_4");
+    texturesSide[STATE_2_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_half");
+    texturesSide[STATE_3_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_3_4");
+    texturesSide[STATE_4_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_full");
   }
 
   @Override
   public Icon getIcon(final int side, final int metadata) {
     switch (BlockSide.getSide(side)) {
       case top:
-        return (metadata == STATE_4_4) ? textures[STATE_4_4] : textures[STATE_EMPTY];
       case bottom:
-        return (metadata == STATE_EMPTY) ? textures[STATE_EMPTY] : textures[STATE_4_4];
+        return textureTopBottom;
       default:
-        return textures[metadata];
+        return texturesSide[metadata];
     }
   }
 
