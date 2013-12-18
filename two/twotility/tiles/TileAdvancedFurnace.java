@@ -34,9 +34,8 @@ import two.twotility.blocks.BlockAdvancedFurnace;
 public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, ISidedInventory {
 
   protected static final int FUEL_PER_LAVA_BLOCK = 20000;// 1 lava source block = 100 operations
-  protected static final int SMELTING_DURATION = 50; // in ticks
+  protected static final int SMELTING_DURATION = 200; // in ticks
   protected static final int FUEL_PER_TICK = FUEL_PER_LAVA_BLOCK / SMELTING_DURATION / 100;
-  protected static final double LAVA_PER_OPERATION = ((double) FluidContainerRegistry.BUCKET_VOLUME) / ((double) FUEL_PER_LAVA_BLOCK);  // 1 bucket contains 1 lava source block
   protected static final int REFILL_TICK_RATE = 20;
   protected static final int STORED_FUEL_MAX = 1600; // in ticks. This is not a limit, depending on the fuel used, this can be exceeded by a lot
   protected static final String NBT_TAG_FUEL_STORED = "fuelStored";
@@ -83,7 +82,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
     }
   }
   //--- Class ------------------------------------------------------------------
-  protected final FluidStack lavaStack = new FluidStack(FluidRegistry.LAVA, (int) Math.ceil(STORED_FUEL_MAX * LAVA_PER_OPERATION));
+  protected final FluidStack lavaStack = new FluidStack(FluidRegistry.LAVA, (int) Math.ceil(fuelToMB(STORED_FUEL_MAX)));
   protected int nextRefillAttempt = REFILL_TICK_RATE;
   protected LavaDrainTarget lavaDrainTarget = null;
   protected int storedFuel = 0; // internal buffer for prepared fuel
@@ -314,7 +313,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
     if (fluidHandler.canDrain(direction, FluidRegistry.LAVA)) {
       final FluidStack drainedFluid = fluidHandler.drain(direction, lavaStack, true);
       if (lavaStack.isFluidEqual(drainedFluid) && (drainedFluid.amount > 0)) {
-        changeStoredFuel((int) (((double) drainedFluid.amount) / LAVA_PER_OPERATION)); // successfully drained enough lava for this many operations (rounded down)
+        changeStoredFuel((int) MBToFuel(drainedFluid.amount)); // successfully drained enough lava for this many operations (rounded down)
         return true;
       }
     }
@@ -511,10 +510,10 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   public int fill(final ForgeDirection from, final FluidStack resource, final boolean doFill) {
     int amountTaken = 0;
     if (lavaStack.isFluidEqual(resource) && (this.storedFuel < STORED_FUEL_MAX) && (resource.amount > 0)) {
-      final int amountRequired = (int) Math.ceil(((double) (STORED_FUEL_MAX * 2 - storedFuel)) * LAVA_PER_OPERATION); // get some extra free lava here to not have to refill every tick
-      amountTaken = Math.min((int) (Math.floor(((double) resource.amount) / LAVA_PER_OPERATION) * LAVA_PER_OPERATION), amountRequired);
+      final int amountRequired = (int) Math.ceil(fuelToMB(STORED_FUEL_MAX * 2 - storedFuel)); // get some extra free lava here to not have to refill every tick
+      amountTaken = Math.min((int) fuelToMB(Math.floor(MBToFuel(resource.amount))), amountRequired);
       if (doFill) {
-        this.changeStoredFuel(amountTaken);
+        changeStoredFuel((int) MBToFuel(amountTaken));
       }
     }
     return amountTaken;
@@ -538,6 +537,16 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
 
   @Override
   public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-    return new FluidTankInfo[]{new FluidTankInfo(lavaStack.copy(), (int) Math.ceil(STORED_FUEL_MAX * LAVA_PER_OPERATION))};
+    return new FluidTankInfo[]{new FluidTankInfo(lavaStack.copy(), (int) Math.ceil(STORED_FUEL_MAX * FUEL_PER_LAVA_MB))};
+  }
+  //--- Convenience functions --------------------------------------------------
+  protected static final double FUEL_PER_LAVA_MB = ((double) FUEL_PER_LAVA_BLOCK) / ((double) FluidContainerRegistry.BUCKET_VOLUME);  // 1 bucket contains 1 lava source block
+
+  public static double fuelToMB(final double fuel) {
+    return fuel / FUEL_PER_LAVA_MB;
+  }
+
+  public static double MBToFuel(final double milliBuckets) {
+    return milliBuckets * FUEL_PER_LAVA_MB;
   }
 }

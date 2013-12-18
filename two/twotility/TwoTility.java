@@ -11,6 +11,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraftforge.common.Configuration;
@@ -54,7 +55,7 @@ public class TwoTility {
   }
 
   public static String getTextureName(final String filePrefix) {
-    return TwoTility.MOD_ID + ":" + filePrefix;
+    return TwoTility.MOD_ID + ":" + filePrefix.toLowerCase(Locale.ENGLISH);
   }
 
   public static String getBlockName(final String blockName) {

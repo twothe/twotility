@@ -13,8 +13,8 @@ import net.minecraftforge.common.Property;
  */
 public class Config {
 
-  public static final AtomicInteger blockIDs = new AtomicInteger(500);
-  public static final AtomicInteger itemIDs = new AtomicInteger(5000);
+  public static final AtomicInteger blockIDs = new AtomicInteger(745);
+  public static final AtomicInteger itemIDs = new AtomicInteger(6928);
   protected static Configuration configuration;
 
   public static int getBlockID(final Class<? extends Block> block) {
