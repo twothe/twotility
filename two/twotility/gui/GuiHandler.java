@@ -79,7 +79,6 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getServerGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z) {
-    Logging.logMethodEntry("GuiHandler", "getServerGuiElement", ID);
     final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
     final GuiEntry guiEntry = knownGuis.get(ID);
 
@@ -92,7 +91,7 @@ public class GuiHandler implements IGuiHandler {
         FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "TileEntity at %d, %d, %d should have been %s, but was %s", new Object[]{x, y, z, e.expected.getName(), e.found.getName()});
         world.removeBlockTileEntity(x, y, z);
       } catch (ReflectiveOperationException e) {
-        FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Unable to create container for GUI: %s", e.getMessage());
+        FMLLog.log(Level.WARNING, e, "Unable to create container for GUI: %d", ID);
       }
     }
     return null;
@@ -100,7 +99,6 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getClientGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z) {
-    Logging.logMethodEntry("GuiHandler", "getClientGuiElement", ID);
     final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
     final GuiEntry guiEntry = knownGuis.get(ID);
     if (guiEntry.containerClass == null) {
@@ -112,14 +110,13 @@ public class GuiHandler implements IGuiHandler {
         FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "TileEntity at %d, %d, %d should have been %s, but was %s", new Object[]{x, y, z, e.expected.getName(), e.found.getName()});
         world.removeBlockTileEntity(x, y, z);
       } catch (ReflectiveOperationException e) {
-        FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Unable to open GUI: %d", e.getMessage());
+        FMLLog.log(Level.WARNING, e, "Unable to create GUI: %d", ID);
       }
     }
     return null;
   }
 
   protected Object tryCreateContainer(final Class<? extends Container> container, final EntityPlayer player, final TileEntity tileEntity) throws ReflectiveOperationException, InvalidTileEntityException {
-    Logging.logMethodEntry("GuiHandler", "tryCreateContainer", container.getSimpleName());
     final Constructor[] constructors = container.getConstructors();
     for (final Constructor constructor : constructors) {
       final Class[] parameters = constructor.getParameterTypes();
@@ -138,7 +135,6 @@ public class GuiHandler implements IGuiHandler {
   }
 
   protected Object tryCreateGUI(final Class<? extends Gui> gui, final EntityPlayer player, final TileEntity tileEntity) throws ReflectiveOperationException, InvalidTileEntityException {
-    Logging.logMethodEntry("GuiHandler", "tryCreateGUI", gui.getSimpleName());
     for (final Constructor constructor : gui.getConstructors()) {
       final Class[] parameters = constructor.getParameterTypes();
       if (parameters.length == 2) {

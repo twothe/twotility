@@ -20,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -117,7 +118,6 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
   @Override
   public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
     if (world.isRemote == false) {
-      System.out.println("[Local] onBlockActivated, opening GUI...");
       FMLNetworkHandler.openGui(player, TwoTility.instance, GuiHandler.ID_ADVANCED_FURNACE, world, x, y, z);
     }
     return true;

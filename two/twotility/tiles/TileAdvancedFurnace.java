@@ -3,12 +3,15 @@
 package two.twotility.tiles;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.logging.Level;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -30,7 +33,19 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, II
   protected static final int OPERATIONS_PER_LAVA_BLOCK = 100;// 1 lava source block = 100 operations
   protected static final int LAVA_PER_OPERATION = FluidContainerRegistry.BUCKET_VOLUME / OPERATIONS_PER_LAVA_BLOCK;  // 1 bucket contains 1 lava source block
   protected static final int STORED_OPERATIONS_MAX = 8; // this is not a limit, depending on the fuel used, this can be exceeded by a lot
-  protected static final String NBT_TAG_OPERATIONS_STORED = "AdvancedFurnace_operationsStored";
+  protected static final String NBT_TAG_OPERATIONS_STORED = "operationsStored";
+  protected static final String NBT_TAG_ITEMLIST = "items";
+  protected static final String NBT_TAG_SLOT = "slot";
+  //--- Inventory declaration --------------------------------------------------
+  protected static final int INVENTORY_SIZE_INPUT = 3 * 5;
+  protected static final int INVENTORY_SIZE_OUTPUT = 3 * 5;
+  protected static final int INVENTORY_SIZE_FUEL = 4;
+  protected static final int INVENTORY_SIZE_PROCESSING = 1;
+  protected static final int INVENTORY_SIZE = INVENTORY_SIZE_INPUT + INVENTORY_SIZE_OUTPUT + INVENTORY_SIZE_FUEL + INVENTORY_SIZE_PROCESSING;
+  protected static final int INVENTORY_START_INPUT = 0;
+  protected static final int INVENTORY_START_FUEL = INVENTORY_START_INPUT + INVENTORY_SIZE_INPUT;
+  protected static final int INVENTORY_START_OUTPUT = INVENTORY_START_FUEL + INVENTORY_SIZE_FUEL;
+  protected static final int INVENTORY_START_PROCESSING = INVENTORY_START_OUTPUT + INVENTORY_SIZE_OUTPUT;
 
   /**
    * Storage class for the nearest lava tank
@@ -52,36 +67,53 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, II
   protected int nextRefillAttempt = 0;
   protected LavaDrainTarget lavaDrainTarget = null;
   protected int storedOperations = 0; // internal buffer for prepared fuel
-  protected final ItemStack[] inventoryInput = new ItemStack[4 * 5];
-  protected final ItemStack[] inventoryOutput = new ItemStack[4 * 5];
-  protected final ItemStack[] inventoryFuel = new ItemStack[6];
-  protected final int sizeTotal = inventoryInput.length + inventoryOutput.length + inventoryFuel.length;
-
-  @Override
-  public void readFromNBT(final NBTTagCompound tag) {
-    super.readFromNBT(tag);
-    storedOperations = tag.getByte(NBT_TAG_OPERATIONS_STORED);
-  }
+  protected final ItemStack[] inventory = new ItemStack[INVENTORY_SIZE];
 
   @Override
   public void writeToNBT(final NBTTagCompound tag) {
     super.writeToNBT(tag);
     tag.setByte(NBT_TAG_OPERATIONS_STORED, (byte) (storedOperations & 0xFF)); // any excess operations will be lost, but >255 requires some strange mod-fuel
+
+    final NBTTagList inventoryList = new NBTTagList();
+    NBTTagCompound tagCompound;
+    for (byte slotCount = 0; slotCount < inventory.length; ++slotCount) {
+      if (inventory[slotCount] != null) {
+        tagCompound = new NBTTagCompound();
+        tagCompound.setByte(NBT_TAG_SLOT, slotCount);
+        inventory[slotCount].writeToNBT(tagCompound);
+        inventoryList.appendTag(tagCompound);
+      }
+    }
+
+    tag.setTag(NBT_TAG_ITEMLIST, inventoryList);
   }
 
-  public boolean doSomething() {
-    this.changeStoredOperations(-1);
-    return false;
+  @Override
+  public void readFromNBT(final NBTTagCompound tag) {
+    super.readFromNBT(tag);
+    storedOperations = tag.getByte(NBT_TAG_OPERATIONS_STORED) & 0xFF;
+
+    final NBTTagList nbttaglist = tag.getTagList(NBT_TAG_ITEMLIST);
+    for (int tagCount = nbttaglist.tagCount() - 1; tagCount >= 0; --tagCount) {
+      final NBTTagCompound itemEntry = (NBTTagCompound) nbttaglist.tagAt(tagCount);
+      final byte slotID = itemEntry.getByte(NBT_TAG_SLOT);
+      if ((slotID >= 0) && (slotID < inventory.length)) {
+        inventory[slotID] = ItemStack.loadItemStackFromNBT(itemEntry);
+      } else {
+        FMLLog.warning("TileAdvancedFurnace received illegal NBT inventory slot. Valid range: 0-%d but got %d.", inventory.length, slotID);
+      }
+    }
   }
 
   @Override
   public void updateEntity() {
     if (worldObj.isRemote) {
-      return;
-    }
-    if (--nextRefillAttempt <= 0) {
-      nextRefillAttempt = REFILL_TICK_RATE;
-      refill(); // if neccessary
+      //do some fancy effects
+    } else {
+      if (--nextRefillAttempt <= 0) {
+        nextRefillAttempt = REFILL_TICK_RATE;
+        refill(); // if neccessary
+      }
     }
   }
 
@@ -93,24 +125,22 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, II
     }
   }
 
-  @Override
-  public void onInventoryChanged() {
-    if (worldObj.isRemote) {
-      return;
-    }
-    final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-    final int newMetadata = BlockAdvancedFurnace.createState(currentMetadata, this.storedOperations > 0, false);
-    if (newMetadata != currentMetadata) {
-      worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 2);
-    }
-    super.onInventoryChanged();
+  @SideOnly(Side.CLIENT)
+  public void setStoredOperationForGUI(final int storedOperations) {
+    this.storedOperations = storedOperations;
   }
 
   protected void changeStoredOperations(final int change) {
     if (change != 0) {
       this.storedOperations += change;
+      if (worldObj.isRemote == false) {
+        final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        final int newMetadata = BlockAdvancedFurnace.createState(currentMetadata, this.storedOperations > 0, false);
+        if (newMetadata != currentMetadata) {
+          worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 2);
+        }
+      }
       onInventoryChanged();
-      System.out.println("Advanced Furnace now has " + (change > 0 ? "+" : "") + change + " fuel for a total of " + this.storedOperations + " operations");
     }
   }
 
@@ -174,25 +204,35 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, II
     return false; // TODO
   }
 
+  public int getStoredOperations() {
+    return this.storedOperations;
+  }
+
+  public double getStoredOperationsInPercent() {
+    if (storedOperations > STORED_OPERATIONS_MAX) {
+      return 1.0;
+    } else if (storedOperations < 0) {
+      return 0.0;
+    } else {
+      return ((double) storedOperations) / ((double) STORED_OPERATIONS_MAX);
+    }
+  }
+
+  //----------------------------------------------------------------------------
   //--- IInventory -------------------------------------------------------------
+  //----------------------------------------------------------------------------
   @Override
   public int getSizeInventory() {
-    System.out.println("getSizeInventory = " + sizeTotal);
-    return sizeTotal;
+    return inventory.length;
   }
 
   @Override
   public ItemStack getStackInSlot(final int slot) {
-    Logging.logMethodEntry("TileAdvancedFurnace", "getStackInSlot", slot);
     if (slot < 0) {
       FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d < 0", slot);
       return null;
-    } else if (slot < inventoryInput.length) {
-      return inventoryInput[slot];
-    } else if (slot < inventoryInput.length + inventoryFuel.length) {
-      return inventoryFuel[slot - inventoryInput.length];
-    } else if (slot < inventoryInput.length + inventoryFuel.length + inventoryOutput.length) {
-      return inventoryOutput[slot - inventoryInput.length - inventoryFuel.length];
+    } else if (slot < inventory.length) {
+      return inventory[slot];
     } else {
       FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d > total size", slot);
       return null;
@@ -200,15 +240,27 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, II
   }
 
   @Override
+  public void setInventorySlotContents(final int slot, final ItemStack itemStack) {
+    if (slot < 0) {
+      FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d < 0", slot);
+    } else if (slot < inventory.length) {
+      inventory[slot] = itemStack;
+      if ((itemStack != null) && (itemStack.stackSize > getInventoryStackLimit())) {
+        itemStack.stackSize = getInventoryStackLimit();
+      }
+    } else {
+      FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d > total size", slot);
+    }
+  }
+
+  @Override
   public ItemStack decrStackSize(final int slot, final int amount) {
-    Logging.logMethodEntry("TileAdvancedFurnace", "decrStackSize", new Object[]{slot, amount});
     ItemStack result = getStackInSlot(slot);
     if (result != null) {
       if (amount >= result.stackSize) { // usually left click
         setInventorySlotContents(slot, null);
       } else { // usually right-click
         result = result.splitStack(amount); // create a new reduced stack instead
-        onInventoryChanged();
       }
     }
 
@@ -217,57 +269,28 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, II
 
   @Override
   public ItemStack getStackInSlotOnClosing(final int slot) {
-    Logging.logMethodEntry("TileAdvancedFurnace", "getStackInSlotOnClosing", slot);
     final ItemStack itemStack = getStackInSlot(slot);
     setInventorySlotContents(slot, null);
     return itemStack;
   }
 
   @Override
-  public void setInventorySlotContents(final int slot, final ItemStack itemStack) {
-    Logging.logMethodEntry("TileAdvancedFurnace", "setInventorySlotContents", new Object[]{slot, itemStack});
-    if (slot < 0) {
-      FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d < 0", slot);
-    } else if (slot < inventoryInput.length) {
-      setInventorySlotContents(inventoryInput, slot, itemStack);
-    } else if (slot < inventoryInput.length + inventoryFuel.length) {
-      setInventorySlotContents(inventoryFuel, slot - inventoryInput.length, itemStack);
-    } else if (slot < inventoryInput.length + inventoryFuel.length + inventoryOutput.length) {
-      setInventorySlotContents(inventoryInput, slot - inventoryInput.length - inventoryFuel.length, itemStack);
-    } else {
-      FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d > total size", slot);
-    }
-  }
-
-  protected void setInventorySlotContents(final ItemStack[] inventory, final int slot, final ItemStack itemStack) {
-    inventoryInput[slot] = itemStack;
-    if ((itemStack != null) && (itemStack.stackSize > getInventoryStackLimit())) {
-      itemStack.stackSize = getInventoryStackLimit();
-    }
-    onInventoryChanged();
-  }
-
-  @Override
   public String getInvName() {
-    Logging.logMethodEntry("TileAdvancedFurnace", "getInvName");
     return BlockAdvancedFurnace.NAME; // TODO: check
   }
 
   @Override
   public boolean isInvNameLocalized() {
-    Logging.logMethodEntry("TileAdvancedFurnace", "isInvNameLocalized");
     return false;
   }
 
   @Override
   public int getInventoryStackLimit() {
-    Logging.logMethodEntry("TileAdvancedFurnace", "getInventoryStackLimit");
     return 64;
   }
 
   @Override
   public boolean isUseableByPlayer(final EntityPlayer player) {
-//    Logging.logMethodEntry("TileAdvancedFurnace", "isUseableByPlayer", player != null ? player.getEntityName() : "null");
     // Called once per tick to verify that the player is still allowed to use the container
     if (player != null) {
       return (player.getDistanceSq(xCoord, yCoord, zCoord) <= 4 * 4); // TODO
@@ -279,23 +302,22 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, II
 
   @Override
   public void openChest() {
-    Logging.logMethodEntry("TileAdvancedFurnace", "openChest");
     // not used
   }
 
   @Override
   public void closeChest() {
-    Logging.logMethodEntry("TileAdvancedFurnace", "closeChest");
     // not used
   }
 
   @Override
   public boolean isItemValidForSlot(final int slot, final ItemStack itemstack) {
-    Logging.logMethodEntry("TileAdvancedFurnace", "isItemValidForSlot", new Object[]{slot, itemstack});
     return true; // TODO: limit slot access
   }
 
+  //----------------------------------------------------------------------------
   //--- IFluidHandler ----------------------------------------------------------
+  //----------------------------------------------------------------------------
   @Override
   public boolean canFill(final ForgeDirection from, final Fluid fluid) {
     return ((fluid != null) && (fluid.getID() == lavaStack.fluidID));
