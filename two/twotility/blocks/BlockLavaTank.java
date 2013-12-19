@@ -55,12 +55,13 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
   protected Icon textureTopBottom;
 
   public BlockLavaTank() {
-    super(Config.getBlockID(BlockLavaTank.class), Material.glass);
+    super(Config.getBlockID(BlockLavaTank.class), Material.iron);
   }
 
   public BlockLavaTank initialize() {
     setHardness(2.5F);
-    setStepSound(soundGlassFootstep);
+    setLightOpacity(0);
+    setStepSound(soundMetalFootstep);
     setUnlocalizedName(NAME);
     setCreativeTab(TwoTility.creativeTab);
 

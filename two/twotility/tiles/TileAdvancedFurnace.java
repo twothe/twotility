@@ -6,7 +6,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.logging.Level;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,7 +68,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   /**
    * Storage class for the nearest lava tank
    */
-  protected class LavaDrainTarget {
+  protected static class LavaDrainTarget {
 
     final IFluidHandler fluidHandler;
     final TileEntity tileEntity;
@@ -280,7 +279,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
       final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
       final int newMetadata = BlockAdvancedFurnace.createState(currentMetadata, this.storedFuel > 0, this.inventory[INVENTORY_START_PROCESSING] != null);
       if (newMetadata != currentMetadata) {
-        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 2);
+        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 3);
       }
     }
   }
@@ -540,13 +539,14 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   public boolean canDrain(ForgeDirection from, Fluid fluid) {
     return false;
   }
+  //--- Convenience functions --------------------------------------------------
+  protected static final double FUEL_PER_LAVA_MB = ((double) FUEL_PER_LAVA_BLOCK) / ((double) FluidContainerRegistry.BUCKET_VOLUME);  // 1 bucket contains 1 lava source block
+  protected static final int MB_CAPACITY = (int) Math.ceil(STORED_FUEL_MAX * FUEL_PER_LAVA_MB); // in ticks. This is not a limit, depending on the fuel used, this can be exceeded by a lot
 
   @Override
   public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-    return new FluidTankInfo[]{new FluidTankInfo(lavaStack.copy(), (int) Math.ceil(STORED_FUEL_MAX * FUEL_PER_LAVA_MB))};
+    return new FluidTankInfo[]{new FluidTankInfo(lavaStack.copy(), MB_CAPACITY)};
   }
-  //--- Convenience functions --------------------------------------------------
-  protected static final double FUEL_PER_LAVA_MB = ((double) FUEL_PER_LAVA_BLOCK) / ((double) FluidContainerRegistry.BUCKET_VOLUME);  // 1 bucket contains 1 lava source block
 
   public static double fuelToMB(final double fuel) {
     return fuel / FUEL_PER_LAVA_MB;

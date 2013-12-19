@@ -2,8 +2,6 @@
  */
 package two.twotility.gui;
 
-import cpw.mods.fml.common.FMLLog;
-import java.util.logging.Level;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;

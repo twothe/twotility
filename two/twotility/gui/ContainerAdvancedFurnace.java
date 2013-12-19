@@ -2,6 +2,7 @@
  */
 package two.twotility.gui;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +21,6 @@ import two.util.Logging;
 public class ContainerAdvancedFurnace extends Container {
 
   protected final static int UPDATEID_STORED_OPERATIONS = 0;
-  
   final InventoryPlayer inventoryPlayer;
   final TileAdvancedFurnace tileAdvancedFurnace;
   int lastStoredFuel;
@@ -97,7 +97,10 @@ public class ContainerAdvancedFurnace extends Container {
   @Override
   public void updateProgressBar(final int updateID, final int newValue) {
     switch (updateID) {
-      case UPDATEID_STORED_OPERATIONS: tileAdvancedFurnace.setStoredFuelForGUI(newValue);
+      case UPDATEID_STORED_OPERATIONS:
+        tileAdvancedFurnace.setStoredFuelForGUI(newValue);
+      default:
+        FMLLog.warning("%s received update event for unknown ID %d", this.getClass().getSimpleName(), updateID);
     }
   }
 

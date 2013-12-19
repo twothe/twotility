@@ -58,7 +58,7 @@ public class GuiHandler implements IGuiHandler {
     }
   }
 
-  private class InvalidTileEntityException extends Exception {
+  private static class InvalidTileEntityException extends Exception {
 
     final Class expected;
     final Class found;

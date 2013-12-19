@@ -15,10 +15,12 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.Icon;
@@ -54,7 +56,8 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
   }
 
   public BlockAdvancedFurnace initialize() {
-    setHardness(5F);
+    setHardness(2.5F);
+    setResistance(9.0f);
     setStepSound(soundStoneFootstep);
     setUnlocalizedName(NAME);
     setTextureName(TwoTility.getTextureName(NAME));
@@ -111,7 +114,7 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = BlockSide.getDirectionFacing(entity); 
+    final int metadata = BlockSide.getDirectionFacing(entity);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
   }
 
@@ -121,6 +124,48 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
       FMLNetworkHandler.openGui(player, TwoTility.instance, GuiHandler.ID_ADVANCED_FURNACE, world, x, y, z);
     }
     return true;
+  }
+
+  @Override
+  public void breakBlock(final World world, final int x, final int y, final int z, final int blockID, final int metadata) {
+    final TileAdvancedFurnace tileAdvancedFurnace = (TileAdvancedFurnace) world.getBlockTileEntity(x, y, z);
+
+    if (tileAdvancedFurnace != null) {
+      for (int slot = 0; slot < tileAdvancedFurnace.getSizeInventory(); ++slot) {
+        final ItemStack itemstack = tileAdvancedFurnace.getStackInSlot(slot);
+
+        if (itemstack != null) {
+          final float modX = world.rand.nextFloat() * 0.8F + 0.1F;
+          final float modY = world.rand.nextFloat() * 0.8F + 0.1F;
+          final float modZ = world.rand.nextFloat() * 0.8F + 0.1F;
+
+          while (itemstack.stackSize > 0) {
+            int stackSplit = world.rand.nextInt(21) + 10;
+
+            if (stackSplit > itemstack.stackSize) {
+              stackSplit = itemstack.stackSize;
+            }
+
+            itemstack.stackSize -= stackSplit;
+            final EntityItem entityitem = new EntityItem(world, (double) ((float) x + modX), (double) ((float) y + modY), (double) ((float) z + modZ), new ItemStack(itemstack.itemID, stackSplit, itemstack.getItemDamage()));
+
+            if (itemstack.hasTagCompound()) {
+              entityitem.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
+            }
+
+            final float baseVelocity = 0.05F;
+            entityitem.motionX = (double) ((float) world.rand.nextGaussian() * baseVelocity);
+            entityitem.motionY = (double) ((float) world.rand.nextGaussian() * baseVelocity + 0.2F);
+            entityitem.motionZ = (double) ((float) world.rand.nextGaussian() * baseVelocity);
+            world.spawnEntityInWorld(entityitem);
+          }
+        }
+      }
+
+      world.func_96440_m(x, y, z, blockID);
+    }
+
+    super.breakBlock(world, x, y, z, blockID, metadata);
   }
 
   @Override

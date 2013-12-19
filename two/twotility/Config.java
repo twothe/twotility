@@ -2,6 +2,7 @@
  */
 package two.twotility;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -15,7 +16,11 @@ public class Config {
 
   public static final AtomicInteger blockIDs = new AtomicInteger(745);
   public static final AtomicInteger itemIDs = new AtomicInteger(6928);
-  protected static Configuration configuration;
+  static Configuration configuration;
+  
+  protected static void initialize(final File configFile) {
+    Config.configuration = new Configuration(configFile);
+  }
 
   public static int getBlockID(final Class<? extends Block> block) {
     final String className = block.getSimpleName();
@@ -40,5 +45,8 @@ public class Config {
   public static boolean isCraftingEnabled(final String key, final boolean defaultValue) {
     final Property property = configuration.get("Allowed Recipes", key, defaultValue);
     return property.getBoolean(defaultValue);
+  }
+
+  private Config() {
   }
 }
