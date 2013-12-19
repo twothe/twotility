@@ -6,8 +6,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.IGuiHandler;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.logging.Level;
 import net.minecraft.client.gui.Gui;
@@ -17,8 +15,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import two.twotility.gui.ContainerAdvancedFurnace;
-import two.twotility.gui.GUIAdvancedFurnace;
 
 /**
  * @author Two
@@ -33,73 +29,6 @@ public class GuiHandler implements IGuiHandler {
    */
   public static ResourceLocation loadGuiPNG(final String guiName) {
     return new ResourceLocation(TwoTility.MOD_ID.toLowerCase(Locale.ENGLISH), "textures/gui/" + guiName.toLowerCase(Locale.ENGLISH) + ".png");
-  }
-
-  /**
-   * Private class for list of known guis
-   */
-  protected static final class GuiEntry {
-
-    final Class<? extends Container> containerClass;
-    final Class<? extends Gui> guiClass;
-    final int hash;
-
-    public GuiEntry(final Class<? extends Container> containerClass, final Class<? extends Gui> guiClass) {
-      if (containerClass == null) {
-        throw new NullPointerException("Container class cannot be null!");
-      }
-      if (guiClass == null) {
-        throw new NullPointerException("GUI class cannot be null!");
-      }
-      this.containerClass = containerClass;
-      this.guiClass = guiClass;
-
-      this.hash = calculateHash();
-    }
-
-    protected int calculateHash() {
-      int result = 7;
-      result = 83 * result + this.containerClass.hashCode();
-      result = 83 * result + this.guiClass.hashCode();
-      return result;
-    }
-
-    @Override
-    public int hashCode() {
-      return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      final GuiEntry other = (GuiEntry) obj;
-      if (this.containerClass != other.containerClass && !this.containerClass.equals(other.containerClass)) {
-        return false;
-      }
-      if (this.guiClass != other.guiClass && !this.guiClass.equals(other.guiClass)) {
-        return false;
-      }
-      return true;
-    }
-  }
-
-  /**
-   * Private class to notice when the world has a corrupted tile entity.
-   */
-  protected static final class InvalidTileEntityException extends Exception {
-
-    final Class expected;
-    final Class found;
-
-    public InvalidTileEntityException(final Class expected, final Class found) {
-      this.expected = expected;
-      this.found = found;
-    }
   }
   //--- Class ------------------------------------------------------------------
   protected ArrayList<GuiEntry> knownGuis = new ArrayList<GuiEntry>();
@@ -186,5 +115,69 @@ public class GuiHandler implements IGuiHandler {
       }
     }
     return null;
+  }
+
+  /**
+   * Private class to notice when the world has a corrupted tile entity.
+   */
+  protected static class GuiEntry {
+
+    final Class<? extends Container> containerClass;
+    final Class<? extends Gui> guiClass;
+    final int hash;
+
+    GuiEntry(final Class<? extends Container> containerClass, final Class<? extends Gui> guiClass) {
+      if (containerClass == null) {
+        throw new NullPointerException("Container class cannot be null!");
+      }
+      if (guiClass == null) {
+        throw new NullPointerException("GUI class cannot be null!");
+      }
+      this.containerClass = containerClass;
+      this.guiClass = guiClass;
+
+      this.hash = calculateHash(containerClass, guiClass);
+    }
+
+    static int calculateHash(final Class<? extends Container> containerClass, final Class<? extends Gui> guiClass) {
+      int result = 7;
+      result = 83 * result + containerClass.hashCode();
+      result = 83 * result + guiClass.hashCode();
+      return result;
+    }
+
+    @Override
+    public int hashCode() {
+      return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final GuiEntry other = (GuiEntry) obj;
+      if (this.containerClass != other.containerClass && !this.containerClass.equals(other.containerClass)) {
+        return false;
+      }
+      if (this.guiClass != other.guiClass && !this.guiClass.equals(other.guiClass)) {
+        return false;
+      }
+      return true;
+    }
+  }
+
+  protected static class InvalidTileEntityException extends Exception {
+
+    final Class expected;
+    final Class found;
+
+    InvalidTileEntityException(final Class expected, final Class found) {
+      this.expected = expected;
+      this.found = found;
+    }
   }
 }

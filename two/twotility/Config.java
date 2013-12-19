@@ -15,16 +15,19 @@ import net.minecraftforge.common.Property;
 public class Config {
 
   protected static final String CATEGORY_VARIOUS_SETTINGS = "other";
+  //--- Class ------------------------------------------------------------------
+  public static final AtomicInteger blockIDs = new AtomicInteger(745);
+  public static final AtomicInteger itemIDs = new AtomicInteger(6928);
   //--- Misc config settings ---------------------------------------------------
   public int LAVA_FLOW_FOLLOW_MAX = 128;
+  protected Configuration configuration;
+
+  protected Config() {
+  }
 
   protected void readOther() {
     LAVA_FLOW_FOLLOW_MAX = configuration.get(CATEGORY_VARIOUS_SETTINGS, "Lava flow follow max", LAVA_FLOW_FOLLOW_MAX).getInt(LAVA_FLOW_FOLLOW_MAX);
   }
-  //--- Class ------------------------------------------------------------------
-  public static final AtomicInteger blockIDs = new AtomicInteger(745);
-  public static final AtomicInteger itemIDs = new AtomicInteger(6928);
-  protected Configuration configuration;
 
   protected void initialize(final File configFile) {
     configuration = new Configuration(configFile);
@@ -61,9 +64,6 @@ public class Config {
   public boolean isCraftingEnabled(final String key, final boolean defaultValue) {
     final Property property = configuration.get("Allowed Recipes", key, defaultValue);
     return property.getBoolean(defaultValue);
-  }
-
-  protected Config() {
   }
 
   public int getMiscInteger(final String key, final int defaultValue) {

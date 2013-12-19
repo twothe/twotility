@@ -11,13 +11,12 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import java.util.Locale;
-import two.util.Logging;
 
 /**
  *
  * @author Two
  */
-@Mod(modid = "TwoTility", name = "TwoTility", version = "131213")
+@Mod(modid = "TwoTility", name = "TwoTility", version = "131219")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true)
 public class TwoTility {
 

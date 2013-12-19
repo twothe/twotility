@@ -5,7 +5,6 @@ package two.twotility;
 import java.util.ArrayList;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.blocks.BlockLavaTank;
-import two.util.Logging;
 
 /**
  * @author Two
