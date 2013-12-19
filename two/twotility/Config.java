@@ -21,7 +21,7 @@ public class Config {
   protected void initialize(final File configFile) {
     configuration = new Configuration(configFile);
   }
-  
+
   protected void load() {
     configuration.load();
   }
@@ -56,5 +56,10 @@ public class Config {
   }
 
   protected Config() {
+  }
+
+  public int getMiscInteger(final String key, final int defaultValue) {
+    final Property property = configuration.getItem(key, defaultValue);
+    return property.getInt(defaultValue);
   }
 }

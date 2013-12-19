@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import java.util.logging.Level;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -24,8 +25,11 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.IFluidTank;
 import two.twotility.TwoTility;
 import two.twotility.blocks.BlockAdvancedFurnace;
+import two.twotility.fluid.FluidDrainTarget;
+import two.util.Logging;
 
 /**
  * @author Two
@@ -33,7 +37,7 @@ import two.twotility.blocks.BlockAdvancedFurnace;
 public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, ISidedInventory {
 
   protected static final int FUEL_PER_LAVA_BLOCK = 20000;// 1 lava source block = 100 operations
-  protected static final int SMELTING_DURATION = 200; // in ticks
+  protected static final int SMELTING_DURATION = 160; // in ticks
   protected static final int FUEL_PER_TICK = FUEL_PER_LAVA_BLOCK / SMELTING_DURATION / 100;
   protected static final int REFILL_TICK_RATE = 20;
   protected static final int STORED_FUEL_MAX = 1600; // in ticks. This is not a limit, depending on the fuel used, this can be exceeded by a lot
@@ -41,6 +45,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   protected static final String NBT_TAG_SMELTTIME_REMAINING = "smeltTimeRemaining";
   protected static final String NBT_TAG_ITEMLIST = "items";
   protected static final String NBT_TAG_SLOT = "slot";
+  protected static int DEFAULT_MAX_LAVA_SEARCH_LOOPS = 128;
   //--- Inventory declaration --------------------------------------------------
   protected static final int INVENTORY_SIZE_INPUT = 3 * 5;
   protected static final int INVENTORY_SIZE_OUTPUT = 3 * 5;
@@ -64,30 +69,19 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
             && (FurnaceRecipes.smelting().getSmeltingList().containsKey(item.itemID)
             || FurnaceRecipes.smelting().getMetaSmeltingList().containsKey(Arrays.asList(item.itemID, item.getItemDamage()))));
   }
-
-  /**
-   * Storage class for the nearest lava tank
-   */
-  protected static class LavaDrainTarget {
-
-    final IFluidHandler fluidHandler;
-    final TileEntity tileEntity;
-    final ForgeDirection direction;
-
-    public LavaDrainTarget(IFluidHandler fluidHandler, TileEntity tileEntity, ForgeDirection direction) {
-      this.fluidHandler = fluidHandler;
-      this.tileEntity = tileEntity;
-      this.direction = direction;
-    }
-  }
   //--- Class ------------------------------------------------------------------
   protected final FluidStack lavaStack = new FluidStack(FluidRegistry.LAVA, (int) Math.ceil(fuelToMB(STORED_FUEL_MAX)));
   protected int nextRefillAttempt = REFILL_TICK_RATE;
-  protected LavaDrainTarget lavaDrainTarget = null;
+  protected FluidDrainTarget lastLavaSource = null;
   protected int storedFuel = 0; // internal buffer for prepared fuel
   protected int smeltTimer = -1;
   protected int nextSoundEffect = 20;
   protected final ItemStack[] inventory = new ItemStack[INVENTORY_SIZE];
+  protected final int maxSearchLoops;
+
+  public TileAdvancedFurnace() {
+    maxSearchLoops = TwoTility.config.getMiscInteger("Lava max search range", DEFAULT_MAX_LAVA_SEARCH_LOOPS);
+  }
 
   @Override
   public void writeToNBT(final NBTTagCompound tag) {
@@ -307,21 +301,17 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   }
 
   protected boolean refillWithLava() {
-    if ((lavaDrainTarget != null) && (lavaDrainTarget.tileEntity.isInvalid() == false) && tryDrainLava(lavaDrainTarget)) {
+    if (tryRefillFrom(this.lastLavaSource)) {
       return true;
     } else {
-      lavaDrainTarget = null; // this has become invalid somehow
+      lastLavaSource = null; // this has become invalid or empty somehow
       return tryDrainFromNearestLavaSource();
     }
   }
 
-  protected boolean tryDrainLava(final LavaDrainTarget target) {
-    return tryDrainLava(target.fluidHandler, target.direction);
-  }
-
-  protected boolean tryDrainLava(final IFluidHandler fluidHandler, final ForgeDirection direction) {
-    if (fluidHandler.canDrain(direction, FluidRegistry.LAVA)) {
-      final FluidStack drainedFluid = fluidHandler.drain(direction, lavaStack, true);
+  protected boolean tryRefillFrom(final FluidDrainTarget target) {
+    if ((target != null) && target.isValid()) {
+      final FluidStack drainedFluid = target.tryDrainLava(lavaStack);
       if (lavaStack.isFluidEqual(drainedFluid) && (drainedFluid.amount > 0)) {
         changeStoredFuel((int) MBToFuel(drainedFluid.amount)); // successfully drained enough lava for this many operations (rounded down)
         return true;
@@ -331,35 +321,88 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   }
 
   protected boolean tryDrainFromNearestLavaSource() {
-    boolean foundMovingLava = false;
+    ForgeDirection movingLavaDirection = ForgeDirection.UNKNOWN;
     TileEntity tileEntity;
     for (final ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
       if (worldObj.getBlockMaterial(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ) == Material.lava) {// is it lava?
-        if (worldObj.getBlockMetadata(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ) == 0) { // is this a source block?
-          worldObj.setBlockToAir(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
-          changeStoredFuel(FUEL_PER_LAVA_BLOCK); // successfully drained a lava block
+        if (tryRefillFromLavaBlock(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ)) {
           return true;
         } else {
-          foundMovingLava = true;
+          movingLavaDirection = direction;
         }
       }
       tileEntity = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+      FluidDrainTarget newTarget = null;
       if (tileEntity instanceof IFluidHandler) {
-        if (tryDrainLava((IFluidHandler) tileEntity, direction)) {
-          this.lavaDrainTarget = new LavaDrainTarget((IFluidHandler) tileEntity, tileEntity, direction);
-          return true;
-        }
+        newTarget = new FluidDrainTarget((IFluidHandler) tileEntity, tileEntity, direction);
+      } else if (tileEntity instanceof IFluidTank) {
+        newTarget = new FluidDrainTarget((IFluidTank) tileEntity, tileEntity, direction);
+      }
+      if (tryRefillFrom(newTarget)) {
+        this.lastLavaSource = newTarget;
+        return true;
       }
     }
 
-    if (foundMovingLava) {
-      return tryDrainFollowingLavaFlow();
+    if (movingLavaDirection != ForgeDirection.UNKNOWN) {
+      return tryDrainFollowingLavaFlow(movingLavaDirection);
     }
     return false;
   }
 
-  protected boolean tryDrainFollowingLavaFlow() {
-    return false; // TODO
+  protected boolean tryRefillFromLavaBlock(final int x, final int y, final int z) {
+    if (worldObj.getBlockMetadata(x, y, z) == 0) { // is this a source block?
+      worldObj.setBlockToAir(x, y, z);
+      changeStoredFuel(FUEL_PER_LAVA_BLOCK); // successfully drained a lava block
+      return true;
+    } else {
+      return false;
+    }
+  }
+  protected final static ForgeDirection[] VALID_LAVA_SEARCH_DIRECTIONS = {ForgeDirection.UP, ForgeDirection.NORTH, ForgeDirection.EAST, ForgeDirection.SOUTH, ForgeDirection.WEST};
+
+  protected boolean tryDrainFollowingLavaFlow(final ForgeDirection direction) {
+    int x = xCoord + direction.offsetX, y = yCoord + direction.offsetY, z = zCoord + direction.offsetZ;
+    int meta, bestMeta = worldObj.getBlockMetadata(x, y, z) + 1; // +1 to make up-flows more important
+    ForgeDirection bestLavaDirection;
+    boolean hasLavaUp;
+    int loopMax = maxSearchLoops;
+
+    for (int loop = loopMax; loop > 0; --loop) {
+      if (tryRefillFromLavaBlock(x, y, z)) {
+        return true; // we found a source block
+      } else {
+        bestLavaDirection = ForgeDirection.UNKNOWN;
+        hasLavaUp = false;
+        for (final ForgeDirection dir : VALID_LAVA_SEARCH_DIRECTIONS) {
+          if (worldObj.getBlockMaterial(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == Material.lava) {
+            meta = worldObj.getBlockMetadata(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) + 1;// +1 to make up-flows more important
+            if (meta > 8) {
+              meta = 1; // up-flow is most important flow
+            }
+            if (meta < bestMeta) {
+              bestMeta = meta;
+              bestLavaDirection = dir;
+            }
+            if (dir == ForgeDirection.UP) {
+              hasLavaUp = true;
+            }
+          }
+        }
+
+        if (hasLavaUp) { // if there was laval upwards, always go there first
+          bestLavaDirection = ForgeDirection.UP;
+          bestMeta = Integer.MAX_VALUE;
+        } else if (bestLavaDirection == ForgeDirection.UNKNOWN) {
+          return false; // there was no lava with better flow value around
+        }
+
+        x += bestLavaDirection.offsetX;
+        y += bestLavaDirection.offsetY;
+        z += bestLavaDirection.offsetZ;
+      }
+    }
+    return false;
   }
 
   public int getStoredFuel() {
