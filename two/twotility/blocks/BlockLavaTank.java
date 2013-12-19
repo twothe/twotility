@@ -7,7 +7,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
@@ -16,7 +18,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlockWithMetadata;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
@@ -35,10 +36,10 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import two.twotility.InitializableModContent;
 import two.twotility.TwoTility;
+import two.twotility.items.ItemLavaTank;
 import two.twotility.tiles.TileLavaTank;
 import two.util.BlockSide;
 import static two.util.BlockSide.top;
-import two.util.Logging;
 
 /**
  * @author Two
@@ -46,20 +47,25 @@ import two.util.Logging;
 public class BlockLavaTank extends Block implements ITileEntityProvider, InitializableModContent {
 
   public static final String NAME = "LavaTank";
-  protected static final int STATE_EMPTY = 0;
-  protected static final int STATE_1_4 = STATE_EMPTY + 1;
-  protected static final int STATE_2_4 = STATE_1_4 + 1;
-  protected static final int STATE_3_4 = STATE_2_4 + 1;
-  protected static final int STATE_4_4 = STATE_3_4 + 1;
-  protected static final int NUM_STATES = STATE_4_4 + 1;
+  public static final int STATE_EMPTY = 0;
+  public static final int STATE_1_4 = STATE_EMPTY + 1;
+  public static final int STATE_2_4 = STATE_1_4 + 1;
+  public static final int STATE_3_4 = STATE_2_4 + 1;
+  public static final int STATE_4_4 = STATE_3_4 + 1;
+  public static final int NUM_STATES = STATE_4_4 + 1;
   //--- Class ------------------------------------------------------------------
   @SideOnly(Side.CLIENT)
   protected Icon[] texturesSide = new Icon[NUM_STATES];
   @SideOnly(Side.CLIENT)
   protected Icon textureTopBottom;
+  protected final ItemLavaTank itemDropped;
 
   public BlockLavaTank() {
     super(TwoTility.config.getBlockID(BlockLavaTank.class), Material.iron);
+    itemDropped = new ItemLavaTank(TwoTility.config.getItemID(ItemLavaTank.class), this);
+    GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
+    GameRegistry.registerTileEntity(TileLavaTank.class, TileLavaTank.class.getName());
+    GameRegistry.registerItem(itemDropped, TwoTility.getItemName(NAME));
   }
 
   @Override
@@ -68,15 +74,13 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
     setLightOpacity(0);
     setStepSound(soundMetalFootstep);
     setUnlocalizedName(NAME);
+    MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
     setCreativeTab(TwoTility.creativeTab);
 
-    MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
     LanguageRegistry.addName(this, "Lava Tank");
-    GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
-    GameRegistry.registerTileEntity(TileLavaTank.class, TileLavaTank.class.getName());
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
-      CraftingManager.getInstance().addRecipe(new ItemStack(new ItemBlockWithMetadata(this.blockID - 256, this), 1), // TODO: fix illegal usage of unregistered ItemBlockWithMetadata
+      CraftingManager.getInstance().addRecipe(new ItemStack(this, 1, STATE_EMPTY),
               "IGI",
               "G G",
               "IGI",
@@ -123,8 +127,8 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
 
   @Override
   public void getSubBlocks(final int itemID, final CreativeTabs creativeTab, final List itemlist) {
-    itemlist.add(new ItemStack(itemID, 1, STATE_EMPTY));
-    itemlist.add(new ItemStack(itemID, 1, STATE_4_4));
+    itemlist.add(new ItemStack(itemDropped.itemID, 1, STATE_EMPTY));
+    itemlist.add(new ItemStack(itemDropped.itemID, 1, STATE_4_4));
   }
 
   @Override
@@ -170,6 +174,16 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
   @Override
   public int damageDropped(final int metadata) {
     return metadata;
+  }
+
+  @Override
+  public int idDropped(int par1, Random par2Random, int par3) {
+    return this.itemDropped.itemID;
+  }
+
+  @Override
+  public int idPicked(World par1World, int par2, int par3, int par4) {
+    return this.itemDropped.itemID;
   }
 
   @SideOnly(Side.CLIENT)

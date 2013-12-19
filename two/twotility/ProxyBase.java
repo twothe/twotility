@@ -20,13 +20,13 @@ public class ProxyBase {
   protected ArrayList<InitializableModContent> pendingInitialization = new ArrayList<InitializableModContent>();
 
   public ProxyBase() {
-    Logging.logMethodEntry("ProxyBase", "Constructor");
   }
 
   protected void createContent() {
     blockAdvancedFurnace = new BlockAdvancedFurnace();
-    pendingInitialization.add(blockAdvancedFurnace);
     blockLavaTank = new BlockLavaTank();
+
+    pendingInitialization.add(blockAdvancedFurnace);
     pendingInitialization.add(blockLavaTank);
   }
 

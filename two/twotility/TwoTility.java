@@ -36,12 +36,15 @@ public class TwoTility {
   }
 
   public static String getBlockName(final String blockName) {
-    return TwoTility.MOD_ID + ":" + blockName;
+    return TwoTility.MOD_ID + ":Block" + blockName;
+  }
+
+  public static String getItemName(final String itemName) {
+    return TwoTility.MOD_ID + ":Item" + itemName;
   }
 
   @Mod.EventHandler
   public void preInit(FMLPreInitializationEvent event) {
-    Logging.logMethodEntry("TwoTility", "preInit");
     config.initialize(event.getSuggestedConfigurationFile());
 
     proxy.onPreInit();
@@ -49,8 +52,6 @@ public class TwoTility {
 
   @Mod.EventHandler
   public void load(FMLInitializationEvent event) {
-    Logging.logMethodEntry("TwoTility", "load");
-
     config.load();
     NetworkRegistry.instance().registerGuiHandler(TwoTility.instance, guiHandler);
     proxy.onInit();
@@ -60,7 +61,6 @@ public class TwoTility {
 
   @Mod.EventHandler
   public void postInit(FMLPostInitializationEvent event) {
-    Logging.logMethodEntry("TwoTility", "postInit");
     proxy.onPostInit();
   }
 }

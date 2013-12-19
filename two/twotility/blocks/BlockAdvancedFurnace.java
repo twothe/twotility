@@ -52,6 +52,8 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
 
   public BlockAdvancedFurnace() {
     super(TwoTility.config.getBlockID(BlockAdvancedFurnace.class), Material.rock);
+    GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
+    GameRegistry.registerTileEntity(TileAdvancedFurnace.class, TileAdvancedFurnace.class.getName());
     guiId = TwoTility.guiHandler.registerGui(ContainerAdvancedFurnace.class, GUIAdvancedFurnace.class);
   }
 
@@ -66,8 +68,6 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
 
     MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
     LanguageRegistry.addName(this, "Advanced Furnace");
-    GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
-    GameRegistry.registerTileEntity(TileAdvancedFurnace.class, TileAdvancedFurnace.class.getName());
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
       CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
