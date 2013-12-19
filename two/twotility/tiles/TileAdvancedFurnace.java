@@ -7,7 +7,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import java.util.logging.Level;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -29,7 +28,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import two.twotility.TwoTility;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.fluid.FluidDrainTarget;
-import two.util.Logging;
 
 /**
  * @author Two
@@ -45,7 +43,6 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   protected static final String NBT_TAG_SMELTTIME_REMAINING = "smeltTimeRemaining";
   protected static final String NBT_TAG_ITEMLIST = "items";
   protected static final String NBT_TAG_SLOT = "slot";
-  protected static int DEFAULT_MAX_LAVA_SEARCH_LOOPS = 128;
   //--- Inventory declaration --------------------------------------------------
   protected static final int INVENTORY_SIZE_INPUT = 3 * 5;
   protected static final int INVENTORY_SIZE_OUTPUT = 3 * 5;
@@ -77,11 +74,6 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   protected int smeltTimer = -1;
   protected int nextSoundEffect = 20;
   protected final ItemStack[] inventory = new ItemStack[INVENTORY_SIZE];
-  protected final int maxSearchLoops;
-
-  public TileAdvancedFurnace() {
-    maxSearchLoops = TwoTility.config.getMiscInteger("Lava max search range", DEFAULT_MAX_LAVA_SEARCH_LOOPS);
-  }
 
   @Override
   public void writeToNBT(final NBTTagCompound tag) {
@@ -366,7 +358,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
     int meta, bestMeta = worldObj.getBlockMetadata(x, y, z) + 1; // +1 to make up-flows more important
     ForgeDirection bestLavaDirection;
     boolean hasLavaUp;
-    int loopMax = maxSearchLoops;
+    int loopMax = TwoTility.config.LAVA_FLOW_FOLLOW_MAX;
 
     for (int loop = loopMax; loop > 0; --loop) {
       if (tryRefillFromLavaBlock(x, y, z)) {

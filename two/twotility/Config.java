@@ -14,6 +14,14 @@ import net.minecraftforge.common.Property;
  */
 public class Config {
 
+  protected static final String CATEGORY_VARIOUS_SETTINGS = "other";
+  //--- Misc config settings ---------------------------------------------------
+  public int LAVA_FLOW_FOLLOW_MAX = 128;
+
+  protected void readOther() {
+    LAVA_FLOW_FOLLOW_MAX = configuration.get(CATEGORY_VARIOUS_SETTINGS, "Lava flow follow max", LAVA_FLOW_FOLLOW_MAX).getInt(LAVA_FLOW_FOLLOW_MAX);
+  }
+  //--- Class ------------------------------------------------------------------
   public static final AtomicInteger blockIDs = new AtomicInteger(745);
   public static final AtomicInteger itemIDs = new AtomicInteger(6928);
   protected Configuration configuration;
