@@ -225,7 +225,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
         if (itemInSlot != null && itemInSlot.itemID == newItem.itemID && (!newItem.getHasSubtypes() || newItem.getItemDamage() == itemInSlot.getItemDamage()) && ItemStack.areItemStackTagsEqual(newItem, itemInSlot)) {
           final int newSlotStackSize = Math.min(itemInSlot.stackSize + newItem.stackSize, newItem.getMaxStackSize());
           final int remaining = newItem.stackSize - (newSlotStackSize - itemInSlot.stackSize);
-          if (remaining != itemInSlot.stackSize) { // was something moved?
+          if (remaining != newItem.stackSize) { // was something moved?
             inventoryChanged = true;
             newItem.stackSize = remaining;
             itemInSlot.stackSize = newSlotStackSize;
@@ -264,6 +264,11 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   @SideOnly(Side.CLIENT)
   public void setStoredFuelForGUI(final int storedFuel) {
     this.storedFuel = storedFuel;
+  }
+
+  @SideOnly(Side.CLIENT)
+  public void setSmeltTimerForGUI(final int smeltTime) {
+    this.smeltTimer = smeltTime;
   }
 
   protected void changeStoredFuel(final int change) {
@@ -359,6 +364,15 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
 
   public int getStoredFuel() {
     return this.storedFuel;
+  }
+
+  /**
+   * Returns the time left till the current item is smelted.
+   *
+   * @return the time left till the current item is smelted, or -1 if no item is in progress.
+   */
+  public int getRemainingSmeltTime() {
+    return this.smeltTimer;
   }
 
   public double getStoredOperationsInPercent() {
