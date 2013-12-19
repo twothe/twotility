@@ -2,6 +2,7 @@
  */
 package two.twotility.gui;
 
+import two.twotility.GuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;

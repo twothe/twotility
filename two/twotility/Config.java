@@ -16,13 +16,21 @@ public class Config {
 
   public static final AtomicInteger blockIDs = new AtomicInteger(745);
   public static final AtomicInteger itemIDs = new AtomicInteger(6928);
-  static Configuration configuration;
+  protected Configuration configuration;
+
+  protected void initialize(final File configFile) {
+    configuration = new Configuration(configFile);
+  }
   
-  protected static void initialize(final File configFile) {
-    Config.configuration = new Configuration(configFile);
+  protected void load() {
+    configuration.load();
   }
 
-  public static int getBlockID(final Class<? extends Block> block) {
+  protected void save() {
+    configuration.save();
+  }
+
+  public int getBlockID(final Class<? extends Block> block) {
     final String className = block.getSimpleName();
     final String key = className.startsWith("Block") ? className.substring("Block".length()) : className;
     final int defaultID = blockIDs.getAndIncrement();
@@ -30,7 +38,7 @@ public class Config {
     return property.getInt(defaultID);
   }
 
-  public static int getItemID(final Class<? extends Item> item) {
+  public int getItemID(final Class<? extends Item> item) {
     final String className = item.getSimpleName();
     final String key = className.startsWith("Item") ? className.substring("Item".length()) : className;
     final int defaultID = itemIDs.getAndIncrement();
@@ -38,15 +46,15 @@ public class Config {
     return property.getInt(defaultID);
   }
 
-  public static boolean isCraftingEnabled(final String key) {
+  public boolean isCraftingEnabled(final String key) {
     return isCraftingEnabled(key, true);
   }
 
-  public static boolean isCraftingEnabled(final String key, final boolean defaultValue) {
+  public boolean isCraftingEnabled(final String key, final boolean defaultValue) {
     final Property property = configuration.get("Allowed Recipes", key, defaultValue);
     return property.getBoolean(defaultValue);
   }
 
-  private Config() {
+  protected Config() {
   }
 }

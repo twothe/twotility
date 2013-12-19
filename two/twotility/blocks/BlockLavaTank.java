@@ -33,16 +33,17 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import two.twotility.Config;
+import two.twotility.InitializableModContent;
 import two.twotility.TwoTility;
 import two.twotility.tiles.TileLavaTank;
 import two.util.BlockSide;
 import static two.util.BlockSide.top;
+import two.util.Logging;
 
 /**
  * @author Two
  */
-public class BlockLavaTank extends Block implements ITileEntityProvider {
+public class BlockLavaTank extends Block implements ITileEntityProvider, InitializableModContent {
 
   public static final String NAME = "LavaTank";
   protected static final int STATE_EMPTY = 0;
@@ -51,14 +52,18 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
   protected static final int STATE_3_4 = STATE_2_4 + 1;
   protected static final int STATE_4_4 = STATE_3_4 + 1;
   protected static final int NUM_STATES = STATE_4_4 + 1;
+  //--- Class ------------------------------------------------------------------
+  @SideOnly(Side.CLIENT)
   protected Icon[] texturesSide = new Icon[NUM_STATES];
+  @SideOnly(Side.CLIENT)
   protected Icon textureTopBottom;
 
   public BlockLavaTank() {
-    super(Config.getBlockID(BlockLavaTank.class), Material.iron);
+    super(TwoTility.config.getBlockID(BlockLavaTank.class), Material.iron);
   }
 
-  public BlockLavaTank initialize() {
+  @Override
+  public void initialize() {
     setHardness(2.5F);
     setLightOpacity(0);
     setStepSound(soundMetalFootstep);
@@ -70,8 +75,8 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
     GameRegistry.registerTileEntity(TileLavaTank.class, TileLavaTank.class.getName());
 
-    if (Config.isCraftingEnabled(NAME)) {
-      CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
+    if (TwoTility.config.isCraftingEnabled(NAME)) {
+      CraftingManager.getInstance().addRecipe(new ItemStack(new ItemBlockWithMetadata(this.blockID - 256, this), 1), // TODO: fix illegal usage of unregistered ItemBlockWithMetadata
               "IGI",
               "G G",
               "IGI",
@@ -80,10 +85,6 @@ public class BlockLavaTank extends Block implements ITileEntityProvider {
     }
 
     MinecraftForge.EVENT_BUS.register(this);
-
-    Item.itemsList[blockID] = (new ItemBlockWithMetadata(blockID - 256, this)).setUnlocalizedName(NAME); // TODO: this isn't allowed
-
-    return this;
   }
 
   @ForgeSubscribe

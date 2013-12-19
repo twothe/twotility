@@ -6,7 +6,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
-import two.twotility.blocks.BlockList;
 
 /**
  * @author Two
@@ -23,6 +22,6 @@ public class TwoTilityCreativeTab extends CreativeTabs {
   @SideOnly(Side.CLIENT)
   @Override
   public int getTabIconItemIndex() {
-    return BlockList.advancedFurnace.blockID;
+    return TwoTility.proxy.blockAdvancedFurnace.blockID;
   }
 }

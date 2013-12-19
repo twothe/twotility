@@ -1,12 +1,13 @@
 /*
  */
-package two.twotility.gui;
+package two.twotility;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.logging.Level;
 import net.minecraft.client.gui.Gui;
@@ -16,24 +17,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import two.twotility.TwoTility;
-import two.util.Logging;
+import two.twotility.gui.ContainerAdvancedFurnace;
+import two.twotility.gui.GUIAdvancedFurnace;
 
 /**
  * @author Two
  */
 public class GuiHandler implements IGuiHandler {
-
-  private static final HashMap<Integer, GuiEntry> knownGuis = new HashMap<Integer, GuiEntry>();
-  //----------------------------------------------------------------------------
-  //--- Register GUI IDs here --------------------------------------------------
-  //----------------------------------------------------------------------------
-  public static final int ID_ADVANCED_FURNACE = 0;
-
-  static {
-    knownGuis.put(ID_ADVANCED_FURNACE, new GuiEntry(ContainerAdvancedFurnace.class, GUIAdvancedFurnace.class));
-  }
-  //----------------------------------------------------------------------------
 
   /**
    * Utility function to load GUI PNGs using the appropriate lower-case name
@@ -44,21 +34,64 @@ public class GuiHandler implements IGuiHandler {
   public static ResourceLocation loadGuiPNG(final String guiName) {
     return new ResourceLocation(TwoTility.MOD_ID.toLowerCase(Locale.ENGLISH), "textures/gui/" + guiName.toLowerCase(Locale.ENGLISH) + ".png");
   }
-  /* Instance */
-  public static final GuiHandler instance = new GuiHandler();
 
-  private static class GuiEntry {
+  /**
+   * Private class for list of known guis
+   */
+  protected static final class GuiEntry {
 
     final Class<? extends Container> containerClass;
     final Class<? extends Gui> guiClass;
+    final int hash;
 
     public GuiEntry(final Class<? extends Container> containerClass, final Class<? extends Gui> guiClass) {
+      if (containerClass == null) {
+        throw new NullPointerException("Container class cannot be null!");
+      }
+      if (guiClass == null) {
+        throw new NullPointerException("GUI class cannot be null!");
+      }
       this.containerClass = containerClass;
       this.guiClass = guiClass;
+
+      this.hash = calculateHash();
+    }
+
+    protected int calculateHash() {
+      int result = 7;
+      result = 83 * result + this.containerClass.hashCode();
+      result = 83 * result + this.guiClass.hashCode();
+      return result;
+    }
+
+    @Override
+    public int hashCode() {
+      return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final GuiEntry other = (GuiEntry) obj;
+      if (this.containerClass != other.containerClass && !this.containerClass.equals(other.containerClass)) {
+        return false;
+      }
+      if (this.guiClass != other.guiClass && !this.guiClass.equals(other.guiClass)) {
+        return false;
+      }
+      return true;
     }
   }
 
-  private static class InvalidTileEntityException extends Exception {
+  /**
+   * Private class to notice when the world has a corrupted tile entity.
+   */
+  protected static final class InvalidTileEntityException extends Exception {
 
     final Class expected;
     final Class found;
@@ -69,22 +102,27 @@ public class GuiHandler implements IGuiHandler {
     }
   }
   //--- Class ------------------------------------------------------------------
+  protected ArrayList<GuiEntry> knownGuis = new ArrayList<GuiEntry>();
 
-  public void initialize() {
-    NetworkRegistry.instance().registerGuiHandler(TwoTility.instance, this);
+  protected GuiHandler() {
   }
 
-  private GuiHandler() {
+  public int registerGui(final Class<? extends Container> containerClass, final Class<? extends Gui> guiClass) {
+    final GuiEntry entry = new GuiEntry(containerClass, guiClass);
+    if (knownGuis.contains(entry) == false) {
+      knownGuis.add(entry);
+    } else {
+      throw new IllegalStateException("Tried to register GUI with container '" + containerClass.getName() + "' and Gui '" + guiClass.getName() + "' twice!");
+    }
+    return knownGuis.indexOf(entry);
   }
 
   @Override
   public Object getServerGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z) {
-    final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-    final GuiEntry guiEntry = knownGuis.get(ID);
+    if ((ID >= 0) && (ID < knownGuis.size())) {
+      final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+      final GuiEntry guiEntry = knownGuis.get(ID);
 
-    if (guiEntry.containerClass == null) {
-      FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested to create container for unknown GUI %d", ID);
-    } else {
       try {
         return tryCreateContainer(guiEntry.containerClass, player, tileEntity);
       } catch (InvalidTileEntityException e) {
@@ -93,17 +131,17 @@ public class GuiHandler implements IGuiHandler {
       } catch (ReflectiveOperationException e) {
         FMLLog.log(Level.WARNING, e, "Unable to create container for GUI: %d", ID);
       }
+    } else {
+      FMLLog.log(Level.WARNING, "Received server request for unknown Gui ID: %d", ID);
     }
     return null;
   }
 
   @Override
   public Object getClientGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z) {
-    final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-    final GuiEntry guiEntry = knownGuis.get(ID);
-    if (guiEntry.containerClass == null) {
-      FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested to create unknown GUI %d", ID);
-    } else {
+    if ((ID >= 0) && (ID < knownGuis.size())) {
+      final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+      final GuiEntry guiEntry = knownGuis.get(ID);
       try {
         return tryCreateGUI(guiEntry.guiClass, player, tileEntity);
       } catch (InvalidTileEntityException e) {
@@ -112,6 +150,8 @@ public class GuiHandler implements IGuiHandler {
       } catch (ReflectiveOperationException e) {
         FMLLog.log(Level.WARNING, e, "Unable to create GUI: %d", ID);
       }
+    } else {
+      FMLLog.log(Level.WARNING, "Received client request for unknown Gui ID: %d", ID);
     }
     return null;
   }

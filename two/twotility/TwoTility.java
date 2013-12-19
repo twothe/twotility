@@ -9,10 +9,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import java.util.Locale;
-import net.minecraftforge.common.Configuration;
-import two.twotility.blocks.BlockList;
-import two.twotility.gui.GuiHandler;
+import two.util.Logging;
 
 /**
  *
@@ -29,33 +28,38 @@ public class TwoTility {
   public static TwoTility instance;
   @SidedProxy(clientSide = "two.twotility.ProxyClient", serverSide = "two.twotility.ProxyServer")
   public static ProxyBase proxy;
+  public static final Config config = new Config();
+  public static final GuiHandler guiHandler = new GuiHandler();
 
-    public static String getTextureName(final String filePrefix) {
+  public static String getTextureName(final String filePrefix) {
     return TwoTility.MOD_ID + ":" + filePrefix.toLowerCase(Locale.ENGLISH);
   }
 
-    public static String getBlockName(final String blockName) {
+  public static String getBlockName(final String blockName) {
     return TwoTility.MOD_ID + ":" + blockName;
   }
 
   @Mod.EventHandler
   public void preInit(FMLPreInitializationEvent event) {
-    Config.initialize(event.getSuggestedConfigurationFile());
-    Config.configuration.load();
+    Logging.logMethodEntry("TwoTility", "preInit");
+    config.initialize(event.getSuggestedConfigurationFile());
 
-    GuiHandler.instance.initialize();
-
-    BlockList.initialize();
-
-    Config.configuration.save();
+    proxy.onPreInit();
   }
 
   @Mod.EventHandler
   public void load(FMLInitializationEvent event) {
-    proxy.initialize();
+    Logging.logMethodEntry("TwoTility", "load");
+
+    config.load();
+    NetworkRegistry.instance().registerGuiHandler(TwoTility.instance, guiHandler);
+    proxy.onInit();
+    config.save();
   }
 
   @Mod.EventHandler
   public void postInit(FMLPostInitializationEvent event) {
+    Logging.logMethodEntry("TwoTility", "postInit");
+    proxy.onPostInit();
   }
 }

@@ -7,8 +7,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import static net.minecraft.block.Block.soundStoneFootstep;
 import net.minecraft.block.ITileEntityProvider;
@@ -22,20 +20,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import two.twotility.Config;
+import two.twotility.InitializableModContent;
 import two.twotility.TwoTility;
-import two.twotility.gui.GuiHandler;
+import two.twotility.gui.ContainerAdvancedFurnace;
+import two.twotility.gui.GUIAdvancedFurnace;
 import two.twotility.tiles.TileAdvancedFurnace;
 import two.util.BlockSide;
 
 /**
  * @author Two
  */
-public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
+public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, InitializableModContent {
 
   public static final String NAME = "AdvancedFurnace";
   protected static final int STATE_EMPTY = 0;
@@ -44,6 +42,7 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
   protected static final int STATE_WORKING = STATE_HAS_FUEL + 1;
   protected static final int NUM_STATES = STATE_WORKING + 1;
   //-- Class -------------------------------------------------------------------
+  protected final int guiId;
   @SideOnly(Side.CLIENT)
   protected Icon[] stateIcons = new Icon[NUM_STATES];
   @SideOnly(Side.CLIENT)
@@ -52,10 +51,12 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
   protected Icon iconTop;
 
   public BlockAdvancedFurnace() {
-    super(Config.getBlockID(BlockAdvancedFurnace.class), Material.rock);
+    super(TwoTility.config.getBlockID(BlockAdvancedFurnace.class), Material.rock);
+    guiId = TwoTility.guiHandler.registerGui(ContainerAdvancedFurnace.class, GUIAdvancedFurnace.class);
   }
 
-  public BlockAdvancedFurnace initialize() {
+  @Override
+  public void initialize() {
     setHardness(2.5F);
     setResistance(9.0f);
     setStepSound(soundStoneFootstep);
@@ -68,7 +69,7 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
     GameRegistry.registerTileEntity(TileAdvancedFurnace.class, TileAdvancedFurnace.class.getName());
 
-    if (Config.isCraftingEnabled(NAME)) {
+    if (TwoTility.config.isCraftingEnabled(NAME)) {
       CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
               " R ",
               "CFC",
@@ -78,7 +79,6 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
               'R', Item.redstone,
               'B', Item.bucketEmpty);
     }
-    return this;
   }
 
   @SideOnly(Side.CLIENT)
@@ -121,7 +121,7 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider {
   @Override
   public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
     if (world.isRemote == false) {
-      FMLNetworkHandler.openGui(player, TwoTility.instance, GuiHandler.ID_ADVANCED_FURNACE, world, x, y, z);
+      FMLNetworkHandler.openGui(player, TwoTility.instance, guiId, world, x, y, z);
     }
     return true;
   }
