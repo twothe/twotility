@@ -42,24 +42,28 @@ public class TwoTility {
     return TwoTility.MOD_ID + ":Item" + itemName;
   }
 
-  @Mod.EventHandler
-  public void preInit(FMLPreInitializationEvent event) {
-    config.initialize(event.getSuggestedConfigurationFile());
-
-    proxy.onPreInit();
+  public static String getSoundName(final String soundName) {
+    return TwoTility.MOD_ID + ":" + soundName;
   }
 
   @Mod.EventHandler
-  public void load(FMLInitializationEvent event) {
+  public void preInit(final FMLPreInitializationEvent event) {
+    config.initialize(event.getSuggestedConfigurationFile());
+
+    proxy.onPreInit(event);
+  }
+
+  @Mod.EventHandler
+  public void load(final FMLInitializationEvent event) {
     config.load();
     NetworkRegistry.instance().registerGuiHandler(TwoTility.instance, guiHandler);
-    proxy.onInit();
+    proxy.onInit(event);
     config.readOther();
     config.save();
   }
 
   @Mod.EventHandler
-  public void postInit(FMLPostInitializationEvent event) {
-    proxy.onPostInit();
+  public void postInit(final FMLPostInitializationEvent event) {
+    proxy.onPostInit(event);
   }
 }

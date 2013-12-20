@@ -346,6 +346,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
     if (worldObj.getBlockMetadata(x, y, z) == 0) { // is this a source block?
       worldObj.setBlockToAir(x, y, z);
       changeStoredFuel(FUEL_PER_LAVA_BLOCK); // successfully drained a lava block
+      worldObj.playSoundEffect((double) xCoord + 0.5D, (double) yCoord + 0.5D, (double) zCoord + 0.5D, TwoTility.proxy.SOUND_FLUIDSUCKIN, 0.6F, worldObj.rand.nextFloat() * 0.1F + 0.9F);
       return true;
     } else {
       return false;
