@@ -7,7 +7,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -39,7 +38,7 @@ import two.twotility.TwoTility;
 import two.twotility.items.ItemLavaTank;
 import two.twotility.tiles.TileLavaTank;
 import two.util.BlockSide;
-import static two.util.BlockSide.top;
+import static two.util.BlockSide.TOP;
 
 /**
  * @author Two
@@ -58,14 +57,12 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
   protected Icon[] texturesSide = new Icon[NUM_STATES];
   @SideOnly(Side.CLIENT)
   protected Icon textureTopBottom;
-  protected final ItemLavaTank itemDropped;
+  protected ItemLavaTank itemDropped;
 
   public BlockLavaTank() {
     super(TwoTility.config.getBlockID(BlockLavaTank.class), Material.iron);
-    itemDropped = new ItemLavaTank(TwoTility.config.getItemID(ItemLavaTank.class), this);
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
     GameRegistry.registerTileEntity(TileLavaTank.class, TileLavaTank.class.getName());
-    GameRegistry.registerItem(itemDropped, TwoTility.getItemName(NAME));
   }
 
   @Override
@@ -76,6 +73,8 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
     setUnlocalizedName(NAME);
     MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
     setCreativeTab(TwoTility.creativeTab);
+    
+    itemDropped = TwoTility.proxy.itemLavaTank;
 
     LanguageRegistry.addName(this, "Lava Tank");
 
@@ -200,8 +199,8 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
   @Override
   public Icon getIcon(final int side, final int metadata) {
     switch (BlockSide.getSide(side)) {
-      case top:
-      case bottom:
+      case TOP:
+      case BOTTOM:
         return textureTopBottom;
       default:
         return texturesSide[metadata];

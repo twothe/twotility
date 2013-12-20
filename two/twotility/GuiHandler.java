@@ -122,6 +122,12 @@ public class GuiHandler implements IGuiHandler {
    */
   protected static class GuiEntry {
 
+    static int calculateHash(final Class<? extends Container> containerClass, final Class<? extends Gui> guiClass) {
+      int result = 7;
+      result = 83 * result + containerClass.hashCode();
+      result = 83 * result + guiClass.hashCode();
+      return result;
+    }
     final Class<? extends Container> containerClass;
     final Class<? extends Gui> guiClass;
     final int hash;
@@ -137,13 +143,6 @@ public class GuiHandler implements IGuiHandler {
       this.guiClass = guiClass;
 
       this.hash = calculateHash(containerClass, guiClass);
-    }
-
-    static int calculateHash(final Class<? extends Container> containerClass, final Class<? extends Gui> guiClass) {
-      int result = 7;
-      result = 83 * result + containerClass.hashCode();
-      result = 83 * result + guiClass.hashCode();
-      return result;
     }
 
     @Override

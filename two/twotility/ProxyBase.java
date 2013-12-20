@@ -2,26 +2,24 @@
  */
 package two.twotility;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import java.util.ArrayList;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.blocks.BlockLavaTank;
-import two.util.Logging;
+import two.twotility.items.ItemLavaTank;
 
 /**
  * @author Two
  */
 public class ProxyBase {
 
+  /* Items */
+  public ItemLavaTank itemLavaTank;
   /* Blocks */
   public BlockAdvancedFurnace blockAdvancedFurnace;
   public BlockLavaTank blockLavaTank;
-  /* Items */
   /* Sound */
   public final String SOUND_FLUIDSUCKIN = TwoTility.getSoundName("fluidsuckin");
   /* Initialization list for content that needs post-initialization. */
@@ -30,28 +28,42 @@ public class ProxyBase {
   public ProxyBase() {
   }
 
-  public void onPreInit(final FMLPreInitializationEvent event) {
-    MinecraftForge.EVENT_BUS.register(this);
+  protected void registerBlocks() {
     blockAdvancedFurnace = new BlockAdvancedFurnace();
-    blockLavaTank = new BlockLavaTank();
-
     pendingInitialization.add(blockAdvancedFurnace);
+
+    blockLavaTank = new BlockLavaTank();
     pendingInitialization.add(blockLavaTank);
   }
 
-  public void onInit(final FMLInitializationEvent event) {
+  protected void registerItems() {
+    itemLavaTank = new ItemLavaTank(blockLavaTank);
+    pendingInitialization.add(itemLavaTank);
+  }
+
+  protected void registerRenderers() {
+  }
+
+  public void onPreInit() {
+    MinecraftForge.EVENT_BUS.register(this);
+  }
+
+  public void onInit() {
+    registerBlocks();
+    registerItems();
+    registerRenderers();
+
     for (final InitializableModContent content : pendingInitialization) {
       content.initialize();
     }
     pendingInitialization.clear();
   }
 
-  public void onPostInit(final FMLPostInitializationEvent event) {
+  public void onPostInit() {
   }
 
   @ForgeSubscribe
   public void onSoundSetup(final SoundLoadEvent event) {
-    Logging.logMethodEntry("ProxyClient", "onSoundSetup", "...");
     event.manager.addSound(SOUND_FLUIDSUCKIN + ".ogg");
   }
 }

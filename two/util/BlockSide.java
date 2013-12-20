@@ -8,7 +8,7 @@ import net.minecraft.util.MathHelper;
  */
 public enum BlockSide {
 
-  bottom, top, north, south, west, east; // Blockside.ordinal() is the Minecraft side of a Block facing north
+  BOTTOM, TOP, NORTH, SOUTH, WEST, EAST; // Blockside.ordinal() is the Minecraft side of a Block facing north
 
   /**
    * Returns the direction the entity is facing.
@@ -42,52 +42,52 @@ public enum BlockSide {
   public static BlockSide getRotatedSide(final int side, final int blockDir) {
     switch (side) {
       case 0:
-        return bottom;
+        return BOTTOM;
       case 1:
-        return top;
+        return TOP;
       case 2: // north side
         switch (blockDir & 3) {
           case 0: // facing west
-            return east;
+            return EAST;
           case 1: // facing north
-            return north;
+            return NORTH;
           case 2: // facing east
-            return west;
+            return WEST;
           case 3: // facing south
-            return south;
+            return SOUTH;
         }
       case 3: // south side
         switch (blockDir & 3) {
           case 0: // facing west
-            return west;
+            return WEST;
           case 1: // facing north
-            return south;
+            return SOUTH;
           case 2: // facing east
-            return east;
+            return EAST;
           case 3: // facing south
-            return north;
+            return NORTH;
         }
       case 4: // west side
         switch (blockDir & 3) {
           case 0: // facing west
-            return north;
+            return NORTH;
           case 1: // facing north
-            return west;
+            return WEST;
           case 2: // facing east
-            return south;
+            return SOUTH;
           case 3: // facing south
-            return east;
+            return EAST;
         }
       case 5: // east side
         switch (blockDir & 3) {
           case 0: // facing west
-            return south;
+            return SOUTH;
           case 1: // facing north
-            return east;
+            return EAST;
           case 2: // facing east
-            return north;
+            return NORTH;
           case 3: // facing south
-            return west;
+            return WEST;
         }
     }
     throw new IllegalArgumentException("Illegal side " + side);
@@ -113,13 +113,13 @@ public enum BlockSide {
   public static BlockSide fromDirection(final int direction) {
     switch (direction & 3) {
       case 0:
-        return west;
+        return WEST;
       case 1:
-        return north;
+        return NORTH;
       case 2:
-        return east;
+        return EAST;
       case 3:
-        return south;
+        return SOUTH;
     }
     throw new IllegalArgumentException("Illegal direction " + direction); // impossible to reach
   }
@@ -133,13 +133,13 @@ public enum BlockSide {
    */
   public static int toDirection(final BlockSide side) {
     switch (side) {
-      case west:
+      case WEST:
         return 0;
-      case north:
+      case NORTH:
         return 1;
-      case east:
+      case EAST:
         return 2;
-      case south:
+      case SOUTH:
         return 3;
     }
     throw new IllegalArgumentException("Side " + side + " cannot be converted into a direction."); // for top/bottom

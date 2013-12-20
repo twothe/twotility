@@ -102,10 +102,10 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
   public Icon getIcon(final int side, final int metadata) {
     final BlockSide rotatedSide = BlockSide.getRotatedSide(side, metadata);
     switch (rotatedSide) {
-      case north:
+      case NORTH:
         return getFrontfaceByState(getStateFromMetadata(metadata));
-      case top:
-      case bottom:
+      case TOP:
+      case BOTTOM:
         return iconTop;
       default:
         return iconSide;

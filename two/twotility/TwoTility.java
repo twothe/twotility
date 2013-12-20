@@ -50,20 +50,20 @@ public class TwoTility {
   public void preInit(final FMLPreInitializationEvent event) {
     config.initialize(event.getSuggestedConfigurationFile());
 
-    proxy.onPreInit(event);
+    proxy.onPreInit();
   }
 
   @Mod.EventHandler
   public void load(final FMLInitializationEvent event) {
     config.load();
     NetworkRegistry.instance().registerGuiHandler(TwoTility.instance, guiHandler);
-    proxy.onInit(event);
+    proxy.onInit();
     config.readOther();
     config.save();
   }
 
   @Mod.EventHandler
   public void postInit(final FMLPostInitializationEvent event) {
-    proxy.onPostInit(event);
+    proxy.onPostInit();
   }
 }
