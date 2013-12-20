@@ -58,7 +58,7 @@ public class ContainerAdvancedFurnace extends Container {
     // output slots
     for (int y = 0; y < 5; ++y) {
       for (int x = 0; x < 3; ++x) {
-        this.addSlotToContainer(new SlotWithValidation(tileAdvancedFurnace, slotCount++, 112 + x * 18, 4 + y * 18));
+        this.addSlotToContainer(new SlotFurnace(inventoryPlayer.player, tileAdvancedFurnace, slotCount++, 112 + x * 18, 4 + y * 18));
       }
     }
 
@@ -123,21 +123,18 @@ public class ContainerAdvancedFurnace extends Container {
     final Slot slot = getSlot(slotId);
     if ((slot != null) && (slot.getHasStack())) {
       final ItemStack itemStack = slot.getStack();
-      ItemStack result = itemStack.copy();
+      final ItemStack result = itemStack.copy();
 
       if (slotId >= 36) {
-        if (!mergeItemStack(itemStack, 0, 36)) { // transfer to player's inventory by first match
+        if (!mergeItemStack(result, 0, 36)) { // transfer to player's inventory by first match
           return null;
         }
-      } else if (!mergeItemStack(itemStack, 36, 36 + tileAdvancedFurnace.getSizeInventory())) {
+      } else if (!mergeItemStack(result, 36 + TileAdvancedFurnace.INVENTORY_START_INPUT, 36 + TileAdvancedFurnace.INVENTORY_START_INPUT + TileAdvancedFurnace.INVENTORY_SIZE_INPUT + TileAdvancedFurnace.INVENTORY_SIZE_FUEL)) {
         return null;
       }
 
-      if (itemStack.stackSize == 0) {
-        slot.putStack(null);
-      } else {
-        slot.onSlotChanged();
-      }
+      final int itemsMoved = itemStack.stackSize - result.stackSize;
+      slot.decrStackSize(itemsMoved);
       slot.onPickupFromSlot(player, itemStack);
       return result;
     }

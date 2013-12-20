@@ -116,6 +116,7 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
     final int metadata = BlockSide.getDirectionFacing(entity);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
+    super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
 
   @Override

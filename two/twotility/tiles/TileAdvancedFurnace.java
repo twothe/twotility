@@ -44,16 +44,16 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   protected static final String NBT_TAG_ITEMLIST = "items";
   protected static final String NBT_TAG_SLOT = "slot";
   //--- Inventory declaration --------------------------------------------------
-  protected static final int INVENTORY_SIZE_INPUT = 3 * 5;
-  protected static final int INVENTORY_SIZE_OUTPUT = 3 * 5;
-  protected static final int INVENTORY_SIZE_FUEL = 4;
-  protected static final int INVENTORY_SIZE_PROCESSING = 1;
-  protected static final int INVENTORY_SIZE = INVENTORY_SIZE_INPUT + INVENTORY_SIZE_OUTPUT + INVENTORY_SIZE_FUEL + INVENTORY_SIZE_PROCESSING;
-  protected static final int INVENTORY_START_INPUT = 0;
-  protected static final int INVENTORY_START_FUEL = INVENTORY_START_INPUT + INVENTORY_SIZE_INPUT;
-  protected static final int INVENTORY_START_OUTPUT = INVENTORY_START_FUEL + INVENTORY_SIZE_FUEL;
-  protected static final int INVENTORY_START_PROCESSING = INVENTORY_START_OUTPUT + INVENTORY_SIZE_OUTPUT;
-  protected static final int[] ACCESSIBLE_SLOTS = new int[INVENTORY_SIZE - INVENTORY_SIZE_PROCESSING];
+  public static final int INVENTORY_SIZE_INPUT = 3 * 5;
+  public static final int INVENTORY_SIZE_OUTPUT = 3 * 5;
+  public static final int INVENTORY_SIZE_FUEL = 4;
+  public static final int INVENTORY_SIZE_PROCESSING = 1;
+  public static final int INVENTORY_SIZE = INVENTORY_SIZE_INPUT + INVENTORY_SIZE_OUTPUT + INVENTORY_SIZE_FUEL + INVENTORY_SIZE_PROCESSING;
+  public static final int INVENTORY_START_INPUT = 0;
+  public static final int INVENTORY_START_FUEL = INVENTORY_START_INPUT + INVENTORY_SIZE_INPUT;
+  public static final int INVENTORY_START_OUTPUT = INVENTORY_START_FUEL + INVENTORY_SIZE_FUEL;
+  public static final int INVENTORY_START_PROCESSING = INVENTORY_START_OUTPUT + INVENTORY_SIZE_OUTPUT;
+  public static final int[] ACCESSIBLE_SLOTS = new int[INVENTORY_SIZE - INVENTORY_SIZE_PROCESSING];
 
   static {
     for (int i = 0; i < INVENTORY_START_PROCESSING; ++i) {
@@ -188,7 +188,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
     if (smeltResult == null) {
       return true;
     } else if (tryAddToOutput(smeltResult)) {
-      setInventorySlotContents(INVENTORY_START_PROCESSING, null);
+      decrStackSize(INVENTORY_START_PROCESSING, 1);
       onInventoryChanged();
       updateMetadata();
       return true;
@@ -421,7 +421,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   }
 
   //----------------------------------------------------------------------------
-  //--- IInventory -------------------------------------------------------------
+  //--- ISidedInventory --------------------------------------------------------
   //----------------------------------------------------------------------------
   @Override
   public int getSizeInventory() {
@@ -495,7 +495,7 @@ public class TileAdvancedFurnace extends TileEntity implements IFluidHandler, IS
   public boolean isUseableByPlayer(final EntityPlayer player) {
     // Called once per tick to verify that the player is still allowed to use the container
     if (player != null) {
-      return (player.getDistanceSq(xCoord, yCoord, zCoord) <= 4 * 4); // TODO
+      return (player.getDistanceSq(xCoord, yCoord, zCoord) <= 5 * 5); // TODO
     } else {
       FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested isUseableByPlayer with null player");
       return false;
