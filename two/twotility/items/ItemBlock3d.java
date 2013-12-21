@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlockWithMetadata;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
@@ -20,13 +20,13 @@ import two.util.BlockSide;
 /**
  * @author Two
  */
-public abstract class ItemBlock3d extends ItemBlockWithMetadata implements InitializableModContent {
+public abstract class ItemBlock3d extends Item implements InitializableModContent {
 
   protected final Block block;
   protected final int blockID;
 
   public ItemBlock3d(final int id, final Block block) {
-    super(id, block);
+    super(id);
     this.block = block;
     this.blockID = block.blockID;
   }
@@ -39,7 +39,6 @@ public abstract class ItemBlock3d extends ItemBlockWithMetadata implements Initi
   /**
    * Returns the blockID for this Item
    */
-  @Override
   public int getBlockID() {
     return blockID;
   }
@@ -65,6 +64,13 @@ public abstract class ItemBlock3d extends ItemBlockWithMetadata implements Initi
   @Override
   public Icon getIconFromDamage(final int metadata) {
     return block.getIcon(BlockSide.NORTH.ordinal(), metadata);
+  }
+
+  /**
+   * Returns the metadata of the block which this Item (ItemBlock) can place
+   */
+  public int getMetadata(int par1) {
+    return par1;
   }
 
   /**
@@ -128,7 +134,6 @@ public abstract class ItemBlock3d extends ItemBlockWithMetadata implements Initi
   /**
    * Returns true if the given ItemBlock can be placed on the given side of the given block position.
    */
-  @Override
   public boolean canPlaceItemBlockOnSide(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer, ItemStack par7ItemStack) {
     int i1 = par1World.getBlockId(par2, par3, par4);
 
@@ -204,7 +209,6 @@ public abstract class ItemBlock3d extends ItemBlockWithMetadata implements Initi
    * @param player The player who is placing the block. Can be null if the block is not being placed by a player.
    * @param side The side the player (or machine) right-clicked on.
    */
-  @Override
   public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata) {
     if (!world.setBlock(x, y, z, blockID, metadata, 3)) {
       return false;
