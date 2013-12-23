@@ -3,8 +3,6 @@
 package two.twotility.inventory;
 
 import cpw.mods.fml.common.FMLLog;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -13,7 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import two.twotility.TwoTility;
 import two.twotility.items.ItemPouchSmall;
-import two.util.Logging;
 
 /**
  * @author Two
@@ -173,7 +170,6 @@ public class InventoryPouchSmall implements ISidedInventory {
 
   protected void loadNBT() {
     NBTTagCompound tagCompound = this.stackPouchSmall.getTagCompound();
-    Logging.logMethodEntry(this.getClass().getSimpleName(), "loadNBT [" + (owner.worldObj.isRemote ? "CLIENT" : "SERVER") + "]", "object=" + this.stackPouchSmall.hashCode(), "tagCompound=" + Objects.toString(tagCompound));
     if (tagCompound == null) {
       return;
     }
@@ -184,7 +180,6 @@ public class InventoryPouchSmall implements ISidedInventory {
       final byte slotID = itemEntry.getByte(NBT_TAG_SLOT);
       if ((slotID >= 0) && (slotID < inventory.length)) {
         inventory[slotID] = ItemStack.loadItemStackFromNBT(itemEntry);
-        Logging.logMethodEntry(this.getClass().getSimpleName(), "loadNBT", "slot(" + slotID + ")=" + Objects.toString(inventory[slotID]));
       } else {
         FMLLog.warning(this.getClass().getSimpleName() + " received illegal NBT inventory slot. Valid range: 0-%d but got %d.", getSizeInventory(), slotID);
       }
@@ -208,6 +203,5 @@ public class InventoryPouchSmall implements ISidedInventory {
       }
     }
     tagCompound.setTag(NBT_TAG_ITEMLIST, inventoryList);
-    Logging.logMethodEntry(this.getClass().getSimpleName(), "writeNBT [" + (owner.worldObj.isRemote ? "CLIENT" : "SERVER") + "]", "object=" + this.stackPouchSmall.hashCode(), "tagCompound=" + Objects.toString(tagCompound), Arrays.toString(inventory));
   }
 }
