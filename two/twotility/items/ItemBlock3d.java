@@ -10,17 +10,15 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import two.twotility.InitializableModContent;
 import two.util.BlockSide;
 
 /**
  * @author Two
  */
-public abstract class ItemBlock3d extends Item implements InitializableModContent {
+public abstract class ItemBlock3d extends ItemBase {
 
   protected final Block block;
   protected final int blockID;
@@ -64,13 +62,6 @@ public abstract class ItemBlock3d extends Item implements InitializableModConten
   @Override
   public Icon getIconFromDamage(final int metadata) {
     return block.getIcon(BlockSide.NORTH.ordinal(), metadata);
-  }
-
-  /**
-   * Returns the metadata of the block which this Item (ItemBlock) can place
-   */
-  public int getMetadata(int par1) {
-    return par1;
   }
 
   /**
@@ -184,15 +175,6 @@ public abstract class ItemBlock3d extends Item implements InitializableModConten
   @Override
   public String getUnlocalizedName() {
     return block.getUnlocalizedName();
-  }
-
-  @SideOnly(Side.CLIENT)
-  /**
-   * gets the CreativeTab this item is displayed on
-   */
-  @Override
-  public CreativeTabs getCreativeTab() {
-    return block.getCreativeTabToDisplayOn();
   }
 
   @SideOnly(Side.CLIENT)

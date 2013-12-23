@@ -9,6 +9,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.blocks.BlockLavaTank;
 import two.twotility.items.ItemLavaTank;
+import two.twotility.items.ItemPouchSmall;
 
 /**
  * @author Two
@@ -17,6 +18,7 @@ public class ProxyBase {
 
   /* Items */
   public ItemLavaTank itemLavaTank;
+  public ItemPouchSmall itemPouchSmall;
   /* Blocks */
   public BlockAdvancedFurnace blockAdvancedFurnace;
   public BlockLavaTank blockLavaTank;
@@ -39,6 +41,9 @@ public class ProxyBase {
   protected void registerItems() {
     itemLavaTank = new ItemLavaTank(blockLavaTank);
     pendingInitialization.add(itemLavaTank);
+    
+    itemPouchSmall = new ItemPouchSmall();
+    pendingInitialization.add(itemPouchSmall);
   }
 
   protected void registerRenderers() {

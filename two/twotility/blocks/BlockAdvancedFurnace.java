@@ -11,10 +11,12 @@ import net.minecraft.block.Block;
 import static net.minecraft.block.Block.soundStoneFootstep;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -25,15 +27,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.InitializableModContent;
 import two.twotility.TwoTility;
-import two.twotility.gui.ContainerAdvancedFurnace;
+import two.twotility.inventory.ContainerAdvancedFurnace;
 import two.twotility.gui.GUIAdvancedFurnace;
+import two.twotility.gui.GUICallback;
 import two.twotility.tiles.TileAdvancedFurnace;
 import two.util.BlockSide;
+import two.util.InvalidTileEntityException;
 
 /**
  * @author Two
  */
-public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, InitializableModContent {
+public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, InitializableModContent, GUICallback {
 
   public static final String NAME = "AdvancedFurnace";
   protected static final int STATE_EMPTY = 0;
@@ -54,7 +58,7 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
     super(TwoTility.config.getBlockID(BlockAdvancedFurnace.class), Material.rock);
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
     GameRegistry.registerTileEntity(TileAdvancedFurnace.class, TileAdvancedFurnace.class.getName());
-    guiId = TwoTility.guiHandler.registerGui(ContainerAdvancedFurnace.class, GUIAdvancedFurnace.class);
+    guiId = TwoTility.guiHandler.registerGui(this);
   }
 
   @Override
@@ -125,6 +129,26 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
       FMLNetworkHandler.openGui(player, TwoTility.instance, guiId, world, x, y, z);
     }
     return true;
+  }
+
+  @Override
+  public Container createContainer(EntityPlayer player, World world, int x, int y, int z) throws InvalidTileEntityException {
+    final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+    if (tileEntity instanceof TileAdvancedFurnace) {
+      return (new ContainerAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity)).layout();
+    } else {
+      throw new InvalidTileEntityException(TileAdvancedFurnace.class, tileEntity, x, y, z);
+    }
+  }
+
+  @Override
+  public Gui createGUI(EntityPlayer player, World world, int x, int y, int z) throws InvalidTileEntityException {
+    final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+    if (tileEntity instanceof TileAdvancedFurnace) {
+      return new GUIAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
+    } else {
+      throw new InvalidTileEntityException(TileAdvancedFurnace.class, tileEntity, x, y, z);
+    }
   }
 
   @Override

@@ -2,6 +2,7 @@
  */
 package two.twotility.gui;
 
+import two.twotility.inventory.ContainerAdvancedFurnace;
 import two.twotility.GuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -17,12 +18,11 @@ import two.twotility.tiles.TileAdvancedFurnace;
 public class GUIAdvancedFurnace extends GuiContainer {
 
   protected final static int LAVA_TEXTURE_HEIGHT = 36;
-  
   protected static final ResourceLocation background = GuiHandler.loadGuiPNG(BlockAdvancedFurnace.NAME);
   protected final TileAdvancedFurnace tileAdvancedFurnace;
 
   public GUIAdvancedFurnace(final InventoryPlayer inventoryPlayer, final TileAdvancedFurnace tileAdvancedFurnace) {
-    super(new ContainerAdvancedFurnace(inventoryPlayer, tileAdvancedFurnace));
+    super((new ContainerAdvancedFurnace(inventoryPlayer, tileAdvancedFurnace)).layout());
     this.tileAdvancedFurnace = tileAdvancedFurnace;
     // visible gui part
     this.xSize = 168;
