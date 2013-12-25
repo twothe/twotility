@@ -3,6 +3,11 @@
 package two.twotility.inventory;
 
 import cpw.mods.fml.common.FMLLog;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -22,6 +27,7 @@ public class InventoryPouchSmall implements ISidedInventory {
   protected static final int[] ACCESSIBLE_SLOTS = {};
   protected static final String NBT_TAG_ITEMLIST = "items";
   protected static final String NBT_TAG_SLOT = "slot";
+  protected static final String NBT_TAG_TOOLTIP = "tooltip";
 
   public static InventoryPouchSmall fromItemStack(final ItemStack stackPouchSmall, final EntityPlayer player) {
     final InventoryPouchSmall result = new InventoryPouchSmall(stackPouchSmall, player);
@@ -161,11 +167,9 @@ public class InventoryPouchSmall implements ISidedInventory {
 
   @Override
   public void onInventoryChanged() {
-    if (this.owner.worldObj.isRemote == false) {
-      writeNBT();
-      this.owner.getHeldItem().setTagCompound(this.stackPouchSmall.getTagCompound());
-      this.owner.inventory.onInventoryChanged();
-    }
+    writeNBT();
+    this.owner.getHeldItem().setTagCompound(this.stackPouchSmall.getTagCompound());
+    this.owner.inventory.onInventoryChanged();
   }
 
   protected void loadNBT() {
@@ -193,15 +197,52 @@ public class InventoryPouchSmall implements ISidedInventory {
       this.stackPouchSmall.setTagCompound(tagCompound);
     }
 
+    final TreeMap<String, Integer> tooltipSummary = new TreeMap<String, Integer>();
     final NBTTagList inventoryList = new NBTTagList();
+
     for (byte slot = 0; slot < inventory.length; ++slot) {
-      if (inventory[slot] != null) {
+      final ItemStack inventorySlot = inventory[slot];
+      if (inventorySlot != null) {
         final NBTTagCompound itemEntry = new NBTTagCompound();
         itemEntry.setByte(NBT_TAG_SLOT, slot);
-        inventory[slot].writeToNBT(itemEntry);
+        inventorySlot.writeToNBT(itemEntry);
         inventoryList.appendTag(itemEntry);
+
+        final String itemName = inventorySlot.getDisplayName();
+        if (tooltipSummary.containsKey(itemName)) {
+          tooltipSummary.put(itemName, tooltipSummary.get(itemName) + inventorySlot.stackSize);
+        } else {
+          tooltipSummary.put(itemName, inventorySlot.stackSize);
+        }
       }
     }
     tagCompound.setTag(NBT_TAG_ITEMLIST, inventoryList);
+
+    final StringBuilder tooltip = new StringBuilder();
+    for (final String key : tooltipSummary.keySet()) {
+      final int count = tooltipSummary.get(key);
+      tooltip.append(key);
+      if (count > 1) {
+        tooltip.append(" x").append(count);
+      }
+      tooltip.append("\n");
+    }
+    tagCompound.setString(NBT_TAG_TOOLTIP, tooltip.toString());
+  }
+
+  public static void addItemsToTooltip(final ItemStack itemStack, final List strings) {
+    final NBTTagCompound tagCompound = itemStack.getTagCompound();
+    if (tagCompound == null) {
+      return;
+    }
+
+    final String tooltip = tagCompound.getString(NBT_TAG_TOOLTIP);
+    if (tooltip != null) {
+      for (final String entry : tooltip.split("\\n")) {
+        if (entry.length() > 0) {
+          strings.add(entry);
+        }
+      }
+    }
   }
 }

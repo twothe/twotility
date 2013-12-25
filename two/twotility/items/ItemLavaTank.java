@@ -3,6 +3,8 @@
 package two.twotility.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,6 +27,7 @@ public class ItemLavaTank extends ItemBlock3d {
     GameRegistry.registerItem(this, TwoTility.getItemName(NAME));
   }
 
+  @SideOnly(Side.CLIENT)
   @Override
   public void addInformation(final ItemStack itemStack, final EntityPlayer player, final List strings, final boolean verbose) {
     final int numBuckets = getMetadata(itemStack.getItemDamage());

@@ -5,6 +5,9 @@ package two.twotility.items;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -17,8 +20,10 @@ import two.twotility.TwoTility;
 import two.twotility.inventory.ContainerPouchSmall;
 import two.twotility.gui.GUICallback;
 import two.twotility.gui.GUIPouchSmall;
+import two.twotility.inventory.InventoryPouchSmall;
 import two.twotility.tiles.TilePouchSmall;
 import two.util.InvalidTileEntityException;
+import two.util.Logging;
 
 /**
  * @author Two
@@ -83,5 +88,12 @@ public class ItemPouchSmall extends ItemBase implements GUICallback {
     } else {
       throw new IllegalStateException("Container of " + this.getClass().getSimpleName() + " requested, but for a different item (" + heldItem.getDisplayName() + ")!");
     }
+  }
+
+  @SideOnly(Side.CLIENT)
+  @Override
+  public void addInformation(final ItemStack itemStack, final EntityPlayer player, final List strings, final boolean verbose) {
+    // called once per frame if shown
+    InventoryPouchSmall.addItemsToTooltip(itemStack, strings);
   }
 }
