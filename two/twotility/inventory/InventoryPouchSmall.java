@@ -3,10 +3,7 @@
 package two.twotility.inventory;
 
 import cpw.mods.fml.common.FMLLog;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +11,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumChatFormatting;
 import two.twotility.TwoTility;
 import two.twotility.items.ItemPouchSmall;
 
@@ -200,6 +198,7 @@ public class InventoryPouchSmall implements ISidedInventory {
     final TreeMap<String, Integer> tooltipSummary = new TreeMap<String, Integer>();
     final NBTTagList inventoryList = new NBTTagList();
 
+    int emptySlots = 0;
     for (byte slot = 0; slot < inventory.length; ++slot) {
       final ItemStack inventorySlot = inventory[slot];
       if (inventorySlot != null) {
@@ -214,6 +213,8 @@ public class InventoryPouchSmall implements ISidedInventory {
         } else {
           tooltipSummary.put(itemName, inventorySlot.stackSize);
         }
+      } else {
+        ++emptySlots;
       }
     }
     tagCompound.setTag(NBT_TAG_ITEMLIST, inventoryList);
@@ -227,6 +228,10 @@ public class InventoryPouchSmall implements ISidedInventory {
       }
       tooltip.append("\n");
     }
+
+    tooltip.append(EnumChatFormatting.ITALIC).append(EnumChatFormatting.DARK_GRAY).
+            append(inventory.length - emptySlots).append("/").append(inventory.length).
+            append(EnumChatFormatting.RESET);
     tagCompound.setString(NBT_TAG_TOOLTIP, tooltip.toString());
   }
 
@@ -239,9 +244,7 @@ public class InventoryPouchSmall implements ISidedInventory {
     final String tooltip = tagCompound.getString(NBT_TAG_TOOLTIP);
     if (tooltip != null) {
       for (final String entry : tooltip.split("\\n")) {
-        if (entry.length() > 0) {
-          strings.add(entry);
-        }
+        strings.add(entry);
       }
     }
   }
