@@ -3,15 +3,12 @@
 package two.twotility.inventory;
 
 import cpw.mods.fml.common.FMLLog;
-import java.util.List;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumChatFormatting;
 import two.twotility.TwoTility;
 import two.twotility.items.ItemPouchSmall;
 
@@ -195,10 +192,8 @@ public class InventoryPouchSmall implements ISidedInventory {
       this.stackPouchSmall.setTagCompound(tagCompound);
     }
 
-    final TreeMap<String, Integer> tooltipSummary = new TreeMap<String, Integer>();
     final NBTTagList inventoryList = new NBTTagList();
 
-    int emptySlots = 0;
     for (byte slot = 0; slot < inventory.length; ++slot) {
       final ItemStack inventorySlot = inventory[slot];
       if (inventorySlot != null) {
@@ -206,46 +201,8 @@ public class InventoryPouchSmall implements ISidedInventory {
         itemEntry.setByte(NBT_TAG_SLOT, slot);
         inventorySlot.writeToNBT(itemEntry);
         inventoryList.appendTag(itemEntry);
-
-        final String itemName = inventorySlot.getDisplayName();
-        if (tooltipSummary.containsKey(itemName)) {
-          tooltipSummary.put(itemName, tooltipSummary.get(itemName) + inventorySlot.stackSize);
-        } else {
-          tooltipSummary.put(itemName, inventorySlot.stackSize);
-        }
-      } else {
-        ++emptySlots;
       }
     }
     tagCompound.setTag(NBT_TAG_ITEMLIST, inventoryList);
-
-    final StringBuilder tooltip = new StringBuilder();
-    for (final String key : tooltipSummary.keySet()) {
-      final int count = tooltipSummary.get(key);
-      tooltip.append(key);
-      if (count > 1) {
-        tooltip.append(" x").append(count);
-      }
-      tooltip.append("\n");
-    }
-
-    tooltip.append(EnumChatFormatting.ITALIC).append(EnumChatFormatting.DARK_GRAY).
-            append(inventory.length - emptySlots).append("/").append(inventory.length).
-            append(EnumChatFormatting.RESET);
-    tagCompound.setString(NBT_TAG_TOOLTIP, tooltip.toString());
-  }
-
-  public static void addItemsToTooltip(final ItemStack itemStack, final List strings) {
-    final NBTTagCompound tagCompound = itemStack.getTagCompound();
-    if (tagCompound == null) {
-      return;
-    }
-
-    final String tooltip = tagCompound.getString(NBT_TAG_TOOLTIP);
-    if (tooltip != null) {
-      for (final String entry : tooltip.split("\\n")) {
-        strings.add(entry);
-      }
-    }
   }
 }
