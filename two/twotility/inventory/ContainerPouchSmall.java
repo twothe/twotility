@@ -43,7 +43,7 @@ public class ContainerPouchSmall extends ContainerBase {
     if (slotCount != pouchInventory.getSizeInventory()) {
       throw new RuntimeException("Mismatch between container slot-size{" + slotCount + "} and " + pouchInventory.getClass().getName() + " slot-size{" + pouchInventory.getSizeInventory() + "}");
     }
-    
+
     return this;
   }
 
@@ -64,26 +64,7 @@ public class ContainerPouchSmall extends ContainerBase {
   }
 
   @Override
-  public ItemStack transferStackInSlot(final EntityPlayer player, final int slotId) {
-    final Slot slot = getSlot(slotId);
-    if ((slot != null) && (slot.getHasStack())) {
-      final ItemStack itemStack = slot.getStack();
-      final ItemStack result = itemStack.copy();
-
-      if (slotId >= 36) {
-        if (!mergeItemStack(result, 0, 36)) { // transfer to player's inventory by first match
-          return null;
-        }
-      } else if (!mergeItemStack(result, 36 + InventoryPouchSmall.INVENTORY_START, 36 + InventoryPouchSmall.INVENTORY_START + InventoryPouchSmall.INVENTORY_SIZE)) {
-        return null;
-      }
-
-      final int itemsMoved = itemStack.stackSize - result.stackSize;
-      slot.decrStackSize(itemsMoved);
-      slot.onPickupFromSlot(player, itemStack);
-      return result;
-    }
-
-    return null;
+  protected boolean mergeItemStackWithInventory(final ItemStack itemStack, final int slotOffset) {
+    return mergeItemStack(itemStack, slotOffset + InventoryPouchSmall.INVENTORY_START, slotOffset + InventoryPouchSmall.INVENTORY_START + InventoryPouchSmall.INVENTORY_SIZE);
   }
 }

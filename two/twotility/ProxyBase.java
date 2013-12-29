@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
+import two.twotility.blocks.BlockCraftingBox;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.blocks.BlockLavaTank;
+import two.twotility.items.ItemCraftingBox;
 import two.twotility.items.ItemLavaTank;
 import two.twotility.items.ItemPouchSmall;
 
@@ -19,9 +21,11 @@ public class ProxyBase {
   /* Items */
   public ItemLavaTank itemLavaTank;
   public ItemPouchSmall itemPouchSmall;
+  public ItemCraftingBox itemCraftingBox;
   /* Blocks */
   public BlockAdvancedFurnace blockAdvancedFurnace;
   public BlockLavaTank blockLavaTank;
+  public BlockCraftingBox blockCraftingBox;
   /* Sound */
   public final String SOUND_FLUIDSUCKIN = TwoTility.getSoundName("fluidsuckin");
   /* Initialization list for content that needs post-initialization. */
@@ -36,6 +40,9 @@ public class ProxyBase {
 
     blockLavaTank = new BlockLavaTank();
     pendingInitialization.add(blockLavaTank);
+
+    blockCraftingBox = new BlockCraftingBox();
+    pendingInitialization.add(blockCraftingBox);
   }
 
   protected void registerItems() {
@@ -44,6 +51,9 @@ public class ProxyBase {
     
     itemPouchSmall = new ItemPouchSmall();
     pendingInitialization.add(itemPouchSmall);
+
+    itemCraftingBox = new ItemCraftingBox(blockCraftingBox);
+    pendingInitialization.add(itemCraftingBox);
   }
 
   protected void registerRenderers() {

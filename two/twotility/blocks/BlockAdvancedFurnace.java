@@ -2,42 +2,36 @@
  */
 package two.twotility.blocks;
 
-import cpw.mods.fml.common.network.FMLNetworkHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import static net.minecraft.block.Block.soundStoneFootstep;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import two.twotility.InitializableModContent;
 import two.twotility.TwoTility;
 import two.twotility.inventory.ContainerAdvancedFurnace;
 import two.twotility.gui.GUIAdvancedFurnace;
-import two.twotility.gui.GUICallback;
+import two.twotility.inventory.ContainerBase;
 import two.twotility.tiles.TileAdvancedFurnace;
+import two.twotility.tiles.TileWithInventory;
 import two.util.BlockSide;
-import two.util.InvalidTileEntityException;
 
 /**
  * @author Two
  */
-public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, InitializableModContent, GUICallback {
+public class BlockAdvancedFurnace extends BlockWithInventory {
 
   public static final String NAME = "AdvancedFurnace";
   protected static final int STATE_EMPTY = 0;
@@ -46,7 +40,6 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
   protected static final int STATE_WORKING = STATE_HAS_FUEL + 1;
   protected static final int NUM_STATES = STATE_WORKING + 1;
   //-- Class -------------------------------------------------------------------
-  protected final int guiId;
   @SideOnly(Side.CLIENT)
   protected Icon[] stateIcons = new Icon[NUM_STATES];
   @SideOnly(Side.CLIENT)
@@ -55,10 +48,8 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
   protected Icon iconTop;
 
   public BlockAdvancedFurnace() {
-    super(TwoTility.config.getBlockID(BlockAdvancedFurnace.class), Material.rock);
+    super(TwoTility.config.getBlockID(BlockAdvancedFurnace.class), Material.rock, TileAdvancedFurnace.class);
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
-    GameRegistry.registerTileEntity(TileAdvancedFurnace.class, TileAdvancedFurnace.class.getName());
-    guiId = TwoTility.guiHandler.registerGui(this);
   }
 
   @Override
@@ -98,7 +89,12 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
   }
 
   protected Icon getFrontfaceByState(final int state) {
-    return stateIcons[state];
+    if ((state >= 0) && (state < stateIcons.length)) {
+      return stateIcons[state];
+    } else {
+      FMLLog.warning("Illegal front face state #%d for %s.", state, this.getClass().getSimpleName());
+      return stateIcons[0];
+    }
   }
 
   @SideOnly(Side.CLIENT)
@@ -118,92 +114,27 @@ public class BlockAdvancedFurnace extends Block implements ITileEntityProvider, 
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = BlockSide.getDirectionFacing(entity);
+    final int metadata = createState(BlockSide.getDirectionFacing(entity), 0);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
 
   @Override
-  public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int side, final float hitX, final float hitY, final float hitZ) {
-    if (world.isRemote == false) {
-      FMLNetworkHandler.openGui(player, TwoTility.instance, guiId, world, x, y, z);
-    }
-    return true;
+  protected ContainerBase doCreateContainer(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
+    return new ContainerAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
   }
 
   @Override
-  public Container createContainer(EntityPlayer player, World world, int x, int y, int z) throws InvalidTileEntityException {
-    final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-    if (tileEntity instanceof TileAdvancedFurnace) {
-      return (new ContainerAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity)).layout();
-    } else {
-      throw new InvalidTileEntityException(TileAdvancedFurnace.class, tileEntity, x, y, z);
-    }
-  }
-
-  @Override
-  public Gui createGUI(EntityPlayer player, World world, int x, int y, int z) throws InvalidTileEntityException {
-    final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
-    if (tileEntity instanceof TileAdvancedFurnace) {
-      return new GUIAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
-    } else {
-      throw new InvalidTileEntityException(TileAdvancedFurnace.class, tileEntity, x, y, z);
-    }
-  }
-
-  @Override
-  public void breakBlock(final World world, final int x, final int y, final int z, final int blockID, final int metadata) {
-    final TileAdvancedFurnace tileAdvancedFurnace = (TileAdvancedFurnace) world.getBlockTileEntity(x, y, z);
-
-    if (tileAdvancedFurnace != null) {
-      for (int slot = 0; slot < tileAdvancedFurnace.getSizeInventory(); ++slot) {
-        final ItemStack itemstack = tileAdvancedFurnace.getStackInSlot(slot);
-
-        if (itemstack != null) {
-          final float modX = world.rand.nextFloat() * 0.8F + 0.1F;
-          final float modY = world.rand.nextFloat() * 0.8F + 0.1F;
-          final float modZ = world.rand.nextFloat() * 0.8F + 0.1F;
-
-          while (itemstack.stackSize > 0) {
-            int stackSplit = world.rand.nextInt(21) + 10;
-
-            if (stackSplit > itemstack.stackSize) {
-              stackSplit = itemstack.stackSize;
-            }
-
-            itemstack.stackSize -= stackSplit;
-            final EntityItem entityitem = new EntityItem(world, (double) ((float) x + modX), (double) ((float) y + modY), (double) ((float) z + modZ), new ItemStack(itemstack.itemID, stackSplit, itemstack.getItemDamage()));
-
-            if (itemstack.hasTagCompound()) {
-              entityitem.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
-            }
-
-            final float baseVelocity = 0.05F;
-            entityitem.motionX = (double) ((float) world.rand.nextGaussian() * baseVelocity);
-            entityitem.motionY = (double) ((float) world.rand.nextGaussian() * baseVelocity + 0.2F);
-            entityitem.motionZ = (double) ((float) world.rand.nextGaussian() * baseVelocity);
-            world.spawnEntityInWorld(entityitem);
-          }
-        }
-      }
-
-      world.func_96440_m(x, y, z, blockID);
-    }
-
-    super.breakBlock(world, x, y, z, blockID, metadata);
-  }
-
-  @Override
-  public TileEntity createNewTileEntity(World world) {
-    return new TileAdvancedFurnace();
+  protected Gui doCreateGUI(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
+    return new GUIAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
   }
 
   protected static int getStateFromMetadata(final int metadata) {
-    return (metadata >>> 2) & 3;
+    return (metadata & BlockSide.DATA_MASK);
   }
 
   protected static int createState(final int metaCurrent, final int state) {
-    return ((state & 3) << 2) | (metaCurrent & 3);
+    return ((metaCurrent & BlockSide.ROTATION_MASK) | (state & BlockSide.DATA_MASK));
   }
 
   public static int createState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {

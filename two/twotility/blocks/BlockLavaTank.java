@@ -79,7 +79,7 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
     LanguageRegistry.addName(this, "Lava Tank");
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
-      CraftingManager.getInstance().addRecipe(new ItemStack(this, 1, STATE_EMPTY),
+      CraftingManager.getInstance().addRecipe(new ItemStack(itemDropped, 1, STATE_EMPTY),
               "IGI",
               "G G",
               "IGI",

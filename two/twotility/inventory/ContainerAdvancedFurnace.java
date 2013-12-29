@@ -22,8 +22,8 @@ public class ContainerAdvancedFurnace extends ContainerBase {
 
   protected final static int UPDATEID_STORED_OPERATIONS = 0;
   protected final static int UPDATEID_SMELTTIME_REMAINING = UPDATEID_STORED_OPERATIONS + 1;
-  final TileAdvancedFurnace tileAdvancedFurnace;
-  int lastStoredFuel, lastSmeltTime;
+  protected final TileAdvancedFurnace tileAdvancedFurnace;
+  protected int lastStoredFuel, lastSmeltTime;
 
   public ContainerAdvancedFurnace(final InventoryPlayer inventoryPlayer, final TileAdvancedFurnace tileAdvancedFurnace) {
     super(inventoryPlayer, 4, 155, 4, 99);
@@ -125,26 +125,7 @@ public class ContainerAdvancedFurnace extends ContainerBase {
   }
 
   @Override
-  public ItemStack transferStackInSlot(final EntityPlayer player, final int slotId) {
-    final Slot slot = getSlot(slotId);
-    if ((slot != null) && (slot.getHasStack())) {
-      final ItemStack itemStack = slot.getStack();
-      final ItemStack result = itemStack.copy();
-
-      if (slotId >= 36) {
-        if (!mergeItemStack(result, 0, 36)) { // transfer to player's inventory by first match
-          return null;
-        }
-      } else if (!mergeItemStack(result, 36 + TileAdvancedFurnace.INVENTORY_START_INPUT, 36 + TileAdvancedFurnace.INVENTORY_START_INPUT + TileAdvancedFurnace.INVENTORY_SIZE_INPUT + TileAdvancedFurnace.INVENTORY_SIZE_FUEL)) {
-        return null;
-      }
-
-      final int itemsMoved = itemStack.stackSize - result.stackSize;
-      slot.decrStackSize(itemsMoved);
-      slot.onPickupFromSlot(player, itemStack);
-      return result;
-    }
-
-    return null;
+  protected boolean mergeItemStackWithInventory(final ItemStack newItem, final int slotOffset) {
+    return mergeItemStack(newItem, slotOffset + TileAdvancedFurnace.INVENTORY_START_INPUT, slotOffset + TileAdvancedFurnace.INVENTORY_START_INPUT + TileAdvancedFurnace.INVENTORY_SIZE_INPUT + TileAdvancedFurnace.INVENTORY_SIZE_FUEL);
   }
 }

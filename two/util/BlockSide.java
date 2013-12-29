@@ -9,6 +9,8 @@ import net.minecraft.util.MathHelper;
 public enum BlockSide {
 
   BOTTOM, TOP, NORTH, SOUTH, WEST, EAST; // Blockside.ordinal() is the Minecraft side of a Block facing north
+  public static final int ROTATION_MASK = 0x0C; // this mask extracts the rotation information from the metadata
+  public static final int DATA_MASK = 0x03; // this mask extracts block specific data from the metadata
 
   /**
    * Returns the direction the entity is facing.
@@ -18,7 +20,7 @@ public enum BlockSide {
    * @return the direction the entity is facing as CW 0 (west) to 3 (south)
    */
   public static int getLookDirection(final EntityLivingBase entity) {
-    return MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3; // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
+    return createRotationData(MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3); // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
   }
 
   /**
@@ -29,24 +31,42 @@ public enum BlockSide {
    * @return the direction that is facing the entity as CW 0 (west) to 3 (south)
    */
   public static int getDirectionFacing(final EntityLivingBase entity) {
-    return MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3; // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
+    return createRotationData(MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3); // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
+  }
+
+  /**
+   * Creates rotation data based on the given BlockSide ordinal.
+   * @param direction a direction ordinal.
+   * @return rotation data based on the given BlockSide ordinal.
+   */
+  public static int createRotationData(final int direction) {
+    return (direction & 3) << 2;
+  }
+
+  /**
+   * Returns the BlockSide according the given metadata. 
+   * @param metadata metadata created by createRotationData.
+   * @return the BlockSide according the given metadata.
+   */
+  public static int extractRotationData(final int metadata) {
+    return (metadata & ROTATION_MASK) >>> 2;
   }
 
   /**
    * Calculates which side is <i>side</i> given the block's orientation
    *
    * @param side the side that is searched for
-   * @param blockDir the facing of the block as CW 0 (south) to 3 (east)
+   * @param metadata the facing of the block.
    * @return the side that corresponds to <i>side</i> according to the block's rotation.
    */
-  public static BlockSide getRotatedSide(final int side, final int blockDir) {
+  public static BlockSide getRotatedSide(final int side, final int metadata) {
     switch (side) {
       case 0:
         return BOTTOM;
       case 1:
         return TOP;
       case 2: // north side
-        switch (blockDir & 3) {
+        switch (extractRotationData(metadata)) {
           case 0: // facing west
             return EAST;
           case 1: // facing north
@@ -57,7 +77,7 @@ public enum BlockSide {
             return SOUTH;
         }
       case 3: // south side
-        switch (blockDir & 3) {
+        switch (extractRotationData(metadata)) {
           case 0: // facing west
             return WEST;
           case 1: // facing north
@@ -68,7 +88,7 @@ public enum BlockSide {
             return NORTH;
         }
       case 4: // west side
-        switch (blockDir & 3) {
+        switch (extractRotationData(metadata)) {
           case 0: // facing west
             return NORTH;
           case 1: // facing north
@@ -79,7 +99,7 @@ public enum BlockSide {
             return EAST;
         }
       case 5: // east side
-        switch (blockDir & 3) {
+        switch (extractRotationData(metadata)) {
           case 0: // facing west
             return SOUTH;
           case 1: // facing north
@@ -107,11 +127,11 @@ public enum BlockSide {
   /**
    * Returns the side that corresponds to direction.
    *
-   * @param direction the direction to look up.
+   * @param metadata the direction to look up.
    * @return the side that corresponds to direction.
    */
-  public static BlockSide fromDirection(final int direction) {
-    switch (direction & 3) {
+  public static BlockSide fromMetadata(final int metadata) {
+    switch (extractRotationData(metadata)) {
       case 0:
         return WEST;
       case 1:
@@ -121,37 +141,6 @@ public enum BlockSide {
       case 3:
         return SOUTH;
     }
-    throw new IllegalArgumentException("Illegal direction " + direction); // impossible to reach
-  }
-
-  /**
-   * Returns the direction that corresponds to side.
-   * The result is intended for a block's metadata.
-   *
-   * @param side the side to look up.
-   * @return the direction that corresponds to side.
-   */
-  public static int toDirection(final BlockSide side) {
-    switch (side) {
-      case WEST:
-        return 0;
-      case NORTH:
-        return 1;
-      case EAST:
-        return 2;
-      case SOUTH:
-        return 3;
-    }
-    throw new IllegalArgumentException("Side " + side + " cannot be converted into a direction."); // for top/bottom
-  }
-
-  /**
-   * Returns the direction that corresponds to this.
-   * The result is intended for a block's metadata.
-   *
-   * @return the direction that corresponds to this.
-   */
-  public int toDirection() {
-    return toDirection(this);
+    throw new IllegalArgumentException("Illegal direction " + metadata); // impossible to reach
   }
 }

@@ -18,5 +18,6 @@ public class ProxyClient extends ProxyBase {
 
     itemRendererBlock3d = new ItemRendererBlock3d();
     MinecraftForgeClient.registerItemRenderer(itemLavaTank.itemID, itemRendererBlock3d);
+    MinecraftForgeClient.registerItemRenderer(itemCraftingBox.itemID, itemRendererBlock3d);
   }
 }

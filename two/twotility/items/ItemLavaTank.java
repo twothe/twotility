@@ -37,4 +37,9 @@ public class ItemLavaTank extends ItemBlock3d {
       strings.add(String.format("Contains %d buckets of lava", numBuckets));
     }
   }
+
+  @Override
+  public boolean getHasSubtypes() {
+    return true;
+  }
 }

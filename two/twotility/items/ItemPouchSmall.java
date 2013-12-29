@@ -84,4 +84,9 @@ public class ItemPouchSmall extends ItemBase implements GUICallback {
       throw new IllegalStateException("Container of " + this.getClass().getSimpleName() + " requested, but for a different item (" + heldItem.getDisplayName() + ")!");
     }
   }
+
+  @Override
+  public boolean getHasSubtypes() {
+    return true;
+  }
 }

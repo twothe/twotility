@@ -2,6 +2,7 @@
  */
 package two.twotility.inventory;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -42,6 +43,40 @@ public abstract class ContainerBase extends Container {
   protected Slot createSlot(final IInventory inventory, final int slotIndex, final int x, final int y) {
     return new Slot(inventory, slotIndex, x, y);
   }
+
+  @Override
+  public ItemStack transferStackInSlot(final EntityPlayer player, final int slotId) {
+    final Slot slot = getSlot(slotId);
+    if ((slot != null) && (slot.getHasStack())) {
+      final ItemStack itemStack = slot.getStack();
+      final ItemStack result = itemStack.copy();
+
+      if (slotId >= 36) {
+        if (!mergeItemStack(result, 0, 36)) { // transfer to player's inventory by first match
+          return null;
+        }
+      } else if (!mergeItemStackWithInventory(result, 36)) {
+        return null;
+      }
+
+      final int itemsMoved = itemStack.stackSize - result.stackSize;
+      slot.decrStackSize(itemsMoved);
+      slot.onPickupFromSlot(player, itemStack);
+      return result;
+    }
+
+    return null;
+  }
+
+  /**
+   * Callback for special inventory handling. 
+   * Must delegate to mergeItemStack with the appropriate slot index, adding the offset.
+   * 
+   * @param itemStack the item to pass to mergeItemStack.
+   * @param slotOffset the offset to add to the accessible internal inventory slot index.
+   * @return the result of the delegated mergeItemStack.
+   */
+  protected abstract boolean mergeItemStackWithInventory(final ItemStack itemStack, final int slotOffset);
 
   protected boolean mergeItemStack(final ItemStack newItem, int slotStart, int slotEnd) {
     if (newItem == null) {
