@@ -50,10 +50,6 @@ public class ContainerCraftingBox extends ContainerBase {
     // crafting result
     this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 76, 76));
 
-    if (slotCount != tileCraftingBox.getSizeInventory()) {
-      throw new RuntimeException("Mismatch between container slot-size{" + slotCount + "} and " + tileCraftingBox.getClass().getName() + " slot-size{" + tileCraftingBox.getSizeInventory() + "}");
-    }
-
     return this;
   }
 
