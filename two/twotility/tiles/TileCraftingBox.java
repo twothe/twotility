@@ -11,7 +11,7 @@ import two.util.BlockSide;
 public class TileCraftingBox extends TileWithInventory {
 
   public static final int INVENTORY_START_STORAGE = 0;
-  public static final int INVENTORY_SIZE_STORAGE = 2 * 3 * 7;
+  public static final int INVENTORY_SIZE_STORAGE = 2 * 3 * 5;
   public static final int INVENTORY_START_CRAFTING = INVENTORY_START_STORAGE + INVENTORY_SIZE_STORAGE;
   public static final int INVENTORY_SIZE_CRAFTING = 3 * 3;
   public static final int INVENTORY_START_CRAFTING_RESULT = INVENTORY_START_CRAFTING + INVENTORY_SIZE_CRAFTING;
@@ -31,6 +31,7 @@ public class TileCraftingBox extends TileWithInventory {
   }
   protected int craftingBoxType = BlockCraftingBox.STATE_BOX;
   protected int selectedRecipeIndex = RECIPE_INDEX_OFF;
+  protected boolean needInitialization = true;
 
   public TileCraftingBox() {
     super(INVENTORY_SIZE);
@@ -38,6 +39,14 @@ public class TileCraftingBox extends TileWithInventory {
 
   public int getCraftingBoxType() {
     return craftingBoxType;
+  }
+
+  public boolean isCraftingBoxType() {
+    return this.craftingBoxType == BlockCraftingBox.STATE_BOX;
+  }
+
+  public boolean isAdvancedCraftingBoxType() {
+    return this.craftingBoxType == BlockCraftingBox.STATE_ADVANCED;
   }
 
   public void setCraftingBoxType(final int craftingBoxType) {

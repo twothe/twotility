@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -174,5 +175,12 @@ public class BlockCraftingBox extends BlockWithInventory {
   @Override
   public int idPicked(World par1World, int par2, int par3, int par4) {
     return this.itemBox.itemID;
+  }
+
+  @Override
+  public TileEntity createTileEntity(final World world, final int metadata) {
+    final TileCraftingBox result = new TileCraftingBox();
+    result.setCraftingBoxType(BlockSide.getStateFromMetadata(metadata));
+    return result;
   }
 }

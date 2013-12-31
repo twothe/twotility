@@ -7,6 +7,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import two.twotility.gui.GUICraftingBox;
 import two.twotility.tiles.TileCraftingBox;
 
 /**
@@ -17,7 +18,7 @@ public class ContainerCraftingBox extends ContainerBase {
   protected final TileCraftingBox tileCraftingBox;
 
   public ContainerCraftingBox(final InventoryPlayer inventoryPlayer, final TileCraftingBox tileCraftingBox) {
-    super(inventoryPlayer, 4, 137, 4, 82);
+    super(inventoryPlayer, 6, tileCraftingBox.isCraftingBoxType() ? 179 - GUICraftingBox.HEIGHT_RECIPE_ROW : 179, 6, tileCraftingBox.isCraftingBoxType() ? 124 - GUICraftingBox.HEIGHT_RECIPE_ROW : 124);
     this.tileCraftingBox = tileCraftingBox;
   }
 
@@ -27,28 +28,34 @@ public class ContainerCraftingBox extends ContainerBase {
 
     int slotCount = 0;
     // input slots left
-    for (int y = 0; y < 7; ++y) {
+    for (int y = 0; y < 5; ++y) {
       for (int x = 0; x < 3; ++x) {
         this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 4 + x * 18, 4 + y * 18));
       }
     }
 
     // input slots right
-    for (int y = 0; y < 7; ++y) {
+    for (int y = 0; y < 5; ++y) {
       for (int x = 0; x < 3; ++x) {
-        this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 112 + x * 18, 4 + y * 18));
+        this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 116 + x * 18, 4 + y * 18));
       }
     }
 
     // crafting grid
     for (int y = 0; y < 3; ++y) {
       for (int x = 0; x < 3; ++x) {
-        this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 58 + x * 18, 4 + y * 18));
+        this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 60 + x * 18, 4 + y * 18));
       }
     }
 
     // crafting result
-    this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 76, 76));
+    this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 78, 76));
+
+    if (tileCraftingBox.isAdvancedCraftingBoxType()) {
+      for (int x = 0; x < 9; ++x) {
+        this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 6 + x * 18, 100));
+      }
+    }
 
     return this;
   }
@@ -62,6 +69,8 @@ public class ContainerCraftingBox extends ContainerBase {
     } else if ((slotIndex >= TileCraftingBox.INVENTORY_START_CRAFTING) && (slotIndex < TileCraftingBox.INVENTORY_START_CRAFTING + TileCraftingBox.INVENTORY_SIZE_CRAFTING)) {
       return super.createSlot(tileCraftingBox, slotIndex, x, y);
     } else if ((slotIndex >= TileCraftingBox.INVENTORY_START_CRAFTING_RESULT) && (slotIndex < TileCraftingBox.INVENTORY_START_CRAFTING_RESULT + TileCraftingBox.INVENTORY_SIZE_CRAFTING_RESULT)) {
+      return super.createSlot(tileCraftingBox, slotIndex, x, y);
+    } else if ((slotIndex >= TileCraftingBox.INVENTORY_START_RECIPE) && (slotIndex < TileCraftingBox.INVENTORY_START_RECIPE + TileCraftingBox.INVENTORY_SIZE_RECIPE)) {
       return super.createSlot(tileCraftingBox, slotIndex, x, y);
     } else {
       throw new IllegalArgumentException("Slot index #" + slotIndex + " is invalid for " + tileCraftingBox.getClass().getSimpleName());

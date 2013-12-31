@@ -17,6 +17,7 @@ import two.twotility.tiles.TileCraftingBox;
  */
 public class GUICraftingBox extends GuiContainer {
 
+  public static final int HEIGHT_RECIPE_ROW = 24;
   protected static final ResourceLocation background = GuiHandler.loadGuiPNG(BlockCraftingBox.NAME_BOX);
   protected final TileCraftingBox tileCraftingBox;
   protected final int boxHeight;
@@ -27,9 +28,9 @@ public class GUICraftingBox extends GuiContainer {
     super((new ContainerCraftingBox(inventoryPlayer, tileCraftingBox)).layout());
     this.tileCraftingBox = tileCraftingBox;
 
-    isTypeBox = tileCraftingBox.getCraftingBoxType() == BlockCraftingBox.STATE_BOX;
+    isTypeBox = tileCraftingBox.isCraftingBoxType();
     this.xSize = 171;
-    this.ySize = isTypeBox ? 198 - 23 : 198;
+    this.ySize = isTypeBox ? 198 - HEIGHT_RECIPE_ROW : 198;
     boxHeight = isTypeBox ? 95 : 119;
     playerInventoryHeight = 78;
   }
@@ -40,9 +41,9 @@ public class GUICraftingBox extends GuiContainer {
     Minecraft.getMinecraft().getTextureManager().bindTexture(background);
 
     drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, boxHeight);
-    drawTexturedModalRect(guiLeft, guiTop + boxHeight, 120, 0, xSize, playerInventoryHeight);
+    drawTexturedModalRect(guiLeft, guiTop + boxHeight + 1, 0, 120, xSize, playerInventoryHeight);
 
-    if (isTypeBox) {
+    if (isTypeBox == false) {
       final int selectedRecipeX = 6 + 18 * tileCraftingBox.getSelectedRecipeIndex();
       drawTexturedModalRect(guiLeft + selectedRecipeX, guiTop + 100, 171, 0, 16, 16);
     }

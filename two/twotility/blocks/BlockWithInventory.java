@@ -19,7 +19,6 @@ import two.twotility.TwoTility;
 import two.twotility.gui.GUICallback;
 import two.twotility.inventory.ContainerBase;
 import two.twotility.tiles.TileWithInventory;
-import two.util.BlockSide;
 import two.util.InvalidTileEntityException;
 
 /**
