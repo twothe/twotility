@@ -14,7 +14,7 @@ import net.minecraftforge.common.Property;
  */
 public class Config {
 
-  protected static final String CATEGORY_VARIOUS_SETTINGS = "other";
+  protected static final String CATEGORY_VARIOUS_SETTINGS = "settings";
   //--- Class ------------------------------------------------------------------
   public static final AtomicInteger blockIDs = new AtomicInteger(745);
   public static final AtomicInteger itemIDs = new AtomicInteger(6928);
