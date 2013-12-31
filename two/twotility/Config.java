@@ -19,14 +19,9 @@ public class Config {
   public static final AtomicInteger blockIDs = new AtomicInteger(745);
   public static final AtomicInteger itemIDs = new AtomicInteger(6928);
   //--- Misc config settings ---------------------------------------------------
-  public int LAVA_FLOW_FOLLOW_MAX = 128;
   protected Configuration configuration;
 
   protected Config() {
-  }
-
-  protected void readOther() {
-    LAVA_FLOW_FOLLOW_MAX = configuration.get(CATEGORY_VARIOUS_SETTINGS, "Lava flow follow max", LAVA_FLOW_FOLLOW_MAX).getInt(LAVA_FLOW_FOLLOW_MAX);
   }
 
   protected void initialize(final File configFile) {
@@ -67,7 +62,12 @@ public class Config {
   }
 
   public int getMiscInteger(final String key, final int defaultValue) {
-    final Property property = configuration.getItem(key, defaultValue);
+    final Property property = configuration.get(CATEGORY_VARIOUS_SETTINGS, key, defaultValue);
     return property.getInt(defaultValue);
+  }
+
+  public boolean getMiscBoolean(final String key, final boolean defaultValue) {
+    final Property property = configuration.get(CATEGORY_VARIOUS_SETTINGS, key, defaultValue);
+    return property.getBoolean(defaultValue);
   }
 }

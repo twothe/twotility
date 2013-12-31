@@ -40,7 +40,9 @@ public class BlockCraftingBox extends BlockWithInventory {
   public static final int STATE_BOX = 0;
   public static final int STATE_ADVANCED = STATE_BOX + 1;
   public static final int NUM_STATES = STATE_ADVANCED + 1;
+  protected static final String CONFIG_KEY_IS_NOISY = "Crafting Box is noisy";
 //-- Class -------------------------------------------------------------------
+  public final boolean isNoisy;
   @SideOnly(Side.CLIENT)
   protected Icon[] stateIcons = new Icon[NUM_STATES];
   @SideOnly(Side.CLIENT)
@@ -57,6 +59,7 @@ public class BlockCraftingBox extends BlockWithInventory {
   public BlockCraftingBox() {
     super(TwoTility.config.getBlockID(BlockCraftingBox.class), Material.wood, TileCraftingBox.class);
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME_BOX));
+    this.isNoisy = TwoTility.config.getMiscBoolean(CONFIG_KEY_IS_NOISY, true);
   }
 
   @Override

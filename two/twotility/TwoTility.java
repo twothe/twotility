@@ -58,7 +58,6 @@ public class TwoTility {
     config.load();
     NetworkRegistry.instance().registerGuiHandler(TwoTility.instance, guiHandler);
     proxy.onInit();
-    config.readOther();
     config.save();
   }
 

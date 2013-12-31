@@ -2,19 +2,15 @@
  */
 package two.twotility.tiles;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
-import java.util.logging.Level;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.ForgeDirection;
@@ -336,9 +332,8 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     int meta, bestMeta = worldObj.getBlockMetadata(x, y, z) + 1; // +1 to make up-flows more important
     ForgeDirection bestLavaDirection;
     boolean hasLavaUp;
-    int loopMax = TwoTility.config.LAVA_FLOW_FOLLOW_MAX;
 
-    for (int loop = loopMax; loop > 0; --loop) {
+    for (int loop = TwoTility.proxy.blockAdvancedFurnace.lavaFlowSearchMax; loop > 0; --loop) {
       if (tryRefillFromLavaBlock(x, y, z)) {
         return true; // we found a source block
       } else {

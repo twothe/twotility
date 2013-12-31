@@ -33,6 +33,7 @@ import two.util.BlockSide;
  */
 public class BlockAdvancedFurnace extends BlockWithInventory {
 
+  protected static final String CONFIG_KEY_LAVA_FLOW_MAX = "Lava flow search max";
   public static final String NAME = "AdvancedFurnace";
   protected static final int STATE_EMPTY = 0;
   protected static final int STATE_FILLED = STATE_EMPTY + 1;
@@ -40,6 +41,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
   protected static final int STATE_WORKING = STATE_HAS_FUEL + 1;
   protected static final int NUM_STATES = STATE_WORKING + 1;
   //-- Class -------------------------------------------------------------------
+  public final int lavaFlowSearchMax;
   @SideOnly(Side.CLIENT)
   protected Icon[] stateIcons = new Icon[NUM_STATES];
   @SideOnly(Side.CLIENT)
@@ -50,6 +52,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
   public BlockAdvancedFurnace() {
     super(TwoTility.config.getBlockID(BlockAdvancedFurnace.class), Material.rock, TileAdvancedFurnace.class);
     GameRegistry.registerBlock(this, TwoTility.getBlockName(NAME));
+    lavaFlowSearchMax = TwoTility.config.getMiscInteger(CONFIG_KEY_LAVA_FLOW_MAX, 128);
   }
 
   @Override
@@ -128,7 +131,6 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
   protected Gui doCreateGUI(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
     return new GUIAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
   }
-
 
   public static int createState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {
     return BlockSide.createState(metaCurrent, (hasFuel ? STATE_HAS_FUEL : 0) | (hasWork ? STATE_FILLED : 0));

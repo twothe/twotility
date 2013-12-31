@@ -9,7 +9,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import two.twotility.TwoTility;
-import two.twotility.gui.SlotWithValidation;
+import two.twotility.gui.slots.SlotWithValidation;
 
 /**
  * @author Two

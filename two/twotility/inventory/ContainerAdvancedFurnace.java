@@ -12,7 +12,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotFurnace;
 import net.minecraft.item.ItemStack;
-import two.twotility.gui.SlotWithValidation;
+import two.twotility.gui.slots.SlotWithValidation;
 import two.twotility.tiles.TileAdvancedFurnace;
 
 /**
