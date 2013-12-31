@@ -103,7 +103,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
     final BlockSide rotatedSide = BlockSide.getRotatedSide(side, metadata);
     switch (rotatedSide) {
       case NORTH:
-        return getFrontfaceByState(getStateFromMetadata(metadata));
+        return getFrontfaceByState(BlockSide.getStateFromMetadata(metadata));
       case TOP:
       case BOTTOM:
         return iconTop;
@@ -114,7 +114,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = createState(BlockSide.getDirectionFacing(entity), 0);
+    final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), 0);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
@@ -129,15 +129,8 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
     return new GUIAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
   }
 
-  protected static int getStateFromMetadata(final int metadata) {
-    return (metadata & BlockSide.DATA_MASK);
-  }
-
-  protected static int createState(final int metaCurrent, final int state) {
-    return ((metaCurrent & BlockSide.ROTATION_MASK) | (state & BlockSide.DATA_MASK));
-  }
 
   public static int createState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {
-    return createState(metaCurrent, (hasFuel ? STATE_HAS_FUEL : 0) | (hasWork ? STATE_FILLED : 0));
+    return BlockSide.createState(metaCurrent, (hasFuel ? STATE_HAS_FUEL : 0) | (hasWork ? STATE_FILLED : 0));
   }
 }

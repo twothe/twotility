@@ -19,6 +19,7 @@ import two.twotility.TwoTility;
 import two.twotility.gui.GUICallback;
 import two.twotility.inventory.ContainerBase;
 import two.twotility.tiles.TileWithInventory;
+import two.util.BlockSide;
 import two.util.InvalidTileEntityException;
 
 /**
@@ -47,6 +48,7 @@ public abstract class BlockWithInventory extends Block implements ITileEntityPro
 
   /**
    * Create a new Container class appropriate to the sub-class of this.
+   *
    * @return the fully created container.
    */
   protected abstract ContainerBase doCreateContainer(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z);
@@ -63,6 +65,7 @@ public abstract class BlockWithInventory extends Block implements ITileEntityPro
 
   /**
    * Create a new GUI class appropriate to the sub-class of this.
+   *
    * @return the fully created GUI.
    */
   protected abstract Gui doCreateGUI(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z);

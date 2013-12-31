@@ -2,6 +2,7 @@ package two.util;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.common.ForgeDirection;
 
 /**
  * @author Two
@@ -12,15 +13,135 @@ public enum BlockSide {
   public static final int ROTATION_MASK = 0x0C; // this mask extracts the rotation information from the metadata
   public static final int DATA_MASK = 0x03; // this mask extracts block specific data from the metadata
 
+  public ForgeDirection behind() {
+    switch (this) {
+      case BOTTOM:
+        return ForgeDirection.UP;
+      case TOP:
+        return ForgeDirection.DOWN;
+      case NORTH:
+        return ForgeDirection.SOUTH;
+      case SOUTH:
+        return ForgeDirection.NORTH;
+      case WEST:
+        return ForgeDirection.EAST;
+      case EAST:
+        return ForgeDirection.WEST;
+    }
+    throw new IllegalStateException("Illegal side for behind: " + this.name());
+  }
+
+  public BlockSide backSide() {
+    switch (this) {
+      case BOTTOM:
+        return TOP;
+      case TOP:
+        return BOTTOM;
+      case NORTH:
+        return SOUTH;
+      case SOUTH:
+        return NORTH;
+      case WEST:
+        return EAST;
+      case EAST:
+        return WEST;
+    }
+    throw new IllegalStateException("Illegal side for backSide: " + this.name());
+  }
+
+  public ForgeDirection infront() {
+    switch (this) {
+      case BOTTOM:
+        return ForgeDirection.DOWN;
+      case TOP:
+        return ForgeDirection.UP;
+      case NORTH:
+        return ForgeDirection.NORTH;
+      case SOUTH:
+        return ForgeDirection.SOUTH;
+      case WEST:
+        return ForgeDirection.WEST;
+      case EAST:
+        return ForgeDirection.EAST;
+    }
+    throw new IllegalStateException("Illegal side for infront: " + this.name());
+  }
+
+  public ForgeDirection left() {
+    switch (this) {
+      case NORTH:
+        return ForgeDirection.WEST;
+      case SOUTH:
+        return ForgeDirection.EAST;
+      case WEST:
+        return ForgeDirection.NORTH;
+      case EAST:
+        return ForgeDirection.SOUTH;
+    }
+    throw new IllegalStateException("Illegal side for left: " + this.name());
+  }
+
+  public BlockSide leftSide() {
+    switch (this) {
+      case NORTH:
+        return WEST;
+      case SOUTH:
+        return EAST;
+      case WEST:
+        return NORTH;
+      case EAST:
+        return SOUTH;
+    }
+    throw new IllegalStateException("Illegal side for leftSide: " + this.name());
+  }
+
+  public ForgeDirection right() {
+    switch (this) {
+      case NORTH:
+        return ForgeDirection.EAST;
+      case SOUTH:
+        return ForgeDirection.WEST;
+      case WEST:
+        return ForgeDirection.SOUTH;
+      case EAST:
+        return ForgeDirection.NORTH;
+    }
+    throw new IllegalStateException("Illegal side for right: " + this.name());
+  }
+
+  public BlockSide rightSide() {
+    switch (this) {
+      case NORTH:
+        return EAST;
+      case SOUTH:
+        return WEST;
+      case WEST:
+        return SOUTH;
+      case EAST:
+        return NORTH;
+    }
+    throw new IllegalStateException("Illegal side for rightSide: " + this.name());
+  }
+
   /**
-   * Returns the direction the entity is facing.
+   * Returns the direction the entity is looking at.
    * This is intended to be used for a block's metadata on placement.
    *
    * @param entity the entity in question
-   * @return the direction the entity is facing as CW 0 (west) to 3 (south)
+   * @return the direction the entity is looking at as CW 0 (west) to 3 (south)
    */
   public static int getLookDirection(final EntityLivingBase entity) {
     return createRotationData(MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3); // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
+  }
+
+  /**
+   * Returns the side the entity is looking at.
+   *
+   * @param entity the entity in question
+   * @return the BlockSide the entity is looking at
+   */
+  public static BlockSide getLookSide(final EntityLivingBase entity) {
+    return facingFromMetadata(getLookDirection(entity));
   }
 
   /**
@@ -35,7 +156,18 @@ public enum BlockSide {
   }
 
   /**
+   * Returns the side that is facing the entity
+   *
+   * @param entity the entity in question
+   * @return the BlockSide that is facing the entity.
+   */
+  public static BlockSide getSideFacing(final EntityLivingBase entity) {
+    return facingFromMetadata(getDirectionFacing(entity));
+  }
+
+  /**
    * Creates rotation data based on the given BlockSide ordinal.
+   *
    * @param direction a direction ordinal.
    * @return rotation data based on the given BlockSide ordinal.
    */
@@ -43,8 +175,27 @@ public enum BlockSide {
     return (direction & 3) << 2;
   }
 
+  public static int createRotationData(final BlockSide direction) {
+    return createRotationData(direction.direction());
+  }
+
+  public int direction() {
+    switch (this) {
+      case WEST:
+        return 0;
+      case NORTH:
+        return 1;
+      case EAST:
+        return 2;
+      case SOUTH:
+        return 3;
+    }
+    throw new IllegalArgumentException("No direction for " + this);
+  }
+
   /**
-   * Returns the BlockSide according the given metadata. 
+   * Returns the BlockSide according the given metadata.
+   *
    * @param metadata metadata created by createRotationData.
    * @return the BlockSide according the given metadata.
    */
@@ -130,7 +281,7 @@ public enum BlockSide {
    * @param metadata the direction to look up.
    * @return the side that corresponds to direction.
    */
-  public static BlockSide fromMetadata(final int metadata) {
+  public static BlockSide facingFromMetadata(final int metadata) {
     switch (extractRotationData(metadata)) {
       case 0:
         return WEST;
@@ -142,5 +293,30 @@ public enum BlockSide {
         return SOUTH;
     }
     throw new IllegalArgumentException("Illegal direction " + metadata); // impossible to reach
+  }
+
+  /**
+   * Returns a block's state from its metadata by removing rotation data.
+   *
+   * @param metadata the block's metadata.
+   * @return the block's metadata state.
+   */
+  public static int getStateFromMetadata(final int metadata) {
+    return (metadata & BlockSide.DATA_MASK);
+  }
+
+  /**
+   * Creates a block's state from its current metadata and rotation data.
+   *
+   * @param metaCurrent the block's current metadata.
+   * @param state the block's internal state.
+   * @return the block's metadata.
+   */
+  public static int createState(final int metaCurrent, final int state) {
+    return ((metaCurrent & BlockSide.ROTATION_MASK) | (state & BlockSide.DATA_MASK));
+  }
+
+  public static int createState(final BlockSide blockFacing, final int state) {
+    return createState(createRotationData(blockFacing), state);
   }
 }

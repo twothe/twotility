@@ -80,18 +80,18 @@ public class BlockCraftingBox extends BlockWithInventory {
               "   ",
               "CFC",
               "   ",
-              'C', Block.chest,
+              'C', TwoTility.proxy.blockShelf,
               'F', Block.workbench);
     }
 
     if (TwoTility.config.isCraftingEnabled(NAME_ADVANCED)) {
       CraftingManager.getInstance().addRecipe(itemAdvanced,
-              "WCW",
+              "DCD",
               "BRL",
-              "DPD",
+              "dPd",
               'C', itemBox,
-              'W', Block.planks,
-              'D', Item.redstone, // dust
+              'D', Item.diamond,
+              'd', Item.redstone, // dust
               'B', Item.writableBook,
               'L', Block.lever,
               'P', Block.pistonBase,
@@ -126,7 +126,7 @@ public class BlockCraftingBox extends BlockWithInventory {
     final BlockSide rotatedSide = BlockSide.getRotatedSide(side, metadata);
     switch (rotatedSide) {
       case NORTH:
-        return getFrontfaceByState(getStateFromMetadata(metadata));
+        return getFrontfaceByState(BlockSide.getStateFromMetadata(metadata));
       case SOUTH:
         return iconBack;
       case TOP:
@@ -146,7 +146,7 @@ public class BlockCraftingBox extends BlockWithInventory {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = createState(BlockSide.getDirectionFacing(entity), itemStack.getItemDamage());
+    final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), itemStack.getItemDamage());
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
@@ -163,7 +163,7 @@ public class BlockCraftingBox extends BlockWithInventory {
 
   @Override
   public int damageDropped(final int metadata) {
-    return getStateFromMetadata(metadata);
+    return BlockSide.getStateFromMetadata(metadata);
   }
 
   @Override
@@ -174,13 +174,5 @@ public class BlockCraftingBox extends BlockWithInventory {
   @Override
   public int idPicked(World par1World, int par2, int par3, int par4) {
     return this.itemBox.itemID;
-  }
-
-  public static int getStateFromMetadata(final int metadata) {
-    return (metadata & BlockSide.DATA_MASK);
-  }
-
-  public static int createState(final int metaCurrent, final int state) {
-    return ((metaCurrent & BlockSide.ROTATION_MASK) | (state & BlockSide.DATA_MASK));
   }
 }

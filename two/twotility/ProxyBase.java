@@ -9,6 +9,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import two.twotility.blocks.BlockCraftingBox;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.blocks.BlockLavaTank;
+import two.twotility.blocks.BlockShelf;
 import two.twotility.items.ItemCraftingBox;
 import two.twotility.items.ItemLavaTank;
 import two.twotility.items.ItemPouchSmall;
@@ -25,6 +26,7 @@ public class ProxyBase {
   /* Blocks */
   public BlockAdvancedFurnace blockAdvancedFurnace;
   public BlockLavaTank blockLavaTank;
+  public BlockShelf blockShelf;
   public BlockCraftingBox blockCraftingBox;
   /* Sound */
   public final String SOUND_FLUIDSUCKIN = TwoTility.getSoundName("fluidsuckin");
@@ -41,6 +43,9 @@ public class ProxyBase {
     blockLavaTank = new BlockLavaTank();
     pendingInitialization.add(blockLavaTank);
 
+    blockShelf = new BlockShelf();
+    pendingInitialization.add(blockShelf);
+    
     blockCraftingBox = new BlockCraftingBox();
     pendingInitialization.add(blockCraftingBox);
   }

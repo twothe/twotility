@@ -6,10 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
-import net.minecraft.inventory.SlotFurnace;
 import net.minecraft.item.ItemStack;
-import two.twotility.gui.SlotWithValidation;
 import two.twotility.tiles.TileCraftingBox;
 
 /**
@@ -20,7 +17,7 @@ public class ContainerCraftingBox extends ContainerBase {
   protected final TileCraftingBox tileCraftingBox;
 
   public ContainerCraftingBox(final InventoryPlayer inventoryPlayer, final TileCraftingBox tileCraftingBox) {
-    super(inventoryPlayer, 4, 155, 4, 99);
+    super(inventoryPlayer, 4, 137, 4, 82);
     this.tileCraftingBox = tileCraftingBox;
   }
 
