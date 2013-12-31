@@ -10,10 +10,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import static net.minecraft.block.Block.soundStoneFootstep;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -21,11 +19,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.TwoTility;
-import two.twotility.inventory.ContainerAdvancedFurnace;
-import two.twotility.gui.GUIAdvancedFurnace;
-import two.twotility.inventory.ContainerBase;
 import two.twotility.tiles.TileAdvancedFurnace;
-import two.twotility.tiles.TileWithInventory;
 import two.util.BlockSide;
 
 /**
@@ -120,16 +114,6 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
     final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), 0);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
-  }
-
-  @Override
-  protected ContainerBase doCreateContainer(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
-    return new ContainerAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
-  }
-
-  @Override
-  protected Gui doCreateGUI(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
-    return new GUIAdvancedFurnace(player.inventory, (TileAdvancedFurnace) tileEntity);
   }
 
   public static int createState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {

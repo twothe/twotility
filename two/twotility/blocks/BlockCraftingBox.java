@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -23,11 +21,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.TwoTility;
-import two.twotility.gui.GUICraftingBox;
-import two.twotility.inventory.ContainerBase;
-import two.twotility.inventory.ContainerCraftingBox;
 import two.twotility.tiles.TileCraftingBox;
-import two.twotility.tiles.TileWithInventory;
 import two.util.BlockSide;
 
 /**
@@ -152,16 +146,6 @@ public class BlockCraftingBox extends BlockWithInventory {
     final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), itemStack.getItemDamage());
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
-  }
-
-  @Override
-  protected ContainerBase doCreateContainer(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
-    return new ContainerCraftingBox(player.inventory, (TileCraftingBox) tileEntity);
-  }
-
-  @Override
-  protected Gui doCreateGUI(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
-    return new GUICraftingBox(player.inventory, (TileCraftingBox) tileEntity);
   }
 
   @Override

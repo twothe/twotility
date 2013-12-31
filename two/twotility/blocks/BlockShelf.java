@@ -10,11 +10,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -23,18 +21,10 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import static net.minecraftforge.common.ForgeDirection.EAST;
-import static net.minecraftforge.common.ForgeDirection.NORTH;
-import static net.minecraftforge.common.ForgeDirection.SOUTH;
-import static net.minecraftforge.common.ForgeDirection.WEST;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import two.twotility.TwoTility;
-import two.twotility.gui.GUIShelf;
-import two.twotility.inventory.ContainerBase;
-import two.twotility.inventory.ContainerShelf;
 import two.twotility.tiles.TileShelf;
-import two.twotility.tiles.TileWithInventory;
 import two.util.BlockSide;
 
 /**
@@ -178,15 +168,5 @@ public class BlockShelf extends BlockWithInventory {
   @Override
   public boolean isOpaqueCube() {
     return false;
-  }
-
-  @Override
-  protected ContainerBase doCreateContainer(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
-    return new ContainerShelf(player.inventory, (TileShelf) tileEntity);
-  }
-
-  @Override
-  protected Gui doCreateGUI(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z) {
-    return new GUIShelf(player.inventory, (TileShelf) tileEntity);
   }
 }

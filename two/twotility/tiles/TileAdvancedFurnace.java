@@ -6,7 +6,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Arrays;
 import net.minecraft.block.material.Material;
-import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -23,12 +24,15 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.IFluidTank;
 import two.twotility.TwoTility;
 import two.twotility.blocks.BlockAdvancedFurnace;
+import two.twotility.container.ContainerAdvancedFurnace;
+import two.twotility.container.ContainerBase;
 import two.twotility.fluid.FluidDrainTarget;
+import two.twotility.gui.GUIAdvancedFurnace;
 
 /**
  * @author Two
  */
-public class TileAdvancedFurnace extends TileWithInventory implements IFluidHandler, ISidedInventory {
+public class TileAdvancedFurnace extends TileWithInventory implements IFluidHandler {
 
   protected static final int FUEL_PER_LAVA_BLOCK = 20000;// 1 lava source block = 100 operations
   protected static final int SMELTING_DURATION = 160; // in ticks
@@ -393,9 +397,19 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     }
   }
 
+  @Override
+  public ContainerBase createContainer(final EntityPlayer player) {
+    return new ContainerAdvancedFurnace(player.inventory, this);
+  }
+
+  @Override
+  public Gui createGUI(final EntityPlayer player) {
+    return new GUIAdvancedFurnace(player.inventory, this);
+  }
   //----------------------------------------------------------------------------
   //--- ISidedInventory --------------------------------------------------------
   //----------------------------------------------------------------------------
+
   @Override
   public String getInvName() {
     return BlockAdvancedFurnace.NAME;

@@ -3,7 +3,7 @@
 
 package two.twotility.gui;
 
-import two.twotility.inventory.ContainerPouchSmall;
+import two.twotility.container.ContainerPouchSmall;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;

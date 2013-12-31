@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import two.twotility.GuiHandler;
 import two.twotility.blocks.BlockCraftingBox;
-import two.twotility.inventory.ContainerCraftingBox;
+import two.twotility.container.ContainerCraftingBox;
 import two.twotility.tiles.TileCraftingBox;
 
 /**

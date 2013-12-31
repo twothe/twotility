@@ -1,6 +1,6 @@
 /*
  */
-package two.twotility.inventory;
+package two.twotility.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

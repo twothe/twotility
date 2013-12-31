@@ -2,7 +2,13 @@
  */
 package two.twotility.tiles;
 
+import net.minecraft.client.gui.Gui;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryCrafting;
 import two.twotility.blocks.BlockCraftingBox;
+import two.twotility.container.ContainerBase;
+import two.twotility.container.ContainerCraftingBox;
+import two.twotility.gui.GUICraftingBox;
 import two.util.BlockSide;
 
 /**
@@ -29,14 +35,25 @@ public class TileCraftingBox extends TileWithInventory {
       ACCESSIBLE_SLOTS[index++] = slot;
     }
   }
+  protected final InventoryCrafting craftingMatrix;
   protected int craftingBoxType = BlockCraftingBox.STATE_BOX;
   protected int selectedRecipeIndex = RECIPE_INDEX_OFF;
   protected boolean needInitialization = true;
 
   public TileCraftingBox() {
     super(INVENTORY_SIZE);
+    this.craftingMatrix = new InventoryCrafting(null, 3, 3);
   }
 
+  @Override
+  public ContainerBase createContainer(final EntityPlayer player) {
+    return new ContainerCraftingBox(player.inventory, this);
+  }
+
+  @Override
+  public Gui createGUI(final EntityPlayer player) {
+    return new GUICraftingBox(player.inventory, this);
+  }
   public int getCraftingBoxType() {
     return BlockSide.getStateFromMetadata(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
   }

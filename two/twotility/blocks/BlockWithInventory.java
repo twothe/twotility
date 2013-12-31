@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import two.twotility.InitializableModContent;
 import two.twotility.TwoTility;
 import two.twotility.gui.GUICallback;
-import two.twotility.inventory.ContainerBase;
 import two.twotility.tiles.TileWithInventory;
 import two.util.InvalidTileEntityException;
 
@@ -50,30 +49,21 @@ public abstract class BlockWithInventory extends Block implements ITileEntityPro
    *
    * @return the fully created container.
    */
-  protected abstract ContainerBase doCreateContainer(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z);
-
   @Override
   public Container createContainer(final EntityPlayer player, final World world, final int x, final int y, final int z) throws InvalidTileEntityException {
     final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
     if (tileEntityClass.isInstance(tileEntity)) {
-      return (doCreateContainer(player, tileEntityClass.cast(tileEntity), world, x, y, z)).layout();
+      return tileEntityClass.cast(tileEntity).createContainer(player).layout();
     } else {
       throw new InvalidTileEntityException(tileEntityClass, tileEntity, x, y, z);
     }
   }
 
-  /**
-   * Create a new GUI class appropriate to the sub-class of this.
-   *
-   * @return the fully created GUI.
-   */
-  protected abstract Gui doCreateGUI(final EntityPlayer player, final TileWithInventory tileEntity, final World world, final int x, final int y, final int z);
-
   @Override
   public Gui createGUI(final EntityPlayer player, final World world, final int x, final int y, final int z) throws InvalidTileEntityException {
     final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
     if (tileEntityClass.isInstance(tileEntity)) {
-      return doCreateGUI(player, tileEntityClass.cast(tileEntity), world, x, y, z);
+      return tileEntityClass.cast(tileEntity).createGUI(player);
     } else {
       throw new InvalidTileEntityException(tileEntityClass, tileEntity, x, y, z);
     }

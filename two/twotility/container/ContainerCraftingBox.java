@@ -1,6 +1,6 @@
 /*
  */
-package two.twotility.inventory;
+package two.twotility.container;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
@@ -10,8 +10,12 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import two.twotility.gui.GUICraftingBox;
+import two.twotility.gui.slots.SlotCraftingSource;
+import two.twotility.inventory.CraftingInventoryView;
 import two.twotility.tiles.TileCraftingBox;
 
 /**
@@ -21,11 +25,14 @@ public class ContainerCraftingBox extends ContainerBase {
 
   protected final static int UPDATEID_SELECTED_RECIPE = 0;
   protected final TileCraftingBox tileCraftingBox;
+  protected final CraftingInventoryView craftingMatrix;
+  protected Slot craftingResult;
   protected int lastSelectedRecipe = 0;
 
   public ContainerCraftingBox(final InventoryPlayer inventoryPlayer, final TileCraftingBox tileCraftingBox) {
     super(inventoryPlayer, 6, tileCraftingBox.isCraftingBoxType() ? 179 - GUICraftingBox.HEIGHT_RECIPE_ROW : 179, 6, tileCraftingBox.isCraftingBoxType() ? 124 - GUICraftingBox.HEIGHT_RECIPE_ROW : 124);
     this.tileCraftingBox = tileCraftingBox;
+    this.craftingMatrix = new CraftingInventoryView(tileCraftingBox, this, TileCraftingBox.INVENTORY_START_CRAFTING, 3, 3, true);
     this.lastSelectedRecipe = tileCraftingBox.getSelectedRecipeIndex();
   }
 
@@ -56,7 +63,8 @@ public class ContainerCraftingBox extends ContainerBase {
     }
 
     // crafting result
-    this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 78, 76));
+    this.craftingResult = createSlot(tileCraftingBox, slotCount++, 78, 76);
+    this.addSlotToContainer(craftingResult);
 
     if (tileCraftingBox.isAdvancedCraftingBoxType()) {
       for (int x = 0; x < TileCraftingBox.INVENTORY_SIZE_RECIPE; ++x) {
@@ -74,14 +82,20 @@ public class ContainerCraftingBox extends ContainerBase {
     } else if ((slotIndex >= TileCraftingBox.INVENTORY_START_STORAGE) && (slotIndex < TileCraftingBox.INVENTORY_START_STORAGE + TileCraftingBox.INVENTORY_SIZE_STORAGE)) {
       return super.createSlot(tileCraftingBox, slotIndex, x, y);
     } else if ((slotIndex >= TileCraftingBox.INVENTORY_START_CRAFTING) && (slotIndex < TileCraftingBox.INVENTORY_START_CRAFTING + TileCraftingBox.INVENTORY_SIZE_CRAFTING)) {
-      return super.createSlot(tileCraftingBox, slotIndex, x, y);
+      return new SlotCraftingSource(this, tileCraftingBox, slotIndex, x, y);
     } else if ((slotIndex >= TileCraftingBox.INVENTORY_START_CRAFTING_RESULT) && (slotIndex < TileCraftingBox.INVENTORY_START_CRAFTING_RESULT + TileCraftingBox.INVENTORY_SIZE_CRAFTING_RESULT)) {
-      return super.createSlot(tileCraftingBox, slotIndex, x, y);
+      return new SlotCrafting(inventoryPlayer.player, craftingMatrix, tileCraftingBox, slotIndex, x, y);
     } else if ((slotIndex >= TileCraftingBox.INVENTORY_START_RECIPE) && (slotIndex < TileCraftingBox.INVENTORY_START_RECIPE + TileCraftingBox.INVENTORY_SIZE_RECIPE)) {
       return super.createSlot(tileCraftingBox, slotIndex, x, y);
     } else {
       throw new IllegalArgumentException("Slot index #" + slotIndex + " is invalid for " + tileCraftingBox.getClass().getSimpleName());
     }
+  }
+
+  @Override
+  public void onCraftMatrixChanged(final IInventory inventory) {
+    this.craftingResult.putStack(CraftingManager.getInstance().findMatchingRecipe(this.craftingMatrix, tileCraftingBox.worldObj));
+    super.onCraftMatrixChanged(inventory);
   }
 
   @Override

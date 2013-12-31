@@ -1,6 +1,6 @@
 /*
  */
-package two.twotility.inventory;
+package two.twotility.container;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;

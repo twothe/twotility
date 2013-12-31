@@ -14,7 +14,8 @@ import net.minecraftforge.common.Property;
  */
 public class Config {
 
-  protected static final String CATEGORY_VARIOUS_SETTINGS = "settings";
+  protected static final String CATEGORY_ALLOWED_RECIPES = "Allowed Recipes";
+  protected static final String CATEGORY_VARIOUS_SETTINGS = "Settings";
   //--- Class ------------------------------------------------------------------
   public static final AtomicInteger blockIDs = new AtomicInteger(745);
   public static final AtomicInteger itemIDs = new AtomicInteger(6928);
@@ -57,7 +58,7 @@ public class Config {
   }
 
   public boolean isCraftingEnabled(final String key, final boolean defaultValue) {
-    final Property property = configuration.get("Allowed Recipes", key, defaultValue);
+    final Property property = configuration.get(CATEGORY_ALLOWED_RECIPES, key, defaultValue);
     return property.getBoolean(defaultValue);
   }
 

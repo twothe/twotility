@@ -2,7 +2,12 @@
  */
 package two.twotility.tiles;
 
+import net.minecraft.client.gui.Gui;
+import net.minecraft.entity.player.EntityPlayer;
 import two.twotility.blocks.BlockShelf;
+import two.twotility.container.ContainerBase;
+import two.twotility.container.ContainerShelf;
+import two.twotility.gui.GUIShelf;
 
 /**
  * @author Two
@@ -23,6 +28,16 @@ public class TileShelf extends TileWithInventory {
 
   public TileShelf() {
     super(INVENTORY_SIZE);
+  }
+
+  @Override
+  public ContainerBase createContainer(final EntityPlayer player) {
+    return new ContainerShelf(player.inventory, this);
+  }
+
+  @Override
+  public Gui createGUI(final EntityPlayer player) {
+    return new GUIShelf(player.inventory, this);
   }
 
   @Override

@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import two.twotility.GuiHandler;
 import two.twotility.blocks.BlockShelf;
-import two.twotility.inventory.ContainerShelf;
+import two.twotility.container.ContainerShelf;
 import two.twotility.tiles.TileShelf;
 
 /**

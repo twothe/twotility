@@ -14,7 +14,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.TwoTility;
-import two.twotility.inventory.ContainerPouchSmall;
+import two.twotility.container.ContainerPouchSmall;
 import two.twotility.gui.GUICallback;
 import two.twotility.gui.GUIPouchSmall;
 import two.twotility.tiles.TilePouchSmall;

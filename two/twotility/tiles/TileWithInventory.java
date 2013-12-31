@@ -4,6 +4,7 @@ package two.twotility.tiles;
 
 import cpw.mods.fml.common.FMLLog;
 import java.util.logging.Level;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import two.twotility.TwoTility;
+import two.twotility.container.ContainerBase;
 
 /**
  * @author Two
@@ -132,26 +134,31 @@ public abstract class TileWithInventory extends TileEntity implements ISidedInve
     return true;
   }
 
-  @Override
-  public void readFromNBT(final NBTTagCompound tagCompound) {
-    super.readFromNBT(tagCompound);
+  public abstract ContainerBase createContainer(final EntityPlayer player);
 
-    final NBTTagList inventoryList = tagCompound.getTagList(NBT_TAG_ITEMLIST);
+  public abstract Gui createGUI(final EntityPlayer player);
+
+  protected static void readInventoryFromNBT(final NBTTagCompound tagCompound, final String inventoryName, final ItemStack[] inventory) {
+    final NBTTagList inventoryList = tagCompound.getTagList(inventoryName);
     for (int tagCount = inventoryList.tagCount() - 1; tagCount >= 0; --tagCount) {
       final NBTTagCompound itemEntry = (NBTTagCompound) inventoryList.tagAt(tagCount);
       final byte slotID = itemEntry.getByte(NBT_TAG_SLOT);
       if ((slotID >= 0) && (slotID < inventory.length)) {
         inventory[slotID] = ItemStack.loadItemStackFromNBT(itemEntry);
       } else {
-        FMLLog.warning(this.getClass().getSimpleName() + " received illegal NBT inventory slot. Valid range: 0-%d but got %d.", getSizeInventory(), slotID);
+        FMLLog.warning(TileWithInventory.class.getSimpleName() + " received illegal NBT inventory slot. Valid range: 0-%d but got %d.", inventory.length, slotID);
       }
     }
   }
 
   @Override
-  public void writeToNBT(final NBTTagCompound tagCompound) {
-    super.writeToNBT(tagCompound);
+  public void readFromNBT(final NBTTagCompound tagCompound) {
+    super.readFromNBT(tagCompound);
 
+    readInventoryFromNBT(tagCompound, NBT_TAG_ITEMLIST, inventory);
+  }
+
+  protected static void writeInventoryToNBT(final NBTTagCompound tagCompound, final String inventoryName, final ItemStack[] inventory) {
     final NBTTagList inventoryList = new NBTTagList();
     for (byte slot = 0; slot < inventory.length; ++slot) {
       final ItemStack inventorySlot = inventory[slot];
@@ -162,11 +169,22 @@ public abstract class TileWithInventory extends TileEntity implements ISidedInve
         inventoryList.appendTag(itemEntry);
       }
     }
-    tagCompound.setTag(NBT_TAG_ITEMLIST, inventoryList);
+    tagCompound.setTag(inventoryName, inventoryList);
+  }
+
+  @Override
+  public void writeToNBT(final NBTTagCompound tagCompound) {
+    super.writeToNBT(tagCompound);
+
+    writeInventoryToNBT(tagCompound, NBT_TAG_ITEMLIST, inventory);
   }
 
   public void spillOutInventory() {
-    for (final ItemStack itemstack : this.inventory) {
+    this.spillOutInventory(inventory);
+  }
+
+  public void spillOutInventory(final ItemStack[] inventory) {
+    for (final ItemStack itemstack : inventory) {
       if (itemstack != null) {
         final float modX = worldObj.rand.nextFloat() * 0.8F + 0.1F;
         final float modY = worldObj.rand.nextFloat() * 0.8F + 0.1F;

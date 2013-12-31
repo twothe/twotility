@@ -2,7 +2,7 @@
  */
 package two.twotility.gui;
 
-import two.twotility.inventory.ContainerAdvancedFurnace;
+import two.twotility.container.ContainerAdvancedFurnace;
 import two.twotility.GuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
