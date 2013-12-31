@@ -28,6 +28,8 @@ public class ContainerAdvancedFurnace extends ContainerBase {
   public ContainerAdvancedFurnace(final InventoryPlayer inventoryPlayer, final TileAdvancedFurnace tileAdvancedFurnace) {
     super(inventoryPlayer, 4, 155, 4, 99);
     this.tileAdvancedFurnace = tileAdvancedFurnace;
+    this.lastStoredFuel = this.tileAdvancedFurnace.getStoredFuel();
+    this.lastSmeltTime = this.tileAdvancedFurnace.getRemainingSmeltTime();
   }
 
   @Override

@@ -17,8 +17,8 @@ public class TileCraftingBox extends TileWithInventory {
   public static final int INVENTORY_START_CRAFTING_RESULT = INVENTORY_START_CRAFTING + INVENTORY_SIZE_CRAFTING;
   public static final int INVENTORY_SIZE_CRAFTING_RESULT = 1;
   public static final int INVENTORY_START_RECIPE = INVENTORY_START_CRAFTING_RESULT + INVENTORY_SIZE_CRAFTING_RESULT;
-  public static final int INVENTORY_SIZE_RECIPE = 7;
-  public static final int RECIPE_INDEX_OFF = INVENTORY_SIZE_RECIPE / 2 + 1;
+  public static final int INVENTORY_SIZE_RECIPE = 9;
+  public static final int RECIPE_INDEX_OFF = INVENTORY_SIZE_RECIPE / 2;
   public static final int INVENTORY_SIZE = INVENTORY_SIZE_STORAGE + INVENTORY_SIZE_CRAFTING + INVENTORY_SIZE_CRAFTING_RESULT + INVENTORY_SIZE_RECIPE;
   protected static final int[] ACCESSIBLE_SLOTS = new int[INVENTORY_SIZE_STORAGE];
   protected static final int[] ACCESSIBLE_SLOTS_BOTTOM = {INVENTORY_START_CRAFTING_RESULT};
@@ -38,19 +38,15 @@ public class TileCraftingBox extends TileWithInventory {
   }
 
   public int getCraftingBoxType() {
-    return craftingBoxType;
+    return BlockSide.getStateFromMetadata(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
   }
 
   public boolean isCraftingBoxType() {
-    return this.craftingBoxType == BlockCraftingBox.STATE_BOX;
+    return this.getCraftingBoxType() == BlockCraftingBox.STATE_BOX;
   }
 
   public boolean isAdvancedCraftingBoxType() {
-    return this.craftingBoxType == BlockCraftingBox.STATE_ADVANCED;
-  }
-
-  public void setCraftingBoxType(final int craftingBoxType) {
-    this.craftingBoxType = craftingBoxType;
+    return this.getCraftingBoxType() == BlockCraftingBox.STATE_ADVANCED;
   }
 
   public int getSelectedRecipeIndex() {

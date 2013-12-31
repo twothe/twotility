@@ -2,8 +2,12 @@
  */
 package two.twotility.inventory;
 
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -15,11 +19,14 @@ import two.twotility.tiles.TileCraftingBox;
  */
 public class ContainerCraftingBox extends ContainerBase {
 
+  protected final static int UPDATEID_SELECTED_RECIPE = 0;
   protected final TileCraftingBox tileCraftingBox;
+  protected int lastSelectedRecipe = 0;
 
   public ContainerCraftingBox(final InventoryPlayer inventoryPlayer, final TileCraftingBox tileCraftingBox) {
     super(inventoryPlayer, 6, tileCraftingBox.isCraftingBoxType() ? 179 - GUICraftingBox.HEIGHT_RECIPE_ROW : 179, 6, tileCraftingBox.isCraftingBoxType() ? 124 - GUICraftingBox.HEIGHT_RECIPE_ROW : 124);
     this.tileCraftingBox = tileCraftingBox;
+    this.lastSelectedRecipe = tileCraftingBox.getSelectedRecipeIndex();
   }
 
   @Override
@@ -52,7 +59,7 @@ public class ContainerCraftingBox extends ContainerBase {
     this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 78, 76));
 
     if (tileCraftingBox.isAdvancedCraftingBoxType()) {
-      for (int x = 0; x < 9; ++x) {
+      for (int x = 0; x < TileCraftingBox.INVENTORY_SIZE_RECIPE; ++x) {
         this.addSlotToContainer(createSlot(tileCraftingBox, slotCount++, 6 + x * 18, 100));
       }
     }
@@ -74,6 +81,42 @@ public class ContainerCraftingBox extends ContainerBase {
       return super.createSlot(tileCraftingBox, slotIndex, x, y);
     } else {
       throw new IllegalArgumentException("Slot index #" + slotIndex + " is invalid for " + tileCraftingBox.getClass().getSimpleName());
+    }
+  }
+
+  @Override
+  public void addCraftingToCrafters(final ICrafting crafting) {
+    super.addCraftingToCrafters(crafting);
+    crafting.sendProgressBarUpdate(this, UPDATEID_SELECTED_RECIPE, this.tileCraftingBox.getSelectedRecipeIndex());
+  }
+
+  /**
+   * Looks for changes made in the container, sends them to every listener.
+   */
+  @Override
+  public void detectAndSendChanges() {
+    super.detectAndSendChanges();
+
+    final int newSelectedRecipe = this.tileCraftingBox.getSelectedRecipeIndex();
+    if (lastSelectedRecipe != newSelectedRecipe) {
+      this.lastSelectedRecipe = newSelectedRecipe;
+      for (int i = 0; i < this.crafters.size(); ++i) {
+        final ICrafting icrafting = (ICrafting) this.crafters.get(i);
+        icrafting.sendProgressBarUpdate(this, UPDATEID_SELECTED_RECIPE, newSelectedRecipe);
+      }
+    }
+  }
+
+  @SideOnly(Side.CLIENT)
+  @Override
+  public void updateProgressBar(final int updateID, final int newValue) {
+    switch (updateID) {
+      case UPDATEID_SELECTED_RECIPE:
+        tileCraftingBox.setSelectedRecipeIndex(newValue);
+        break;
+      default:
+        FMLLog.warning("%s received update event for unknown ID %d", this.getClass().getSimpleName(), updateID);
+        break;
     }
   }
 
