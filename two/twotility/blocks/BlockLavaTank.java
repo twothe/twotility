@@ -69,6 +69,7 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
   public void initialize() {
     setHardness(2.5F);
     setLightOpacity(0);
+    setLightValue(8.0f/15.0f);
     setStepSound(soundMetalFootstep);
     setUnlocalizedName(NAME);
     MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);

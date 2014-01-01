@@ -82,7 +82,7 @@ public class BlockShelf extends BlockWithInventory {
     stateIcons[STATE_FULL] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_full");
   }
 
-  protected Icon getFrontFaceByState(final int state) {
+  protected Icon getSideIconByState(final int state) {
     if ((state >= 0) && (state < stateIcons.length)) {
       return stateIcons[state];
     } else {
@@ -96,7 +96,7 @@ public class BlockShelf extends BlockWithInventory {
   public Icon getIcon(final int side, final int metadata) {
     switch (BlockSide.getRotatedSide(side, metadata)) {
       case NORTH:
-        return getFrontFaceByState(BlockSide.getBlockDataFromMetadata(metadata));
+        return getSideIconByState(BlockSide.getBlockDataFromMetadata(metadata));
       default:
         return iconDefault;
     }
@@ -143,7 +143,7 @@ public class BlockShelf extends BlockWithInventory {
 
   @Override
   public void setBlockBoundsBasedOnState(final IBlockAccess world, final int x, final int y, final int z) {
-    final BlockSide facing = BlockSide.facingFromMetadata(world.getBlockMetadata(x, y, z));
+    final BlockSide facing = BlockSide.fromMetadata(world.getBlockMetadata(x, y, z));
     switch (facing) {
       case NORTH:
         this.setBlockBounds(0.0F, 0.0F, 0.75F, 1.0F, 1.0F, 1.0F);

@@ -131,7 +131,7 @@ public enum BlockSide {
    * @return the direction the entity is looking at as CW 0 (west) to 3 (south)
    */
   public static int getLookDirection(final EntityLivingBase entity) {
-    return createRotationData(MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3); // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
+    return MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3; // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
   }
 
   /**
@@ -141,7 +141,7 @@ public enum BlockSide {
    * @return the BlockSide the entity is looking at
    */
   public static BlockSide getLookSide(final EntityLivingBase entity) {
-    return facingFromMetadata(getLookDirection(entity));
+    return fromDirection(getLookDirection(entity));
   }
 
   /**
@@ -152,7 +152,7 @@ public enum BlockSide {
    * @return the direction that is facing the entity as CW 0 (west) to 3 (south)
    */
   public static int getDirectionFacing(final EntityLivingBase entity) {
-    return createRotationData(MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3); // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
+    return MathHelper.floor_double(((double) (entity.rotationYaw + 360.0F - 45.0F + 180.0F)) / 90.0) & 3; // Minecraft is -180° (north) to 180° CW, +360 to replace modulo with &
   }
 
   /**
@@ -162,7 +162,7 @@ public enum BlockSide {
    * @return the BlockSide that is facing the entity.
    */
   public static BlockSide getSideFacing(final EntityLivingBase entity) {
-    return facingFromMetadata(getDirectionFacing(entity));
+    return fromDirection(getDirectionFacing(entity));
   }
 
   /**
@@ -194,12 +194,21 @@ public enum BlockSide {
   }
 
   /**
+   * Returns the raw rotation data as found in the given metadata.
+   * @param metadata the block's metadata.
+   * @return the raw rotation data as found in the given metadata.
+   */
+  public static int getRotationData(final int metadata) {
+    return metadata & ROTATION_MASK;
+  }
+  
+  /**
    * Returns the BlockSide according the given metadata.
    *
    * @param metadata metadata created by createRotationData.
    * @return the BlockSide according the given metadata.
    */
-  public static int extractRotationData(final int metadata) {
+  public static int getDirectionFrom(final int metadata) {
     return (metadata & ROTATION_MASK) >>> 2;
   }
 
@@ -217,7 +226,7 @@ public enum BlockSide {
       case 1:
         return TOP;
       case 2: // north side
-        switch (extractRotationData(metadata)) {
+        switch (getDirectionFrom(metadata)) {
           case 0: // facing west
             return EAST;
           case 1: // facing north
@@ -228,7 +237,7 @@ public enum BlockSide {
             return SOUTH;
         }
       case 3: // south side
-        switch (extractRotationData(metadata)) {
+        switch (getDirectionFrom(metadata)) {
           case 0: // facing west
             return WEST;
           case 1: // facing north
@@ -239,7 +248,7 @@ public enum BlockSide {
             return NORTH;
         }
       case 4: // west side
-        switch (extractRotationData(metadata)) {
+        switch (getDirectionFrom(metadata)) {
           case 0: // facing west
             return NORTH;
           case 1: // facing north
@@ -250,7 +259,7 @@ public enum BlockSide {
             return EAST;
         }
       case 5: // east side
-        switch (extractRotationData(metadata)) {
+        switch (getDirectionFrom(metadata)) {
           case 0: // facing west
             return SOUTH;
           case 1: // facing north
@@ -276,13 +285,23 @@ public enum BlockSide {
   }
 
   /**
-   * Returns the side that corresponds to direction.
+   * Returns the side that corresponds to direction as encoded in the metadata.
    *
    * @param metadata the direction to look up.
    * @return the side that corresponds to direction.
    */
-  public static BlockSide facingFromMetadata(final int metadata) {
-    switch (extractRotationData(metadata)) {
+  public static BlockSide fromMetadata(final int metadata) {
+    return fromDirection(getDirectionFrom(metadata));
+  }
+
+  /**
+   * Returns the side that corresponds to direction.
+   *
+   * @param direction the direction to look up.
+   * @return the side that corresponds to direction.
+   */
+  public static BlockSide fromDirection(final int direction) {
+    switch (direction & 3) {
       case 0:
         return WEST;
       case 1:
@@ -292,7 +311,7 @@ public enum BlockSide {
       case 3:
         return SOUTH;
     }
-    throw new IllegalArgumentException("Illegal direction " + metadata); // impossible to reach
+    throw new IllegalArgumentException("Illegal direction " + direction); // impossible to reach
   }
 
   /**
@@ -306,7 +325,7 @@ public enum BlockSide {
   }
 
   /**
-   * Creates a block's state from its current metadata and rotation data.
+   * Updates a block's state from its current metadata and block state.
    *
    * @param metaCurrent the block's current metadata.
    * @param state the block's internal state.
@@ -316,7 +335,18 @@ public enum BlockSide {
     return ((metaCurrent & BlockSide.ROTATION_MASK) | (state & BlockSide.DATA_MASK));
   }
 
+  /**
+   * Creates a block's metadata using the given rotation data and state.
+   *
+   * @param metaCurrent the block's rotation data.
+   * @param state the block's internal state.
+   * @return the block's metadata.
+   */
+  public static int createState(final int rotationData, final int state) {
+    return (createRotationData(rotationData) | (state & BlockSide.DATA_MASK));
+  }
+
   public static int createState(final BlockSide blockFacing, final int state) {
-    return updateState(createRotationData(blockFacing), state);
+    return createState(blockFacing.direction(), state);
   }
 }

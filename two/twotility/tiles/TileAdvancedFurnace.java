@@ -245,7 +245,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   protected void updateMetadata() {
     if (worldObj.isRemote == false) {
       final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-      final int newMetadata = BlockAdvancedFurnace.createState(currentMetadata, this.storedFuel > 0, this.inventory[INVENTORY_START_PROCESSING] != null);
+      final int newMetadata = BlockAdvancedFurnace.updateState(currentMetadata, this.storedFuel > 0, this.inventory[INVENTORY_START_PROCESSING] != null);
       if (newMetadata != currentMetadata) {
         worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 3);
       }

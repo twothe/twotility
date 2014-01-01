@@ -32,21 +32,16 @@ public class BlockCraftingBox extends BlockWithInventory {
   public static final String NAME_BOX = "CraftingBox";
   public static final String NAME_ADVANCED = "AdvancedCraftingBox";
   public static final int STATE_BOX = 0;
-  public static final int STATE_ADVANCED = STATE_BOX + 1;
-  public static final int NUM_STATES = STATE_ADVANCED + 1;
+  public static final int STATE_ADVANCED = 0x04;
   protected static final String CONFIG_KEY_IS_NOISY = "Crafting Box is noisy";
 //-- Class -------------------------------------------------------------------
   public final boolean isNoisy;
   @SideOnly(Side.CLIENT)
-  protected Icon[] stateIcons = new Icon[NUM_STATES];
-  @SideOnly(Side.CLIENT)
-  protected Icon iconSide;
-  @SideOnly(Side.CLIENT)
   protected Icon iconTop;
   @SideOnly(Side.CLIENT)
-  protected Icon iconBottom;
+  protected Icon iconTopAdvanced;
   @SideOnly(Side.CLIENT)
-  protected Icon iconBack;
+  protected Icon iconBottom;
   protected ItemStack itemBox;
   protected ItemStack itemAdvanced;
 
@@ -99,39 +94,32 @@ public class BlockCraftingBox extends BlockWithInventory {
   @SideOnly(Side.CLIENT)
   @Override
   public void registerIcons(final IconRegister iconRegister) {
-    stateIcons[STATE_BOX] = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX));
-    stateIcons[STATE_ADVANCED] = iconRegister.registerIcon(TwoTility.getTextureName(NAME_ADVANCED));
-
-    iconSide = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_side");
-    iconBack = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_back");
-    iconTop = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_top");
+    iconTop = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX));
+    iconTopAdvanced = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_advanced");
     iconBottom = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_bottom");
   }
 
-  protected Icon getFrontfaceByState(final int state) {
-    if ((state >= 0) && (state < stateIcons.length)) {
-      return stateIcons[state];
-    } else {
-      FMLLog.warning("Illegal front face state #%d for %s.", state, this.getClass().getSimpleName());
-      return stateIcons[0];
+  protected Icon getTopIconByState(final int state) {
+    switch (state) {
+      case STATE_BOX:
+        return iconTop;
+      case STATE_ADVANCED:
+        return iconTopAdvanced;
     }
+    FMLLog.warning("Illegal top-face state #%d for %s.", state, this.getClass().getSimpleName());
+    return iconTop;
   }
 
   @SideOnly(Side.CLIENT)
   @Override
   public Icon getIcon(final int side, final int metadata) {
-    final BlockSide rotatedSide = BlockSide.getRotatedSide(side, metadata);
-    switch (rotatedSide) {
-      case NORTH:
-        return getFrontfaceByState(BlockSide.getBlockDataFromMetadata(metadata));
-      case SOUTH:
-        return iconBack;
+    switch (BlockSide.getSide(side)) {
       case TOP:
-        return iconTop;
+        return getTopIconByState(BlockSide.getRotationData(metadata));
       case BOTTOM:
         return iconBottom;
       default:
-        return iconSide;
+        return TwoTility.proxy.blockShelf.getSideIconByState(BlockSide.getBlockDataFromMetadata(metadata));
     }
   }
 
@@ -143,14 +131,14 @@ public class BlockCraftingBox extends BlockWithInventory {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = BlockSide.updateState(BlockSide.getDirectionFacing(entity), itemStack.getItemDamage());
+    final int metadata = BlockSide.getRotationData(itemStack.getItemDamage());
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
 
   @Override
   public int damageDropped(final int metadata) {
-    return BlockSide.getBlockDataFromMetadata(metadata);
+    return BlockSide.getRotationData(metadata);
   }
 
   @Override

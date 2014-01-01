@@ -53,6 +53,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
   public void initialize() {
     setHardness(2.5F);
     setResistance(9.0f);
+    setLightValue(4.0f / 15.0f);
     setStepSound(soundStoneFootstep);
     setUnlocalizedName(NAME);
     setTextureName(TwoTility.getTextureName(NAME));
@@ -111,12 +112,12 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = BlockSide.updateState(BlockSide.getDirectionFacing(entity), 0);
+    final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), 0);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
 
-  public static int createState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {
+  public static int updateState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {
     return BlockSide.updateState(metaCurrent, (hasFuel ? STATE_HAS_FUEL : 0) | (hasWork ? STATE_FILLED : 0));
   }
 }

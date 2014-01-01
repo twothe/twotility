@@ -54,8 +54,9 @@ public class TileCraftingBox extends TileWithInventory {
   public Gui createGUI(final EntityPlayer player) {
     return new GUICraftingBox(player.inventory, this);
   }
+
   public int getCraftingBoxType() {
-    return BlockSide.getBlockDataFromMetadata(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+    return BlockSide.getRotationData(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
   }
 
   public boolean isCraftingBoxType() {
@@ -72,6 +73,19 @@ public class TileCraftingBox extends TileWithInventory {
 
   public void setSelectedRecipeIndex(final int selectedRecipeIndex) {
     this.selectedRecipeIndex = selectedRecipeIndex;
+  }
+
+  @Override
+  public void onInventoryChanged() {
+    if (worldObj.isRemote == false) {
+      final int currentMeta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+      final int newMeta = BlockSide.updateState(currentMeta, TileShelf.calculateFillState(inventory, currentMeta));
+
+      if (newMeta != currentMeta) {
+        worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMeta, 2);
+      }
+    }
+    super.onInventoryChanged();
   }
 
   @Override
