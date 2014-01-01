@@ -16,9 +16,9 @@ public class CraftingInventoryView extends InventoryCrafting {
   protected IInventory source;
   protected final ContainerBase eventHandler;
   protected final int offset, width, height, size;
-  protected boolean refill;
+  protected boolean takeFromInventory;
 
-  public CraftingInventoryView(final IInventory source, final ContainerBase container, final int offset, final int width, final int height, final boolean refill) {
+  public CraftingInventoryView(final IInventory source, final ContainerBase container, final int offset, final int width, final int height, final boolean takeFromInventory) {
     super(container, width, height);
     this.eventHandler = container;
     this.width = width;
@@ -26,7 +26,7 @@ public class CraftingInventoryView extends InventoryCrafting {
     this.size = width * height;
     this.source = source;
     this.offset = offset;
-    this.refill = refill;
+    this.takeFromInventory = takeFromInventory;
   }
 
   protected ItemStack takeFromSource(final int index, int amount) {
@@ -48,12 +48,12 @@ public class CraftingInventoryView extends InventoryCrafting {
     return requestedItem;
   }
 
-  public boolean isRefill() {
-    return refill;
+  public boolean isTakingFromInventory() {
+    return takeFromInventory;
   }
 
-  public void setRefill(final boolean refill) {
-    this.refill = refill;
+  public void setTakeFromInventory(final boolean takeFromInventory) {
+    this.takeFromInventory = takeFromInventory;
   }
 
   @Override
@@ -73,7 +73,7 @@ public class CraftingInventoryView extends InventoryCrafting {
 
   @Override
   public ItemStack decrStackSize(final int index, final int amount) {
-    if (refill) {
+    if (takeFromInventory) {
       final ItemStack taken = takeFromSource(index, amount);
       if (taken.stackSize < amount) {
         taken.stackSize += source.decrStackSize(index + offset, amount - taken.stackSize).stackSize;

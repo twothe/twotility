@@ -117,7 +117,7 @@ public class ContainerCraftingBox extends ContainerBase {
       for (int i = 0; i < this.crafters.size(); ++i) {
         final ICrafting icrafting = (ICrafting) this.crafters.get(i);
         icrafting.sendProgressBarUpdate(this, UPDATEID_SELECTED_RECIPE, newSelectedRecipe);
-        craftingMatrix.setRefill(tileCraftingBox.isAutocraftingEnabled());
+        craftingMatrix.setTakeFromInventory(tileCraftingBox.isAutocraftingEnabled());
       }
     }
   }
@@ -128,7 +128,7 @@ public class ContainerCraftingBox extends ContainerBase {
     switch (updateID) {
       case UPDATEID_SELECTED_RECIPE:
         tileCraftingBox.setSelectedRecipeIndex(newValue);
-        craftingMatrix.setRefill(tileCraftingBox.isAutocraftingEnabled());
+        craftingMatrix.setTakeFromInventory(tileCraftingBox.isAutocraftingEnabled());
         break;
       default:
         FMLLog.warning("%s received update event for unknown ID %d", this.getClass().getSimpleName(), updateID);

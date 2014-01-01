@@ -74,20 +74,20 @@ public class BlockCraftingBox extends BlockWithInventory {
               'C', TwoTility.proxy.blockShelf,
               'F', Block.workbench);
     }
-
-    if (TwoTility.config.isCraftingEnabled(NAME_ADVANCED)) {
-      CraftingManager.getInstance().addRecipe(itemAdvanced,
-              "DCD",
-              "BRL",
-              "dPd",
-              'C', itemBox,
-              'D', Item.diamond,
-              'd', Item.redstone, // dust
-              'B', Item.writableBook,
-              'L', Block.lever,
-              'P', Block.pistonBase,
-              'R', Item.redstoneRepeater);
-    }
+//
+//    if (TwoTility.config.isCraftingEnabled(NAME_ADVANCED)) {
+//      CraftingManager.getInstance().addRecipe(itemAdvanced,
+//              "DCD",
+//              "BRL",
+//              "dPd",
+//              'C', itemBox,
+//              'D', Item.diamond,
+//              'd', Item.redstone, // dust
+//              'B', Item.writableBook,
+//              'L', Block.lever,
+//              'P', Block.pistonBase,
+//              'R', Item.redstoneRepeater);
+//    }
   }
 
   @SideOnly(Side.CLIENT)
