@@ -13,6 +13,7 @@ import two.twotility.blocks.BlockShelf;
 import two.twotility.items.ItemCraftingBox;
 import two.twotility.items.ItemLavaTank;
 import two.twotility.items.ItemPouchSmall;
+import two.twotility.items.ItemTeddy;
 
 /**
  * @author Two
@@ -23,6 +24,7 @@ public class ProxyBase {
   public ItemLavaTank itemLavaTank;
   public ItemPouchSmall itemPouchSmall;
   public ItemCraftingBox itemCraftingBox;
+  public ItemTeddy itemTeddy;
   /* Blocks */
   public BlockAdvancedFurnace blockAdvancedFurnace;
   public BlockLavaTank blockLavaTank;
@@ -45,7 +47,7 @@ public class ProxyBase {
 
     blockShelf = new BlockShelf();
     pendingInitialization.add(blockShelf);
-    
+
     blockCraftingBox = new BlockCraftingBox();
     pendingInitialization.add(blockCraftingBox);
   }
@@ -53,12 +55,15 @@ public class ProxyBase {
   protected void registerItems() {
     itemLavaTank = new ItemLavaTank(blockLavaTank);
     pendingInitialization.add(itemLavaTank);
-    
+
     itemPouchSmall = new ItemPouchSmall();
     pendingInitialization.add(itemPouchSmall);
 
     itemCraftingBox = new ItemCraftingBox(blockCraftingBox);
     pendingInitialization.add(itemCraftingBox);
+    
+    itemTeddy = new ItemTeddy();
+    pendingInitialization.add(itemTeddy);
   }
 
   protected void registerRenderers() {
