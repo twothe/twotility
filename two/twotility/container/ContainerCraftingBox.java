@@ -32,7 +32,7 @@ public class ContainerCraftingBox extends ContainerBase {
   public ContainerCraftingBox(final InventoryPlayer inventoryPlayer, final TileCraftingBox tileCraftingBox) {
     super(inventoryPlayer, 6, tileCraftingBox.isCraftingBoxType() ? 179 - GUICraftingBox.HEIGHT_RECIPE_ROW : 179, 6, tileCraftingBox.isCraftingBoxType() ? 124 - GUICraftingBox.HEIGHT_RECIPE_ROW : 124);
     this.tileCraftingBox = tileCraftingBox;
-    this.craftingMatrix = new CraftingInventoryView(tileCraftingBox, this, TileCraftingBox.INVENTORY_START_CRAFTING, 3, 3, true);
+    this.craftingMatrix = new CraftingInventoryView(tileCraftingBox, this, TileCraftingBox.INVENTORY_START_CRAFTING, 3, 3, tileCraftingBox.isAutocraftingEnabled());
     this.lastSelectedRecipe = tileCraftingBox.getSelectedRecipeIndex();
   }
 
@@ -117,6 +117,7 @@ public class ContainerCraftingBox extends ContainerBase {
       for (int i = 0; i < this.crafters.size(); ++i) {
         final ICrafting icrafting = (ICrafting) this.crafters.get(i);
         icrafting.sendProgressBarUpdate(this, UPDATEID_SELECTED_RECIPE, newSelectedRecipe);
+        craftingMatrix.setRefill(tileCraftingBox.isAutocraftingEnabled());
       }
     }
   }
@@ -127,6 +128,7 @@ public class ContainerCraftingBox extends ContainerBase {
     switch (updateID) {
       case UPDATEID_SELECTED_RECIPE:
         tileCraftingBox.setSelectedRecipeIndex(newValue);
+        craftingMatrix.setRefill(tileCraftingBox.isAutocraftingEnabled());
         break;
       default:
         FMLLog.warning("%s received update event for unknown ID %d", this.getClass().getSimpleName(), updateID);

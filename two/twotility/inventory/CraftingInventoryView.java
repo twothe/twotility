@@ -16,7 +16,7 @@ public class CraftingInventoryView extends InventoryCrafting {
   protected IInventory source;
   protected final ContainerBase eventHandler;
   protected final int offset, width, height, size;
-  protected final boolean refill;
+  protected boolean refill;
 
   public CraftingInventoryView(final IInventory source, final ContainerBase container, final int offset, final int width, final int height, final boolean refill) {
     super(container, width, height);
@@ -46,6 +46,14 @@ public class CraftingInventoryView extends InventoryCrafting {
       }
     }
     return requestedItem;
+  }
+
+  public boolean isRefill() {
+    return refill;
+  }
+
+  public void setRefill(final boolean refill) {
+    this.refill = refill;
   }
 
   @Override

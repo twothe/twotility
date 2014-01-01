@@ -54,7 +54,6 @@ public class BlockCraftingBox extends BlockWithInventory {
   @Override
   public void initialize() {
     setHardness(1.5F);
-    setResistance(6.0f);
     setStepSound(soundWoodFootstep);
     setUnlocalizedName(NAME_BOX);
     setTextureName(TwoTility.getTextureName(NAME_BOX));

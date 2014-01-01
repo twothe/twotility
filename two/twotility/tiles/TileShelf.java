@@ -48,7 +48,7 @@ public class TileShelf extends TileWithInventory {
     final float fillState = getInventoryFillState(inventory);
     final int currentState = BlockSide.getBlockDataFromMetadata(currentMeta);
     final float currentFillState = ((float) currentState) / ((float) BlockShelf.NUM_STATES);
-    FMLLog.info("if ((new{%5.3f} == 0.0f) || (current{%5.3f} == 0.0f) || (diff{%5.3f} >= %5.3f))", fillState, currentFillState, Math.abs(currentFillState - fillState), MIN_FILLSTATE_CHANGE);
+
     if ((fillState == 0.0f) || (currentFillState == 0.0f) || (Math.abs(currentFillState - fillState) >= MIN_FILLSTATE_CHANGE)) {
       return (int) Math.ceil(fillState * ((float) BlockShelf.STATE_FULL));
     } else {

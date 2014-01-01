@@ -67,6 +67,10 @@ public class TileCraftingBox extends TileWithInventory {
     return this.getCraftingBoxType() == BlockCraftingBox.STATE_ADVANCED;
   }
 
+  public boolean isAutocraftingEnabled() {
+    return (getSelectedRecipeIndex() != RECIPE_INDEX_OFF);
+  }
+
   public int getSelectedRecipeIndex() {
     return selectedRecipeIndex;
   }
