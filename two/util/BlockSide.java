@@ -301,7 +301,7 @@ public enum BlockSide {
    * @param metadata the block's metadata.
    * @return the block's metadata state.
    */
-  public static int getStateFromMetadata(final int metadata) {
+  public static int getBlockDataFromMetadata(final int metadata) {
     return (metadata & BlockSide.DATA_MASK);
   }
 
@@ -312,11 +312,11 @@ public enum BlockSide {
    * @param state the block's internal state.
    * @return the block's metadata.
    */
-  public static int createState(final int metaCurrent, final int state) {
+  public static int updateState(final int metaCurrent, final int state) {
     return ((metaCurrent & BlockSide.ROTATION_MASK) | (state & BlockSide.DATA_MASK));
   }
 
   public static int createState(final BlockSide blockFacing, final int state) {
-    return createState(createRotationData(blockFacing), state);
+    return updateState(createRotationData(blockFacing), state);
   }
 }

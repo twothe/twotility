@@ -123,7 +123,7 @@ public class BlockCraftingBox extends BlockWithInventory {
     final BlockSide rotatedSide = BlockSide.getRotatedSide(side, metadata);
     switch (rotatedSide) {
       case NORTH:
-        return getFrontfaceByState(BlockSide.getStateFromMetadata(metadata));
+        return getFrontfaceByState(BlockSide.getBlockDataFromMetadata(metadata));
       case SOUTH:
         return iconBack;
       case TOP:
@@ -143,14 +143,14 @@ public class BlockCraftingBox extends BlockWithInventory {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), itemStack.getItemDamage());
+    final int metadata = BlockSide.updateState(BlockSide.getDirectionFacing(entity), itemStack.getItemDamage());
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
 
   @Override
   public int damageDropped(final int metadata) {
-    return BlockSide.getStateFromMetadata(metadata);
+    return BlockSide.getBlockDataFromMetadata(metadata);
   }
 
   @Override

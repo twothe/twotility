@@ -100,7 +100,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
     final BlockSide rotatedSide = BlockSide.getRotatedSide(side, metadata);
     switch (rotatedSide) {
       case NORTH:
-        return getFrontfaceByState(BlockSide.getStateFromMetadata(metadata));
+        return getFrontfaceByState(BlockSide.getBlockDataFromMetadata(metadata));
       case TOP:
       case BOTTOM:
         return iconTop;
@@ -111,12 +111,12 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
 
   @Override
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
-    final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), 0);
+    final int metadata = BlockSide.updateState(BlockSide.getDirectionFacing(entity), 0);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
     super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
   }
 
   public static int createState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {
-    return BlockSide.createState(metaCurrent, (hasFuel ? STATE_HAS_FUEL : 0) | (hasWork ? STATE_FILLED : 0));
+    return BlockSide.updateState(metaCurrent, (hasFuel ? STATE_HAS_FUEL : 0) | (hasWork ? STATE_FILLED : 0));
   }
 }

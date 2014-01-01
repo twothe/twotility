@@ -96,7 +96,7 @@ public class BlockShelf extends BlockWithInventory {
   public Icon getIcon(final int side, final int metadata) {
     switch (BlockSide.getRotatedSide(side, metadata)) {
       case NORTH:
-        return getFrontFaceByState(BlockSide.getStateFromMetadata(metadata));
+        return getFrontFaceByState(BlockSide.getBlockDataFromMetadata(metadata));
       default:
         return iconDefault;
     }

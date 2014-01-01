@@ -55,7 +55,7 @@ public class TileCraftingBox extends TileWithInventory {
     return new GUICraftingBox(player.inventory, this);
   }
   public int getCraftingBoxType() {
-    return BlockSide.getStateFromMetadata(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+    return BlockSide.getBlockDataFromMetadata(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
   }
 
   public boolean isCraftingBoxType() {
