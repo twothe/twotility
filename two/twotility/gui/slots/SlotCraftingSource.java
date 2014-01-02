@@ -4,6 +4,7 @@ package two.twotility.gui.slots;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import two.twotility.container.ContainerBase;
 
 /**
@@ -22,5 +23,12 @@ public class SlotCraftingSource extends Slot {
   public void onSlotChanged() {
     super.onSlotChanged();
     this.handler.onCraftMatrixChanged(inventory);
+  }
+
+  @Override
+  public ItemStack decrStackSize(final int amount) {
+    final ItemStack result = super.decrStackSize(amount);
+    onSlotChanged();
+    return result;
   }
 }

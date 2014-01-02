@@ -8,6 +8,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import two.util.Items;
 
 /**
  * @author Two
@@ -44,34 +45,45 @@ public abstract class ContainerBase extends Container {
     return new Slot(inventory, slotIndex, x, y);
   }
 
+  protected boolean transferToInventory(final int slotId, final ItemStack pickedUp) {
+    if (slotId >= 36) {
+      return mergeItemStack(pickedUp, 0, 36);
+    } else {
+      return mergeItemStackWithInventory(pickedUp, 36);
+    }
+  }
+
+  /**
+   * Tries to move all items from the given slotID to the other inventory.
+   * The other inventory is the player's inventory if slotID is part of this continer,
+   * or this container if slotID is part of the player's inventory.
+   *
+   * @param player the player trying to transfere items.
+   * @param slotId the source slot from which the items are transfered.
+   * @return an ItemStack equal to the items moved away from the given slotId or null if no items were moved.
+   */
   @Override
   public ItemStack transferStackInSlot(final EntityPlayer player, final int slotId) {
     final Slot slot = getSlot(slotId);
-    if ((slot != null) && (slot.getHasStack())) {
-      final ItemStack itemStack = slot.getStack();
-      final ItemStack result = itemStack.copy();
+    final ItemStack itemInSlotBefore = slot.getStack();
+    if ((itemInSlotBefore != null) && (itemInSlotBefore.stackSize > 0)) {
+      final ItemStack pickedUp = itemInSlotBefore.copy();
 
-      if (slotId >= 36) {
-        if (!mergeItemStack(result, 0, 36)) { // transfer to player's inventory by first match
-          return null;
-        }
-      } else if (!mergeItemStackWithInventory(result, 36)) {
-        return null;
+      if (transferToInventory(slotId, pickedUp)) {
+        final int amountTaken = itemInSlotBefore.stackSize - pickedUp.stackSize;
+        final ItemStack itemsTaken = slot.decrStackSize(amountTaken);
+        slot.onPickupFromSlot(player, itemsTaken);
+        return itemsTaken;
       }
-
-      final int itemsMoved = itemStack.stackSize - result.stackSize;
-      slot.decrStackSize(itemsMoved);
-      slot.onPickupFromSlot(player, itemStack);
-      return result;
     }
 
     return null;
   }
 
   /**
-   * Callback for special inventory handling. 
+   * Callback for special inventory handling.
    * Must delegate to mergeItemStack with the appropriate slot index, adding the offset.
-   * 
+   *
    * @param itemStack the item to pass to mergeItemStack.
    * @param slotOffset the offset to add to the accessible internal inventory slot index.
    * @return the result of the delegated mergeItemStack.
@@ -91,7 +103,7 @@ public abstract class ContainerBase extends Container {
         slot = getSlot(slotIndex);
         itemInSlot = slot.getStack();
 
-        if (itemInSlot != null && itemInSlot.itemID == newItem.itemID && (!newItem.getHasSubtypes() || newItem.getItemDamage() == itemInSlot.getItemDamage()) && ItemStack.areItemStackTagsEqual(newItem, itemInSlot)) {
+        if (Items.areEqualType(itemInSlot, newItem)) {
           final int newSlotStackSize = Math.min(Math.min(itemInSlot.stackSize + newItem.stackSize, newItem.getMaxStackSize()), slot.inventory.getInventoryStackLimit());
           final int remaining = newItem.stackSize - (newSlotStackSize - itemInSlot.stackSize);
           if (remaining != newItem.stackSize) { // was something moved?
@@ -114,14 +126,9 @@ public abstract class ContainerBase extends Container {
 
         if ((itemInSlot == null) && slot.isItemValid(newItem)) {
           final int newSlotStackSize = Math.min(newItem.stackSize, Math.min(newItem.getMaxStackSize(), slot.inventory.getInventoryStackLimit()));
-          final int remaining = newItem.stackSize - newSlotStackSize;
-          final ItemStack itemForSlot = newItem.copy();
-          itemForSlot.stackSize = newSlotStackSize;
-          slot.putStack(itemForSlot);
-          newItem.stackSize = remaining;
-          slot.onSlotChanged();
+          slot.putStack(newItem.splitStack(newSlotStackSize));
           inventoryChanged = true;
-          if (remaining == 0) {
+          if (newItem.stackSize == 0) {
             break;
           }
         }

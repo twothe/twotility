@@ -52,10 +52,12 @@ public abstract class TileWithInventory extends TileEntity implements ISidedInve
     if (slot < 0) {
       FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d < 0", slot);
     } else if (slot < inventory.length) {
-      inventory[slot] = itemStack;
-      if ((itemStack != null) && (itemStack.stackSize > getInventoryStackLimit())) {
-        itemStack.stackSize = getInventoryStackLimit();
+      if ((itemStack == null) || (itemStack.stackSize <= getInventoryStackLimit())) {
+        inventory[slot] = itemStack;
+      } else {
+        inventory[slot] = itemStack.splitStack(getInventoryStackLimit());
       }
+      onInventoryChanged();
     } else {
       FMLLog.log(TwoTility.MOD_ID, Level.WARNING, "Requested illegal slot item #%d > total size", slot);
     }
@@ -69,6 +71,7 @@ public abstract class TileWithInventory extends TileEntity implements ISidedInve
         setInventorySlotContents(slot, null);
       } else { // usually right-click
         result = result.splitStack(amount); // create a new reduced stack instead
+        onInventoryChanged();
       }
     }
 
