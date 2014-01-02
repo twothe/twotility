@@ -16,7 +16,7 @@ import java.util.Locale;
  *
  * @author Two
  */
-@Mod(modid = "TwoTility", name = "TwoTility", version = "140101")
+@Mod(modid = "TwoTility", name = "TwoTility", version = "140102")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true)
 public class TwoTility {
 

@@ -81,6 +81,7 @@ public class CraftingInventoryView extends InventoryCrafting {
       this.eventHandler.onCraftMatrixChanged(source);
       return taken;
     } else {
+      this.eventHandler.onCraftMatrixChanged(source);
       return source.decrStackSize(index + offset, amount);
     }
   }
