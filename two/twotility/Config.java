@@ -67,6 +67,11 @@ public class Config {
     return property.getInt(defaultValue);
   }
 
+  public double getMiscDouble(final String key, final double defaultValue) {
+    final Property property = configuration.get(CATEGORY_VARIOUS_SETTINGS, key, defaultValue);
+    return property.getDouble(defaultValue);
+  }
+
   public boolean getMiscBoolean(final String key, final boolean defaultValue) {
     final Property property = configuration.get(CATEGORY_VARIOUS_SETTINGS, key, defaultValue);
     return property.getBoolean(defaultValue);

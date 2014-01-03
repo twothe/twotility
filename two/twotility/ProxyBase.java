@@ -13,6 +13,7 @@ import two.twotility.blocks.BlockShelf;
 import two.twotility.items.ItemCraftingBox;
 import two.twotility.items.ItemLavaTank;
 import two.twotility.items.ItemPouchSmall;
+import two.twotility.items.ItemTNTStick;
 import two.twotility.items.ItemTeddy;
 
 /**
@@ -25,6 +26,7 @@ public class ProxyBase {
   public ItemPouchSmall itemPouchSmall;
   public ItemCraftingBox itemCraftingBox;
   public ItemTeddy itemTeddy;
+  public ItemTNTStick itemTNTStick;
   /* Blocks */
   public BlockAdvancedFurnace blockAdvancedFurnace;
   public BlockLavaTank blockLavaTank;
@@ -32,10 +34,16 @@ public class ProxyBase {
   public BlockCraftingBox blockCraftingBox;
   /* Sound */
   public final String SOUND_FLUIDSUCKIN = TwoTility.getSoundName("fluidsuckin");
+  /* Global Config vars */
+  public float configTNTStickDamageMultiplier;
   /* Initialization list for content that needs post-initialization. */
   protected ArrayList<InitializableModContent> pendingInitialization = new ArrayList<InitializableModContent>();
 
   public ProxyBase() {
+  }
+
+  protected void loadGlobalConfigValues() {
+    configTNTStickDamageMultiplier = (float) TwoTility.config.getMiscDouble("TNT-Stick damage multiplier", 0.75);
   }
 
   protected void registerBlocks() {
@@ -61,9 +69,12 @@ public class ProxyBase {
 
     itemCraftingBox = new ItemCraftingBox(blockCraftingBox);
     pendingInitialization.add(itemCraftingBox);
-    
+
     itemTeddy = new ItemTeddy();
     pendingInitialization.add(itemTeddy);
+
+    itemTNTStick = new ItemTNTStick();
+    pendingInitialization.add(itemTNTStick);
   }
 
   protected void registerRenderers() {
@@ -74,6 +85,7 @@ public class ProxyBase {
   }
 
   public void onInit() {
+    loadGlobalConfigValues();
     registerBlocks();
     registerItems();
     registerRenderers();
