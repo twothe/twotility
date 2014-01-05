@@ -6,11 +6,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.network.packet.Packet60Explosion;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -41,17 +41,17 @@ public class EntityTNTStick extends EntityThrowable {
     this.worldObj.spawnParticle("smoke", this.posX, this.posY + 0.5D, this.posZ, 0.0D, 0.0D, 0.0D);
   }
 
-  protected void explode() {
+  protected void explode(final MovingObjectPosition movingObjectPosition) {
     this.setDead();
     final float size = 3f;
-    final NonBreakingExplosion explosion = new NonBreakingExplosion(worldObj, this, posX, posY, posZ, size, TwoTility.proxy.configTNTStickDamageMultiplier);
+    final NonBreakingExplosion explosion = new NonBreakingExplosion(worldObj, this, posX, posY, posZ, size, TwoTility.proxy.configTNTStickDestroysBlocks, TwoTility.proxy.configTNTStickDamageMultiplier);
     explosion.doExplosionA();
     explosion.doExplosionB(true);
 
     if (worldObj.isRemote == false) {
       for (final EntityPlayerMP entityplayer : ((List<EntityPlayerMP>) worldObj.playerEntities)) {
         if (entityplayer.getDistanceSq(posX, posY, posZ) < 4096.0D) {
-          entityplayer.playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(posX, posY, posZ, size, explosion.affectedBlockPositions, (Vec3) explosion.func_77277_b().get(entityplayer)));
+          entityplayer.playerNetServerHandler.sendPacketToPlayer(new Packet60Explosion(posX, posY, posZ, MathHelper.ceiling_float_int(size / 2.0f), explosion.affectedBlockPositions, (Vec3) explosion.func_77277_b().get(entityplayer)));
         }
       }
     }
@@ -64,7 +64,7 @@ public class EntityTNTStick extends EntityThrowable {
     }
 
     if (!this.worldObj.isRemote) {
-      explode();
+      explode(movingObjectPosition);
     }
   }
 }

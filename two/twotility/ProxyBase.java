@@ -36,6 +36,7 @@ public class ProxyBase {
   public final String SOUND_FLUIDSUCKIN = TwoTility.getSoundName("fluidsuckin");
   /* Global Config vars */
   public float configTNTStickDamageMultiplier;
+  public boolean configTNTStickDestroysBlocks;
   /* Initialization list for content that needs post-initialization. */
   protected ArrayList<InitializableModContent> pendingInitialization = new ArrayList<InitializableModContent>();
 
@@ -43,7 +44,8 @@ public class ProxyBase {
   }
 
   protected void loadGlobalConfigValues() {
-    configTNTStickDamageMultiplier = (float) TwoTility.config.getMiscDouble("TNT-Stick damage multiplier", 0.75);
+    configTNTStickDamageMultiplier = (float) TwoTility.config.getMiscDouble("TNT-Stick damage multiplier", 1.0);
+    configTNTStickDestroysBlocks = TwoTility.config.getMiscBoolean("TNT-Stick destroys blocks", true);
   }
 
   protected void registerBlocks() {
