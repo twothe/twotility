@@ -3,6 +3,8 @@
 package two.twotility.tiles;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -74,6 +76,7 @@ public class TileShelf extends TileWithInventory {
     return new ContainerShelf(player.inventory, this);
   }
 
+  @SideOnly(Side.CLIENT)
   @Override
   public Gui createGUI(final EntityPlayer player) {
     return new GUIShelf(player.inventory, this);

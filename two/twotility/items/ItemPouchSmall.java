@@ -5,6 +5,8 @@ package two.twotility.items;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -66,6 +68,11 @@ public class ItemPouchSmall extends ItemBase implements GUICallback {
   }
 
   @Override
+  public boolean getHasSubtypes() {
+    return true;
+  }
+
+  @Override
   public Container createContainer(final EntityPlayer player, final World world, final int x, final int y, final int z) throws InvalidTileEntityException {
     final ItemStack heldItem = player.getHeldItem();
     if (heldItem.getItem().itemID == this.itemID) {
@@ -75,6 +82,7 @@ public class ItemPouchSmall extends ItemBase implements GUICallback {
     }
   }
 
+  @SideOnly(Side.CLIENT)
   @Override
   public Gui createGUI(final EntityPlayer player, final World world, final int x, final int y, final int z) throws InvalidTileEntityException {
     final ItemStack heldItem = player.getHeldItem();
@@ -83,10 +91,5 @@ public class ItemPouchSmall extends ItemBase implements GUICallback {
     } else {
       throw new IllegalStateException("Container of " + this.getClass().getSimpleName() + " requested, but for a different item (" + heldItem.getDisplayName() + ")!");
     }
-  }
-
-  @Override
-  public boolean getHasSubtypes() {
-    return true;
   }
 }

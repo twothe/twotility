@@ -402,6 +402,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     return new ContainerAdvancedFurnace(player.inventory, this);
   }
 
+  @SideOnly(Side.CLIENT)
   @Override
   public Gui createGUI(final EntityPlayer player) {
     return new GUIAdvancedFurnace(player.inventory, this);

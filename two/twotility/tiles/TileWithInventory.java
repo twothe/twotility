@@ -3,6 +3,8 @@
 package two.twotility.tiles;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.logging.Level;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.item.EntityItem;
@@ -139,6 +141,7 @@ public abstract class TileWithInventory extends TileEntity implements ISidedInve
 
   public abstract ContainerBase createContainer(final EntityPlayer player);
 
+  @SideOnly(Side.CLIENT)
   public abstract Gui createGUI(final EntityPlayer player);
 
   protected static void readInventoryFromNBT(final NBTTagCompound tagCompound, final String inventoryName, final ItemStack[] inventory) {

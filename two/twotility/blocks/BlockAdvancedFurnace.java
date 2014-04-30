@@ -37,7 +37,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
   //-- Class -------------------------------------------------------------------
   public final int lavaFlowSearchMax;
   @SideOnly(Side.CLIENT)
-  protected Icon[] stateIcons = new Icon[NUM_STATES];
+  protected Icon[] stateIcons;
   @SideOnly(Side.CLIENT)
   protected Icon iconSide;
   @SideOnly(Side.CLIENT)
@@ -77,6 +77,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
   @SideOnly(Side.CLIENT)
   @Override
   public void registerIcons(final IconRegister iconRegister) {
+    stateIcons = new Icon[NUM_STATES];
     stateIcons[STATE_EMPTY] = iconRegister.registerIcon(TwoTility.getTextureName(NAME));
     stateIcons[STATE_FILLED] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_filled");
     stateIcons[STATE_HAS_FUEL] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_fuel");
@@ -86,6 +87,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
     iconTop = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_top");
   }
 
+  @SideOnly(Side.CLIENT)
   protected Icon getFrontfaceByState(final int state) {
     if ((state >= 0) && (state < stateIcons.length)) {
       return stateIcons[state];
@@ -114,7 +116,7 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
     final int metadata = BlockSide.createState(BlockSide.getDirectionFacing(entity), 0);
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
-    super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
+    super.onBlockPlacedBy(world, x, y, z, entity, itemStack);
   }
 
   public static int updateState(final int metaCurrent, final boolean hasFuel, final boolean hasWork) {

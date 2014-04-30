@@ -2,6 +2,8 @@
  */
 package two.twotility.tiles;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
@@ -50,6 +52,7 @@ public class TileCraftingBox extends TileWithInventory {
     return new ContainerCraftingBox(player.inventory, this);
   }
 
+  @SideOnly(Side.CLIENT)
   @Override
   public Gui createGUI(final EntityPlayer player) {
     return new GUICraftingBox(player.inventory, this);

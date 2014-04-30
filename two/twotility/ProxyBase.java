@@ -3,9 +3,7 @@
 package two.twotility;
 
 import java.util.ArrayList;
-import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import two.twotility.blocks.BlockCraftingBox;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.blocks.BlockLavaTank;
@@ -15,6 +13,7 @@ import two.twotility.items.ItemLavaTank;
 import two.twotility.items.ItemPouchSmall;
 import two.twotility.items.ItemTNTStick;
 import two.twotility.items.ItemTeddy;
+import two.twotility.blocks.BlockStreamingRadio;
 
 /**
  * @author Two
@@ -32,6 +31,7 @@ public class ProxyBase {
   public BlockLavaTank blockLavaTank;
   public BlockShelf blockShelf;
   public BlockCraftingBox blockCraftingBox;
+  public BlockStreamingRadio blockstreamingRadio;
   /* Sound */
   public final String SOUND_FLUIDSUCKIN = TwoTility.getSoundName("fluidsuckin");
   /* Global Config vars */
@@ -60,6 +60,9 @@ public class ProxyBase {
 
     blockCraftingBox = new BlockCraftingBox();
     pendingInitialization.add(blockCraftingBox);
+
+//    blockstreamingRadio = new BlockStreamingRadio();
+//    pendingInitialization.add(blockstreamingRadio);
   }
 
   protected void registerItems() {
@@ -99,10 +102,5 @@ public class ProxyBase {
   }
 
   public void onPostInit() {
-  }
-
-  @ForgeSubscribe
-  public void onSoundSetup(final SoundLoadEvent event) {
-    event.manager.addSound(SOUND_FLUIDSUCKIN + ".ogg");
   }
 }

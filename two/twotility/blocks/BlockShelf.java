@@ -40,7 +40,7 @@ public class BlockShelf extends BlockWithInventory {
   public static final int NUM_STATES = STATE_FULL + 1;
 //-- Class -------------------------------------------------------------------
   @SideOnly(Side.CLIENT)
-  protected Icon[] stateIcons = new Icon[NUM_STATES];
+  protected Icon[] stateIcons;
   @SideOnly(Side.CLIENT)
   protected Icon iconDefault;
 
@@ -75,6 +75,7 @@ public class BlockShelf extends BlockWithInventory {
   @SideOnly(Side.CLIENT)
   @Override
   public void registerIcons(final IconRegister iconRegister) {
+    stateIcons = new Icon[NUM_STATES];
     iconDefault = iconRegister.registerIcon(TwoTility.getTextureName(NAME));
     stateIcons[STATE_EMPTY] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_empty");
     stateIcons[STATE_2_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_2_4");
@@ -82,6 +83,7 @@ public class BlockShelf extends BlockWithInventory {
     stateIcons[STATE_FULL] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_full");
   }
 
+  @SideOnly(Side.CLIENT)
   protected Icon getSideIconByState(final int state) {
     if ((state >= 0) && (state < stateIcons.length)) {
       return stateIcons[state];
@@ -106,7 +108,7 @@ public class BlockShelf extends BlockWithInventory {
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
     final BlockSide blockFacing = getValidPlacementDirection(world, x, y, z, entity);
     world.setBlockMetadataWithNotify(x, y, z, BlockSide.createState(blockFacing, 0), 2);
-    super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
+    super.onBlockPlacedBy(world, x, y, z, entity, itemStack);
   }
 
   protected BlockSide getValidPlacementDirection(final World world, final int x, final int y, final int z, final EntityLivingBase entity) {

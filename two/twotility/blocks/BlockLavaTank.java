@@ -54,7 +54,7 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
   public static final int NUM_STATES = STATE_4_4 + 1;
   //--- Class ------------------------------------------------------------------
   @SideOnly(Side.CLIENT)
-  protected Icon[] texturesSide = new Icon[NUM_STATES];
+  protected Icon[] texturesSide;
   @SideOnly(Side.CLIENT)
   protected Icon textureTopBottom;
   protected ItemLavaTank itemDropped;
@@ -189,6 +189,7 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
   @SideOnly(Side.CLIENT)
   @Override
   public void registerIcons(final IconRegister iconRegister) {
+    texturesSide = new Icon[NUM_STATES];
     textureTopBottom = iconRegister.registerIcon(TwoTility.getTextureName(NAME));
     texturesSide[STATE_EMPTY] = iconRegister.registerIcon(TwoTility.getTextureName(NAME + "_empty"));
     texturesSide[STATE_1_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_1_4");
@@ -197,6 +198,7 @@ public class BlockLavaTank extends Block implements ITileEntityProvider, Initial
     texturesSide[STATE_4_4] = iconRegister.registerIcon(TwoTility.getTextureName(NAME) + "_full");
   }
 
+  @SideOnly(Side.CLIENT)
   @Override
   public Icon getIcon(final int side, final int metadata) {
     switch (BlockSide.getSide(side)) {

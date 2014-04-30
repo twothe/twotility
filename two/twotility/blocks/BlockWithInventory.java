@@ -5,6 +5,8 @@ package two.twotility.blocks;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.logging.Level;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -59,6 +61,7 @@ public abstract class BlockWithInventory extends Block implements ITileEntityPro
     }
   }
 
+  @SideOnly(Side.CLIENT)
   @Override
   public Gui createGUI(final EntityPlayer player, final World world, final int x, final int y, final int z) throws InvalidTileEntityException {
     final TileEntity tileEntity = world.getBlockTileEntity(x, y, z);

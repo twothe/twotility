@@ -98,6 +98,7 @@ public class BlockCraftingBox extends BlockWithInventory {
     iconBottom = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_bottom");
   }
 
+  @SideOnly(Side.CLIENT)
   protected Icon getTopIconByState(final int state) {
     switch (state) {
       case STATE_BOX:
@@ -132,7 +133,7 @@ public class BlockCraftingBox extends BlockWithInventory {
   public void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack) {
     final int metadata = BlockSide.getRotationData(itemStack.getItemDamage());
     world.setBlockMetadataWithNotify(x, y, z, metadata, 2);
-    super.onBlockPlacedBy(world, z, x, y, entity, itemStack);
+    super.onBlockPlacedBy(world, x, y, z, entity, itemStack);
   }
 
   @Override
