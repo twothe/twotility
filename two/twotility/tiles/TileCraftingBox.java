@@ -40,7 +40,6 @@ public class TileCraftingBox extends TileWithInventory {
   protected final InventoryCrafting craftingMatrix;
   protected int craftingBoxType = BlockCraftingBox.STATE_BOX;
   protected int selectedRecipeIndex = RECIPE_INDEX_OFF;
-  protected boolean needInitialization = true;
 
   public TileCraftingBox() {
     super(INVENTORY_SIZE);
