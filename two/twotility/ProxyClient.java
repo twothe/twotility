@@ -34,13 +34,13 @@ public class ProxyClient extends ProxyBase {
 
   @ForgeSubscribe
   public void onSoundSetup(final SoundLoadEvent event) {
-    try {
-      SoundSystemConfig.setCodec("mp3", StreamCodec.class);
-      SoundSystemConfig.setCodec("aac", StreamCodec.class);
-      FMLLog.log(Level.INFO, "MP3/AAC codec loaded");
-    } catch (SoundSystemException ex) {
-      FMLLog.log(Level.SEVERE, "Unable to load MP3/AAC codec", ex);
-    }
+//    try {
+//      SoundSystemConfig.setCodec("mp3", StreamCodec.class);
+//      SoundSystemConfig.setCodec("aac", StreamCodec.class);
+//      FMLLog.log(Level.INFO, "MP3/AAC codec loaded");
+//    } catch (SoundSystemException ex) {
+//      FMLLog.log(Level.SEVERE, "Unable to load MP3/AAC codec", ex);
+//    }
     event.manager.addSound(SOUND_FLUIDSUCKIN + ".ogg");
   }
 }
