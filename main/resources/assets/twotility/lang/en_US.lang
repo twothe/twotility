@@ -1,0 +1,23 @@
+language.name=English
+language.region=US
+language.code=en_US
+
+tile.shelf.name=Shelf
+tile.craftingBox=Crafting Box
+tile.craftingBoxAdvanced=Advanced Crafting Box
+tile.lavaTank=Lava Tank
+tile.advancedFurnace=Advanced Furnace
+tile.streamingRadio=Radio
+
+item.grenade=Grenade
+item.grenade.tooltip=Sophisticated technology
+item.craftingBox=Crafting Box
+item.craftingBoxAdvanced=Advanced Crafting Box
+item.lavaTank=Lava Tank
+item.lavaTank.tooltip.empty=Empty
+item.lavaTank.tooltip.filled=Contains %d buckets of lava
+item.pouchSmall=Small pouch
+item.teddy=Teddy
+item.teddy.tooltip=It's dangerous to go alone...
+
+entity.grenade=Grenade
