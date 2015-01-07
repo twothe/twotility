@@ -3,10 +3,8 @@
 package two.twotility.items;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import two.twotility.TwoTility;
 import two.twotility.blocks.BlockCraftingBox;
 
 /**
@@ -20,7 +18,7 @@ public class ItemCraftingBox extends ItemBlock3d {
 
   @Override
   public void initialize() {
-    GameRegistry.registerItem(this, TwoTility.getItemName(BlockCraftingBox.NAME_BOX));
+    setBaseValues(BlockCraftingBox.NAME_BOX);
   }
 
   @Override

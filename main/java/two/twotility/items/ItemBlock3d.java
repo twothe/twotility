@@ -2,9 +2,11 @@
  */
 package two.twotility.items;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -25,6 +27,12 @@ public abstract class ItemBlock3d extends ItemBase {
     this.block = block;
   }
 
+  @Override
+  protected void setBaseValues(final String name, final CreativeTabs creativeTab) {
+    GameRegistry.registerItem(this, "Item3D" + name);
+    setUnlocalizedName(name);
+  }
+
   @SideOnly(Side.CLIENT)
   public IIcon getIcon(final int side, final int metadata) {
     return block.getIcon(side, metadata);
@@ -41,7 +49,8 @@ public abstract class ItemBlock3d extends ItemBase {
 
   /**
    * Returns 0 for /terrain.png, 1 for /gui/items.png
-   * @return 
+   *
+   * @return
    */
   @SideOnly(Side.CLIENT)
   @Override

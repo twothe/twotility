@@ -34,14 +34,6 @@ public class TwoTility {
     return TwoTility.MOD_ID + ":" + filePrefix;
   }
 
-  public static String getBlockName(final String blockName) {
-    return TwoTility.MOD_ID + ":Block" + blockName;
-  }
-
-  public static String getItemName(final String itemName) {
-    return TwoTility.MOD_ID + ":Item" + itemName;
-  }
-
   public static String getSoundName(final String soundName) {
     return TwoTility.MOD_ID + ":" + soundName;
   }

@@ -24,7 +24,7 @@ public abstract class ItemBase extends Item implements InitializableModContent {
   }
 
   protected void setBaseValues(final String name, final CreativeTabs creativeTab) {
-    GameRegistry.registerItem(this, TwoTility.getItemName(name));
+    GameRegistry.registerItem(this, "Item" + name);
     setUnlocalizedName(name);
     setTextureName(TwoTility.getTextureName(name));
     setCreativeTab(creativeTab);

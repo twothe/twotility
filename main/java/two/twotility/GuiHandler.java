@@ -24,7 +24,7 @@ public class GuiHandler implements IGuiHandler {
    * @return the resource that was created using the given file.
    */
   public static ResourceLocation loadGuiPNG(final String guiName) {
-    return new ResourceLocation(TwoTility.MOD_ID.toLowerCase(Locale.ENGLISH), "textures/gui/" + guiName.toLowerCase(Locale.ENGLISH) + ".png");
+    return new ResourceLocation(TwoTility.MOD_ID.toLowerCase(Locale.ENGLISH), "textures/gui/" + guiName + ".png");
   }
   //--- Class ------------------------------------------------------------------
   protected ArrayList<GUICallback> knownGuis = new ArrayList<GUICallback>();

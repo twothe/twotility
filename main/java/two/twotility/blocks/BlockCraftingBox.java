@@ -82,7 +82,7 @@ public class BlockCraftingBox extends BlockWithInventory {
   @Override
   public void registerBlockIcons(final IIconRegister iconRegister) {
     iconTop = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX));
-    iconTopAdvanced = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_advanced");
+    iconTopAdvanced = iconRegister.registerIcon(TwoTility.getTextureName(NAME_ADVANCED));
     iconBottom = iconRegister.registerIcon(TwoTility.getTextureName(NAME_BOX) + "_bottom");
   }
 

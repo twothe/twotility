@@ -2,7 +2,6 @@
  */
 package two.twotility.items;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
@@ -10,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import two.twotility.TwoTility;
+import two.twotility.blocks.BlockLavaTank;
 import two.util.ItemUtil;
 
 /**
@@ -17,9 +17,8 @@ import two.util.ItemUtil;
  */
 public class ItemLavaTank extends ItemBlock3d {
 
-  protected static final String NAME = "lavaTank";
-  protected static final String KEY_TOOLTIP_EMPTY = TwoTility.getTooltipName(NAME, "empty"); // Empty
-  protected static final String KEY_TOOLTIP_FILLED = TwoTility.getTooltipName(NAME, "filled"); // Contains %d buckets of lava
+  protected static final String KEY_TOOLTIP_EMPTY = TwoTility.getTooltipName(BlockLavaTank.NAME, "empty"); // Empty
+  protected static final String KEY_TOOLTIP_FILLED = TwoTility.getTooltipName(BlockLavaTank.NAME, "filled"); // Contains %d buckets of lava
 
   public ItemLavaTank(final Block block) {
     super(block);
@@ -27,8 +26,7 @@ public class ItemLavaTank extends ItemBlock3d {
 
   @Override
   public void initialize() {
-    GameRegistry.registerItem(this, TwoTility.getItemName(NAME));
-    // no need to do the other registration, this is done by the block itself
+    setBaseValues(BlockLavaTank.NAME);
   }
 
   @SideOnly(Side.CLIENT)
