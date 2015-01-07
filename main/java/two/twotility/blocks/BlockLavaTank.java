@@ -4,6 +4,7 @@ package two.twotility.blocks;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -40,6 +41,7 @@ import two.twotility.tiles.TileLavaTank;
 import two.util.BlockSide;
 import static two.util.BlockSide.TOP;
 import two.util.BlockUtil;
+import two.util.ItemUtil;
 
 /**
  * @author Two
@@ -85,44 +87,19 @@ public class BlockLavaTank extends BlockBase implements ITileEntityProvider {
     MinecraftForge.EVENT_BUS.register(this);
   }
 
-  public void onRightClick(final FillBucketEvent event) {
-    final MovingObjectPosition target = event.target;
-    final Block targetBlock = event.world.getBlock(target.blockX, target.blockY, target.blockZ);
-    if (BlockUtil.isSameBlockType(this, targetBlock)) {
-      event.setCanceled(true); // in all cases: do not spill fluids around!
-      if (event.world.isRemote) {
-        return;
-      }
-
-      final TileEntity tileEntity = event.world.getTileEntity(target.blockX, target.blockY, target.blockZ);
-      if (tileEntity instanceof TileLavaTank) {
-        final TileLavaTank thisTank = (TileLavaTank) tileEntity;
-        if (event.current.getItem() == Items.lava_bucket) {
-          if (thisTank.fill(ForgeDirection.UNKNOWN, new FluidStack(FluidRegistry.LAVA, FluidContainerRegistry.BUCKET_VOLUME), true) > 0) {
-            event.result = new ItemStack(Items.bucket);
-            event.setCanceled(false);
-            event.setResult(Event.Result.ALLOW);
-          }
-        } else if (event.current == FluidContainerRegistry.EMPTY_BUCKET) {
-          final FluidStack drainedFluid = thisTank.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
-          if ((drainedFluid != null) && (drainedFluid.amount >= FluidContainerRegistry.BUCKET_VOLUME)) {
-            event.result = new ItemStack(Items.lava_bucket);
-            event.setCanceled(false);
-            event.setResult(Event.Result.ALLOW);
-          }
-        }
-      } else {
-        FMLLog.log(TwoTility.MOD_ID, Level.WARN, "TileEntity at %d, %d, %d should have been a %s, but was %s", target.blockX, target.blockY, target.blockZ, this.getClass().getSimpleName(), tileEntity.getClass().getName());
-        event.world.removeTileEntity(target.blockX, target.blockY, target.blockZ);
-      }
+  @SubscribeEvent
+  public void onBucketUse(final FillBucketEvent event) {
+    final TileEntity tileEntity = event.world.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ);
+    if (tileEntity instanceof TileLavaTank) {
+      ((TileLavaTank) tileEntity).onUse(event);
     }
   }
 
   @SideOnly(Side.CLIENT)
   @Override
   public void getSubBlocks(final Item thisItem, final CreativeTabs creativeTab, final List itemlist) {
-    itemlist.add(new ItemStack(itemDropped, 1, STATE_EMPTY));
-    itemlist.add(new ItemStack(itemDropped, 1, STATE_4_4));
+//    itemlist.add(new ItemStack(itemDropped, 1, STATE_EMPTY));
+//    itemlist.add(new ItemStack(itemDropped, 1, STATE_4_4));
   }
 
   @Override

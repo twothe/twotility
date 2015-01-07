@@ -31,7 +31,7 @@ public class BlockUtil {
   }
 
   public static boolean isSameBlockType(final Block block, final Block other) {
-    throw new UnsupportedOperationException("Not supported yet."); // TODO: implement
+    return (block == other);
   }
   
   public static boolean isAir(final Block block) {

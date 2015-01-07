@@ -32,9 +32,4 @@ public class ItemCraftingBox extends ItemBlock3d {
     FMLLog.warning("Unknown state #%d for %s!", itemStack.getItemDamage(), this.getClass().getSimpleName());
     return null;
   }
-
-  @Override
-  public boolean getHasSubtypes() {
-    return true;
-  }
 }

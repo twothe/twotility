@@ -113,7 +113,7 @@ public class BlockCraftingBox extends BlockWithInventory {
   @SideOnly(Side.CLIENT)
   @Override
   public void getSubBlocks(final Item thisItem, final CreativeTabs creativeTab, final List itemlist) {
-    itemlist.add(itemBox);
+//    itemlist.add(itemBox);
 //    itemlist.add(itemAdvanced);
   }
 

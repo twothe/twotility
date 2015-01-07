@@ -6,7 +6,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import two.twotility.TwoTility;
 import two.twotility.blocks.BlockLavaTank;
@@ -27,6 +29,13 @@ public class ItemLavaTank extends ItemBlock3d {
   @Override
   public void initialize() {
     setBaseValues(BlockLavaTank.NAME);
+    setHasSubtypes(true);
+  }
+
+  @Override
+  public void getSubItems(final Item item, final CreativeTabs creativeTab, final List itemList) {
+    itemList.add(new ItemStack(item, 1, BlockLavaTank.STATE_EMPTY));
+    itemList.add(new ItemStack(item, 1, BlockLavaTank.STATE_4_4));
   }
 
   @SideOnly(Side.CLIENT)
@@ -38,10 +47,5 @@ public class ItemLavaTank extends ItemBlock3d {
     } else {
       strings.add(String.format(ItemUtil.getCachedTooltip(KEY_TOOLTIP_FILLED), numBuckets));
     }
-  }
-
-  @Override
-  public boolean getHasSubtypes() {
-    return true;
   }
 }

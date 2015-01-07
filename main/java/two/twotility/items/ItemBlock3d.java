@@ -2,11 +2,9 @@
  */
 package two.twotility.items;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -25,12 +23,6 @@ public abstract class ItemBlock3d extends ItemBase {
   public ItemBlock3d(final Block block) {
     super();
     this.block = block;
-  }
-
-  @Override
-  protected void setBaseValues(final String name, final CreativeTabs creativeTab) {
-    GameRegistry.registerItem(this, "Item3D" + name);
-    setUnlocalizedName(name);
   }
 
   @SideOnly(Side.CLIENT)
@@ -105,7 +97,7 @@ public abstract class ItemBlock3d extends ItemBase {
       final int metavalue = targetBlock.onBlockPlaced(world, x, y, z, sideID, hitX, hitY, hitZ, this.getMetadata(itemStackInUse.getItemDamage()));
 
       if (placeBlockAt(itemStackInUse, player, world, x, y, z, sideID, hitX, hitY, hitZ, metavalue)) {
-        world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), targetBlock.stepSound.soundName, (targetBlock.stepSound.getVolume() + 1.0F) / 2.0F, targetBlock.stepSound.getPitch() * 0.8F);
+        world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), block.stepSound.getBreakSound(), (targetBlock.stepSound.getVolume() + 1.0F) / 2.0F, targetBlock.stepSound.getPitch() * 0.8F);
         --itemStackInUse.stackSize;
       }
 
@@ -191,4 +183,5 @@ public abstract class ItemBlock3d extends ItemBase {
 
     return true;
   }
+  
 }
