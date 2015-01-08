@@ -15,16 +15,19 @@ import net.minecraftforge.fluids.IFluidTank;
 public class FluidTank implements IFluidTank {
 
   protected static final String NBT_TAG_CAPACITY = "BucketFluidTank_capacity";
+  protected static final String NBT_TAG_DOCLAMP = "BucketFluidTank_clamp";
   protected final FluidStack internalStorage;
+  protected boolean clampToBucketSize;
   protected int capacity;
 
-  public FluidTank(final Fluid fluid, final int amount, final int capacity) {
-    this(fluid.getID(), amount, capacity);
+  public FluidTank(final Fluid fluid, final int amount, final int capacity, final boolean clampToBucketSize) {
+    this(fluid.getID(), amount, capacity, clampToBucketSize);
   }
 
-  public FluidTank(final int fluidID, final int amount, final int capacity) {
+  public FluidTank(final int fluidID, final int amount, final int capacity, final boolean clampToBucketSize) {
     this.internalStorage = new FluidStack(fluidID, amount);
     this.capacity = capacity;
+    this.clampToBucketSize = clampToBucketSize;
   }
 
   public void readFromNBT(final NBTTagCompound tag) {
@@ -33,11 +36,15 @@ public class FluidTank implements IFluidTank {
     this.internalStorage.amount = stackRead.amount;
     this.internalStorage.tag = stackRead.tag;
     this.capacity = tag.getInteger(NBT_TAG_CAPACITY);
+    if (tag.hasKey(NBT_TAG_DOCLAMP)) {
+      this.clampToBucketSize = tag.getBoolean(NBT_TAG_DOCLAMP);
+    }
   }
 
   public void writeToNBT(final NBTTagCompound tag) {
     this.internalStorage.writeToNBT(tag);
     tag.setInteger(NBT_TAG_CAPACITY, this.capacity);
+    tag.setBoolean(NBT_TAG_DOCLAMP, this.clampToBucketSize);
   }
 
   @Override
@@ -53,6 +60,14 @@ public class FluidTank implements IFluidTank {
   @Override
   public int getCapacity() {
     return this.capacity;
+  }
+
+  public void setClapToBucketSize(final boolean newClamp) {
+    this.clampToBucketSize = newClamp;
+  }
+
+  public boolean isClampingToBucketSize() {
+    return this.clampToBucketSize;
   }
 
   @Override
@@ -116,18 +131,26 @@ public class FluidTank implements IFluidTank {
 
   protected int getEffectiveDrainAmount(final int requested) {
     if (internalStorage.amount >= requested) {
-      return requested;
+      if (isClampingToBucketSize()) {
+        return clampToBucketSize(requested);
+      } else {
+        return requested;
+      }
     } else {
-      return internalStorage.amount;
+      return internalStorage.amount; // if someone drains everything this should not clamp, as empty is clamped just fine.
     }
   }
 
+  protected int clampToBucketSize(final int amount) {
+    return amount / ((int) FluidContainerRegistry.BUCKET_VOLUME) * ((int) FluidContainerRegistry.BUCKET_VOLUME);
+  }
+
   public int getAmountInBuckets() {
-    return internalStorage.amount / FluidContainerRegistry.BUCKET_VOLUME;
+    return internalStorage.amount / ((int) FluidContainerRegistry.BUCKET_VOLUME);
   }
 
   public int getCapacityInBuckets() {
-    return this.capacity / FluidContainerRegistry.BUCKET_VOLUME;
+    return this.capacity / ((int) FluidContainerRegistry.BUCKET_VOLUME);
   }
 
   /**

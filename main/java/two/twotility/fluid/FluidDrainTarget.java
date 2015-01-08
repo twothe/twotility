@@ -54,9 +54,7 @@ public class FluidDrainTarget {
   }
 
   protected FluidStack tryDrainLavaFromHandler(final FluidStack amount) {
-    return fluidHandler.canDrain(direction, amount.getFluid())
-            ? fluidHandler.drain(direction, amount, true)
-            : null;
+    return fluidHandler.drain(direction, amount, true);
   }
 
   protected FluidStack tryDrainLavaFromTank(final FluidStack amount) {

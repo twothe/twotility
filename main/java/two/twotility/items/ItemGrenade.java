@@ -45,7 +45,7 @@ public class ItemGrenade extends ItemBase {
     if (player.capabilities.isCreativeMode == false) {
       --itemStack.stackSize;
     }
-    world.playSoundAtEntity(player, "random.fuse", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+    world.playSoundAtEntity(player, "game.tnt.primed", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
     if (!world.isRemote) {
       world.spawnEntityInWorld(new EntityGrenade(world, player));

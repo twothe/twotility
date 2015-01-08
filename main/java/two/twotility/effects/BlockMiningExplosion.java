@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.Entity;
@@ -23,7 +24,7 @@ import two.util.Vector3d;
 /**
  * @author Two
  */
-public class NonBreakingExplosion extends Explosion {
+public class BlockMiningExplosion extends Explosion {
 
   protected final int searchRange;
   protected final World world;
@@ -33,7 +34,7 @@ public class NonBreakingExplosion extends Explosion {
   protected final Vector3d explosionSource;
   protected final Map affectedPlayers = new HashMap();
 
-  public NonBreakingExplosion(final World world, final Entity explodingEntity, final double x, final double y, final double z, final float size, final boolean destroyBlocks, final float strengthMultiplier) {
+  public BlockMiningExplosion(final World world, final Entity explodingEntity, final double x, final double y, final double z, final float size, final boolean destroyBlocks, final float strengthMultiplier) {
     super(world, explodingEntity, x, y, z, size);
     this.isFlaming = false;
     this.searchRange = MathHelper.ceiling_float_int(size / 2.0f);
@@ -119,6 +120,9 @@ public class NonBreakingExplosion extends Explosion {
   }
 
   protected void findAffectedEntities() {
+    if (this.world.isRemote) {
+      return;
+    }
     final List<Entity> affectedEntities = this.world.getEntitiesWithinAABBExcludingEntity(this.exploder, AxisAlignedBB.getBoundingBox(
             MathHelper.floor_double(this.explosionX - searchRange - 1.0D),
             MathHelper.floor_double(this.explosionY - searchRange - 1.0D),
@@ -206,10 +210,21 @@ public class NonBreakingExplosion extends Explosion {
 
   @Override
   public void doExplosionB(final boolean spawnParticles) {
-    this.world.playSoundEffect(this.explosionX, this.explosionY, this.explosionZ, "random.explode", 4.0F, (1.0F + (this.world.rand.nextFloat() - this.world.rand.nextFloat()) * 0.2F) * 0.7F);
+    if (this.world.isRemote) {
+      if (this.explosionSize >= 4.0F) {
+        this.world.spawnParticle("hugeexplode", this.explosionX, this.explosionY, this.explosionZ, 0.0, 0.0, 0.0);
+      } else {
+        this.world.spawnParticle("largeexplode", this.explosionX, this.explosionY, this.explosionZ, 0.0, 0.0, 0.0);
+      }
+    } else {
+      this.world.playSoundEffect(this.explosionX, this.explosionY, this.explosionZ, "random.explode", 4.0F, (1.0F + (this.world.rand.nextFloat() - this.world.rand.nextFloat()) * 0.2F) * 0.7F);
+    }
 
     int x, y, z;
     Block block;
+    final Random random = this.world.rand;
+
+    final int particleLimit = Math.max(1, affectedBlockPositions.size() / 100);
 
     for (final ChunkPosition chunkposition : ((List<ChunkPosition>) affectedBlockPositions)) {
       x = chunkposition.chunkPosX;
@@ -218,8 +233,14 @@ public class NonBreakingExplosion extends Explosion {
       block = this.world.getBlock(x, y, z);
 
       if (block.isAir(world, x, y, z) == false) {
-        block.dropBlockAsItemWithChance(this.world, x, y, z, this.world.getBlockMetadata(x, y, z), 1.0F, 0);
-        block.onBlockExploded(this.world, x, y, z, this);
+        if (this.world.isRemote == false) {
+          block.dropBlockAsItemWithChance(this.world, x, y, z, this.world.getBlockMetadata(x, y, z), 1.0F, 0);
+          block.onBlockExploded(this.world, x, y, z, this);
+        } else if ((particleLimit == 1) || (random.nextInt(particleLimit) == 0)) {
+          this.world.spawnParticle("explode", x + random.nextDouble() - 0.5, y + random.nextDouble() - 0.5, z + random.nextDouble() - 0.5, (random.nextDouble() - 0.5) * 0.2, random.nextDouble() * 0.5 * 0.2, (random.nextDouble() - 0.5) * 0.2);
+          this.world.spawnParticle("explode", x + random.nextDouble() - 0.5, y + random.nextDouble() - 0.5, z + random.nextDouble() - 0.5, (random.nextDouble() - 0.5) * 0.2, random.nextDouble() * 0.5 * 0.2, (random.nextDouble() - 0.5) * 0.2);
+          this.world.spawnParticle("explode", x + random.nextDouble() - 0.5, y + random.nextDouble() - 0.5, z + random.nextDouble() - 0.5, (random.nextDouble() - 0.5) * 0.2, random.nextDouble() * 0.5 * 0.2, (random.nextDouble() - 0.5) * 0.2);
+        }
       }
     }
   }

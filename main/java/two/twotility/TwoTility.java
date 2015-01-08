@@ -9,7 +9,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import java.util.Locale;
 
 /**
  *
@@ -20,7 +19,7 @@ public class TwoTility {
 
   public static final String MOD_NAME = "TwoTility";
   public static final String MOD_ID = "TwoTility";
-  public static final String MOD_VERSION = "172.1.0";
+  public static final String MOD_VERSION = "1710.1.0";
   //----------------------------------------------------------------------------
   public static final TwoTilityCreativeTab creativeTab = new TwoTilityCreativeTab();
   @Mod.Instance("TwoTility")

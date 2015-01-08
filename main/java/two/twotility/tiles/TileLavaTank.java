@@ -3,12 +3,10 @@
 package two.twotility.tiles;
 
 import cpw.mods.fml.common.eventhandler.Event;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -33,7 +31,7 @@ public class TileLavaTank extends TileEntity implements IFluidHandler {
   }
 
   public TileLavaTank(final int amount, final int capacity) {
-    tank = new FluidTank(FluidRegistry.LAVA, amount, capacity);
+    tank = new FluidTank(FluidRegistry.LAVA, amount, capacity, true); // true = tank will clamp to bucket size whenever possible
   }
 
   @Override
@@ -123,6 +121,8 @@ public class TileLavaTank extends TileEntity implements IFluidHandler {
         event.result = FluidContainerRegistry.drainFluidContainer(itemInUse);
         tank.fill(fluidStack, true);
         markDirty();
+      } else {
+        event.setCanceled(true);
       }
     } else if (FluidContainerRegistry.isEmptyContainer(itemInUse)) {
       final int capacity = FluidContainerRegistry.getContainerCapacity(tank.getFluid(), itemInUse);
@@ -135,6 +135,8 @@ public class TileLavaTank extends TileEntity implements IFluidHandler {
         }
         tank.drain(capacity, true);
         markDirty();
+      } else {
+        event.setCanceled(true);
       }
     } else {
       event.setCanceled(true);
