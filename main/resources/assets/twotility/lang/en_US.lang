@@ -1,3 +1,5 @@
+itemGroup.TwoTility=TwoTility
+
 language.name=English
 language.region=US
 language.code=en_US
@@ -16,7 +18,7 @@ item.craftingBoxAdvanced.name=Advanced Crafting Box
 item.lavaTank.name=Lava Tank
 item.lavaTank.tooltip.empty=Empty
 item.lavaTank.tooltip.filled=Contains %d buckets of lava
-item.pouchSmall.name=Small pouch
+item.pouchSmall.name=Small Pouch
 item.teddy.name=Teddy
 item.teddy.tooltip=It's dangerous to go alone...
 

@@ -25,9 +25,9 @@ public class ItemCraftingBox extends ItemBlock3d {
   public String getUnlocalizedName(final ItemStack itemStack) {
     switch (itemStack.getItemDamage()) {
       case BlockCraftingBox.STATE_BOX:
-        return BlockCraftingBox.NAME_BOX;
+        return "item." + BlockCraftingBox.NAME_BOX;
       case BlockCraftingBox.STATE_ADVANCED:
-        return BlockCraftingBox.NAME_ADVANCED;
+        return "item." + BlockCraftingBox.NAME_ADVANCED;
     }
     FMLLog.warning("Unknown state #%d for %s!", itemStack.getItemDamage(), this.getClass().getSimpleName());
     return null;
