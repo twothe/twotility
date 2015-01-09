@@ -51,7 +51,7 @@ public class ContainerPouchSmall extends ContainerBase {
   @Override
   protected Slot createSlot(final IInventory inventory, final int slotIndex, final int x, final int y) {
     final ItemStack itemStackInSlot = inventory.getStackInSlot(slotIndex);
-    if (ItemUtil.isSameType(itemStackInSlot, TwoTility.proxy.itemPouchSmall)) {
+    if (ItemUtil.isSameBaseType(itemStackInSlot, TwoTility.proxy.itemPouchSmall)) {
       return new SlotWithValidation(inventory, slotIndex, x, y, false);
     } else {
       return super.createSlot(inventory, slotIndex, x, y);

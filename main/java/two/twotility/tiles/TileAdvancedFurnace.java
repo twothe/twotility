@@ -432,7 +432,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     if ((slot >= INVENTORY_START_OUTPUT) && (slot < INVENTORY_START_OUTPUT + INVENTORY_SIZE_OUTPUT)) {
       return true;
     } else if ((slot >= INVENTORY_START_FUEL) && (slot < INVENTORY_START_FUEL + INVENTORY_SIZE_FUEL)) {
-      return ItemUtil.isSameItem(itemstack, Items.bucket);
+      return ItemUtil.isStackHolding(itemstack, Items.bucket);
     } else {
       return false;
     }

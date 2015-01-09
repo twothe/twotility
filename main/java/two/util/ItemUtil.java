@@ -20,23 +20,6 @@ public class ItemUtil {
 
   public static final FMLControlledNamespacedRegistry<Item> registry = GameData.getItemRegistry();
 
-  public static boolean isSameType(final ItemStack itemStack, final ItemStack other) {
-    if (itemStack == other) {
-      return true;
-    }
-    if (itemStack == null) {
-      return false;
-    }
-    return isSameItem(itemStack.getItem(), other.getItem());
-  }
-
-  public static boolean isSameType(final ItemStack itemStack, final Item other) {
-    if (itemStack == null) {
-      return (other == null);
-    }
-    return isSameItem(itemStack.getItem(), other);
-  }
-
   public static boolean isSameItem(final ItemStack itemStack, final ItemStack other) {
     if (itemStack == other) {
       return true;
@@ -44,18 +27,19 @@ public class ItemUtil {
     if (itemStack == null) {
       return false;
     }
-    return itemStack.isItemEqual(other);
-  }
-
-  public static boolean isSameItem(final ItemStack itemStack, final Item other) {
-    if (itemStack == null) {
-      return (other == null);
-    }
-    return isSameItem(itemStack.getItem(), other);
+    return (itemStack.isItemEqual(other) && ItemStack.areItemStackTagsEqual(itemStack, other)); // intenionally no check for stack size
   }
 
   public static boolean isSameItem(final Item item, final Item other) {
     return (item == other); // is this enough?
+  }
+
+  public static boolean isStackHolding(final ItemStack itemStack, final Item item) {
+    return ((itemStack != null) && isSameItem(itemStack.getItem(), item) && (itemStack.hasTagCompound() == false));
+  }
+
+  public static boolean isSameBaseType(final ItemStack itemStack, final Item item) {
+    return ((itemStack != null) && isSameItem(itemStack.getItem(), item));
   }
 
   public static Item findByName(final String name) {

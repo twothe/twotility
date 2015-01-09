@@ -42,8 +42,6 @@ public class BlockCraftingBox extends BlockWithInventory {
   protected IIcon iconTopAdvanced;
   @SideOnly(Side.CLIENT)
   protected IIcon iconBottom;
-  protected ItemStack itemBox;
-  protected ItemStack itemAdvanced;
 
   public BlockCraftingBox() {
     super(Material.wood, TileCraftingBox.class);
@@ -55,7 +53,7 @@ public class BlockCraftingBox extends BlockWithInventory {
     setBaseValues(NAME_BOX, soundTypeWood, 1.5F, BlockUtil.HARVEST_TOOL_AXE, BlockUtil.HARVEST_LEVEL_WOOD);
 
     if (TwoTility.config.isCraftingEnabled(NAME_BOX)) {
-      CraftingManager.getInstance().addRecipe(itemBox,
+      CraftingManager.getInstance().addRecipe(new ItemStack(TwoTility.proxy.itemCraftingBox),
               "   ",
               "CFC",
               "   ",

@@ -68,7 +68,7 @@ public class ItemPouchSmall extends ItemBase implements GUICallback {
   @Override
   public Container createContainer(final EntityPlayer player, final World world, final int x, final int y, final int z) throws InvalidTileEntityException {
     final ItemStack heldItem = player.getHeldItem();
-    if (ItemUtil.isSameType(heldItem, this)) {
+    if (ItemUtil.isSameBaseType(heldItem, this)) {
       return (new ContainerPouchSmall(player.inventory, heldItem)).layout();
     } else {
       throw new IllegalStateException("Container of " + this.getClass().getSimpleName() + " requested, but for a different item (" + heldItem.getDisplayName() + ")!");
@@ -79,7 +79,7 @@ public class ItemPouchSmall extends ItemBase implements GUICallback {
   @Override
   public Gui createGUI(final EntityPlayer player, final World world, final int x, final int y, final int z) throws InvalidTileEntityException {
     final ItemStack heldItem = player.getHeldItem();
-    if (ItemUtil.isSameType(heldItem, this)) {
+    if (ItemUtil.isSameBaseType(heldItem, this)) {
       return new GUIPouchSmall(player.inventory, heldItem);
     } else {
       throw new IllegalStateException("Container of " + this.getClass().getSimpleName() + " requested, but for a different item (" + heldItem.getDisplayName() + ")!");

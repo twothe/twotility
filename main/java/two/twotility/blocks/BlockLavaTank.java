@@ -3,7 +3,6 @@
 package two.twotility.blocks;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -32,7 +31,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.Level;
 import two.twotility.TwoTility;
@@ -41,7 +39,6 @@ import two.twotility.tiles.TileLavaTank;
 import two.util.BlockSide;
 import static two.util.BlockSide.TOP;
 import two.util.BlockUtil;
-import two.util.ItemUtil;
 
 /**
  * @author Two
