@@ -32,7 +32,7 @@ import two.util.ItemUtil;
  * @author Two
  */
 public class TileAdvancedFurnace extends TileWithInventory implements IFluidHandler {
-  
+
   protected static final int FUEL_PER_LAVA_BLOCK = 20000;// 1 lava source block = 100 operations
   protected static final int SMELTING_DURATION = 160; // in ticks
   protected static final int FUEL_PER_TICK = FUEL_PER_LAVA_BLOCK / SMELTING_DURATION / 100;
@@ -51,7 +51,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   public static final int INVENTORY_START_OUTPUT = INVENTORY_START_FUEL + INVENTORY_SIZE_FUEL;
   public static final int INVENTORY_START_PROCESSING = INVENTORY_START_OUTPUT + INVENTORY_SIZE_OUTPUT;
   protected static final int[] ACCESSIBLE_SLOTS = new int[INVENTORY_SIZE - INVENTORY_SIZE_PROCESSING];
-  
+
   static {
     for (int i = 0; i < INVENTORY_START_PROCESSING; ++i) {
       ACCESSIBLE_SLOTS[i] = i;
@@ -65,25 +65,26 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   protected int storedFuel = 0; // internal buffer for prepared fuel
   protected int smeltTimer = -1;
   protected int nextSoundEffect = 20;
-  
+  protected ItemStack currentSmeltingItem = null; // cache value to prevent unnecessary smeltery lookups
+
   public TileAdvancedFurnace() {
     super(INVENTORY_SIZE);
   }
-  
+
   @Override
   public void writeToNBT(final NBTTagCompound tag) {
     super.writeToNBT(tag);
     tag.setInteger(NBT_TAG_FUEL_STORED, storedFuel);
     tag.setInteger(NBT_TAG_SMELTTIME_REMAINING, smeltTimer);
   }
-  
+
   @Override
   public void readFromNBT(final NBTTagCompound tag) {
     super.readFromNBT(tag);
     storedFuel = tag.getInteger(NBT_TAG_FUEL_STORED);
     smeltTimer = tag.getInteger(NBT_TAG_SMELTTIME_REMAINING);
   }
-  
+
   @Override
   public void updateEntity() {
     if (worldObj.isRemote) {
@@ -92,7 +93,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
         nextRefillAttempt = REFILL_TICK_RATE;
         refill(); // if neccessary
       }
-      
+
       final ItemStack itemInProgress = getStackInSlot(INVENTORY_START_PROCESSING);
       if (smeltTimer < 0) {
         tryBeginSmelting(itemInProgress);
@@ -103,23 +104,24 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       }
     }
   }
-  
+
   protected void tryBeginSmelting(final ItemStack itemInProgress) {
     if (itemInProgress == null) {
       final ItemStack smeltableItem = findSmeltableItem();
       if (smeltableItem != null) {
         setInventorySlotContents(INVENTORY_START_PROCESSING, smeltableItem);
+        currentSmeltingItem = smeltableItem;
         updateMetadata();
       }
     } else {
-      if (ItemUtil.canSmelt(itemInProgress)) {
+      if (checkCanSmeltItem(itemInProgress)) {
         smeltTimer = SMELTING_DURATION;
       } else {
         tryClearProgressSlot(itemInProgress);
       }
     }
   }
-  
+
   protected void finishSmelting(final ItemStack itemInProgress) {
     ItemStack smeltResult = ItemUtil.getSmeltingResult(itemInProgress);
     if (smeltResult == null) {
@@ -129,12 +131,13 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       smeltTimer = -1;
     }
   }
-  
+
   protected void tryContinueSmelting(final ItemStack itemInProgress) {
     if (itemInProgress == null) {
       smeltTimer = -1;
+      currentSmeltingItem = null;
     } else {
-      if (ItemUtil.canSmelt(itemInProgress)) {
+      if (checkCanSmeltItem(itemInProgress)) {
         if (storedFuel >= FUEL_PER_TICK) {
           --smeltTimer;
           changeStoredFuel(-FUEL_PER_TICK);
@@ -146,7 +149,18 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       }
     }
   }
-  
+
+  protected boolean checkCanSmeltItem(final ItemStack itemInProgress) {
+    if (currentSmeltingItem != itemInProgress) {
+      if (ItemUtil.canSmelt(itemInProgress)) {
+        currentSmeltingItem = itemInProgress;
+      } else {
+        currentSmeltingItem = null;
+      }
+    }
+    return (itemInProgress == currentSmeltingItem);
+  }
+
   protected ItemStack findSmeltableItem() {
     for (int slot = INVENTORY_START_INPUT; slot < INVENTORY_START_INPUT + INVENTORY_SIZE_INPUT; ++slot) {
       if (ItemUtil.canSmelt(getStackInSlot(slot))) {
@@ -155,8 +169,9 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     }
     return null;
   }
-  
+
   protected boolean tryClearProgressSlot(final ItemStack smeltResult) {
+    currentSmeltingItem = null;
     if (smeltResult == null) {
       return true;
     } else if (tryAddToOutput(smeltResult)) {
@@ -168,18 +183,18 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       return false;
     }
   }
-  
+
   protected boolean tryAddToOutput(final ItemStack newItem) {
     if (newItem == null) {
       return true;
     }
     ItemStack itemInSlot;
     boolean inventoryChanged = false;
-    
+
     if (newItem.isStackable()) { // try to stack with existing items if possible
       for (int slot = INVENTORY_START_OUTPUT; slot < INVENTORY_START_OUTPUT + INVENTORY_SIZE_OUTPUT; ++slot) {
         itemInSlot = getStackInSlot(slot);
-        
+
         if (itemInSlot != null && itemInSlot.getItem() == newItem.getItem() && (!newItem.getHasSubtypes() || newItem.getItemDamage() == itemInSlot.getItemDamage()) && ItemStack.areItemStackTagsEqual(newItem, itemInSlot)) {
           final int newSlotStackSize = Math.min(itemInSlot.stackSize + newItem.stackSize, newItem.getMaxStackSize());
           final int remaining = newItem.stackSize - (newSlotStackSize - itemInSlot.stackSize);
@@ -194,11 +209,11 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
         }
       }
     }
-    
+
     if (newItem.stackSize > 0) { // if there is anything left, put it in the next free slot
       for (int slot = INVENTORY_START_OUTPUT; slot < INVENTORY_START_OUTPUT + INVENTORY_SIZE_OUTPUT; ++slot) {
         itemInSlot = getStackInSlot(slot);
-        
+
         if (itemInSlot == null) {
           setInventorySlotContents(slot, newItem.copy());
           newItem.stackSize = 0;
@@ -207,10 +222,10 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
         }
       }
     }
-    
+
     return inventoryChanged;
   }
-  
+
   protected void refill() {
     if (storedFuel < STORED_FUEL_MAX) {
       if (refillWithLava() == false) {
@@ -218,17 +233,17 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       }
     }
   }
-  
+
   @SideOnly(Side.CLIENT)
   public void setStoredFuelForGUI(final int storedFuel) {
     this.storedFuel = storedFuel;
   }
-  
+
   @SideOnly(Side.CLIENT)
   public void setSmeltTimerForGUI(final int smeltTime) {
     this.smeltTimer = smeltTime;
   }
-  
+
   protected void changeStoredFuel(final int change) {
     if (change != 0) {
       this.storedFuel += change;
@@ -236,7 +251,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       markDirty();
     }
   }
-  
+
   protected void updateMetadata() {
     if (worldObj.isRemote == false) {
       final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
@@ -246,7 +261,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       }
     }
   }
-  
+
   protected boolean refillWithInternalFuel() {
     ItemStack fuelItem;
     int burnTime;
@@ -263,7 +278,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     }
     return false;
   }
-  
+
   protected boolean refillWithLava() {
     if (tryRefillFrom(this.lastLavaSource)) {
       return true;
@@ -272,7 +287,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       return tryDrainFromNearestLavaSource();
     }
   }
-  
+
   protected boolean tryRefillFrom(final FluidDrainTarget target) {
     if ((target != null) && target.isValid()) {
       final FluidStack drainedFluid = target.tryDrainLava(LAVA_FLUIDSTACK);
@@ -283,7 +298,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     }
     return false;
   }
-  
+
   protected boolean tryDrainFromNearestLavaSource() {
     ForgeDirection movingLavaDirection = ForgeDirection.UNKNOWN;
     TileEntity tileEntity;
@@ -307,13 +322,13 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
         return true;
       }
     }
-    
+
     if (movingLavaDirection != ForgeDirection.UNKNOWN) {
       return tryDrainFollowingLavaFlow(movingLavaDirection);
     }
     return false;
   }
-  
+
   protected boolean tryRefillFromLavaBlock(final int x, final int y, final int z) {
     if (worldObj.getBlockMetadata(x, y, z) == 0) { // is this a source block?
       worldObj.setBlockToAir(x, y, z);
@@ -325,13 +340,13 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     }
   }
   protected final static ForgeDirection[] VALID_LAVA_SEARCH_DIRECTIONS = {ForgeDirection.UP, ForgeDirection.NORTH, ForgeDirection.EAST, ForgeDirection.SOUTH, ForgeDirection.WEST};
-  
+
   protected boolean tryDrainFollowingLavaFlow(final ForgeDirection direction) {
     int x = xCoord + direction.offsetX, y = yCoord + direction.offsetY, z = zCoord + direction.offsetZ;
     int meta, bestMeta = worldObj.getBlockMetadata(x, y, z) + 1; // +1 to make up-flows more important
     ForgeDirection bestLavaDirection;
     boolean hasLavaUp;
-    
+
     for (int loop = TwoTility.proxy.blockAdvancedFurnace.lavaFlowSearchMax; loop > 0; --loop) {
       if (tryRefillFromLavaBlock(x, y, z)) {
         return true; // we found a source block
@@ -353,14 +368,14 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
             }
           }
         }
-        
+
         if (hasLavaUp) { // if there was laval upwards, always go there first
           bestLavaDirection = ForgeDirection.UP;
           bestMeta = Integer.MAX_VALUE;
         } else if (bestLavaDirection == ForgeDirection.UNKNOWN) {
           return false; // there was no lava with better flow value around
         }
-        
+
         x += bestLavaDirection.offsetX;
         y += bestLavaDirection.offsetY;
         z += bestLavaDirection.offsetZ;
@@ -368,7 +383,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     }
     return false;
   }
-  
+
   public int getStoredFuel() {
     return this.storedFuel;
   }
@@ -381,7 +396,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   public int getRemainingSmeltTime() {
     return this.smeltTimer;
   }
-  
+
   public double getStoredOperationsInPercent() {
     if (storedFuel > STORED_FUEL_MAX) {
       return 1.0;
@@ -391,12 +406,12 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       return ((double) storedFuel) / ((double) STORED_FUEL_MAX);
     }
   }
-  
+
   @Override
   public ContainerBase createContainer(final EntityPlayer player) {
     return new ContainerAdvancedFurnace(player.inventory, this);
   }
-  
+
   @SideOnly(Side.CLIENT)
   @Override
   public Gui createGUI(final EntityPlayer player) {
@@ -410,7 +425,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   public String getInventoryName() {
     return BlockAdvancedFurnace.NAME;
   }
-  
+
   @Override
   public boolean isItemValidForSlot(final int slot, final ItemStack itemstack) {
     if ((slot >= INVENTORY_START_PROCESSING) && (slot < INVENTORY_START_PROCESSING + INVENTORY_SIZE_PROCESSING)) {
@@ -437,7 +452,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       return false;
     }
   }
-  
+
   @Override
   public int[] getAccessibleSlotsFromSide(int var1) {
     return ACCESSIBLE_SLOTS;
@@ -450,7 +465,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   public boolean canFill(final ForgeDirection from, final Fluid fluid) {
     return ((fluid != null) && (fluid.getID() == LAVA_FLUIDSTACK.fluidID));
   }
-  
+
   @Override
   public int fill(final ForgeDirection from, final FluidStack resource, final boolean doFill) {
     int amountTaken = 0;
@@ -469,12 +484,12 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
     return null;
   }
-  
+
   @Override
   public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
     return null;
   }
-  
+
   @Override
   public boolean canDrain(ForgeDirection from, Fluid fluid) {
     return false;
@@ -487,11 +502,11 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
   public FluidTankInfo[] getTankInfo(ForgeDirection from) {
     return new FluidTankInfo[]{new FluidTankInfo(LAVA_FLUIDSTACK.copy(), MB_CAPACITY)};
   }
-  
+
   public static double fuelToMB(final double fuel) {
     return fuel / FUEL_PER_LAVA_MB;
   }
-  
+
   public static double MBToFuel(final double milliBuckets) {
     return milliBuckets * FUEL_PER_LAVA_MB;
   }

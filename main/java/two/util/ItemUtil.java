@@ -81,7 +81,6 @@ public class ItemUtil {
     return true;
   }
 
-  @SideOnly(Side.CLIENT)
   protected static final Map<String, String> tooltipCache = new HashMap<String, String>();
 
   @SideOnly(Side.CLIENT)
