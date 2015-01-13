@@ -176,7 +176,6 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       return true;
     } else if (tryAddToOutput(smeltResult)) {
       decrStackSize(INVENTORY_START_PROCESSING, 1);
-      markDirty();
       updateMetadata();
       return true;
     } else {
@@ -248,18 +247,20 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     if (change != 0) {
       this.storedFuel += change;
       updateMetadata();
-      markDirty();
     }
   }
 
-  protected void updateMetadata() {
+  protected boolean updateMetadata() {
     if (worldObj.isRemote == false) {
       final int currentMetadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
       final int newMetadata = BlockAdvancedFurnace.updateState(currentMetadata, this.storedFuel > 0, this.inventory[INVENTORY_START_PROCESSING] != null);
       if (newMetadata != currentMetadata) {
         worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newMetadata, 3);
+        markDirty();
+        return true;
       }
     }
+    return false;
   }
 
   protected boolean refillWithInternalFuel() {
@@ -293,6 +294,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       final FluidStack drainedFluid = target.tryDrainLava(LAVA_FLUIDSTACK);
       if (LAVA_FLUIDSTACK.isFluidEqual(drainedFluid) && (drainedFluid.amount > 0)) {
         changeStoredFuel((int) MBToFuel(drainedFluid.amount)); // successfully drained enough lava for this many operations (rounded down)
+        markDirty();
         return true;
       }
     }
@@ -333,6 +335,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     if (worldObj.getBlockMetadata(x, y, z) == 0) { // is this a source block?
       worldObj.setBlockToAir(x, y, z);
       changeStoredFuel(FUEL_PER_LAVA_BLOCK); // successfully drained a lava block
+      markDirty();
       worldObj.playSoundEffect((double) xCoord + 0.5D, (double) yCoord + 0.5D, (double) zCoord + 0.5D, TwoTility.proxy.SOUND_FLUIDSUCKIN, 0.6F, worldObj.rand.nextFloat() * 0.1F + 0.9F);
       return true;
     } else {
@@ -474,6 +477,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
       amountTaken = Math.min((int) fuelToMB(Math.floor(MBToFuel(resource.amount))), amountRequired);
       if (doFill) {
         changeStoredFuel((int) MBToFuel(amountTaken));
+        markDirty();
       }
     }
     return amountTaken;
