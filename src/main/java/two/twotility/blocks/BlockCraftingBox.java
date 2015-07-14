@@ -19,6 +19,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
 import two.twotility.tiles.TileCraftingBox;
 import two.util.BlockSide;
@@ -53,12 +54,11 @@ public class BlockCraftingBox extends BlockWithInventory {
     setBaseValues(NAME_BOX, soundTypeWood, 1.5F, BlockUtil.HARVEST_TOOL_AXE, BlockUtil.HARVEST_LEVEL_WOOD);
 
     if (TwoTility.config.isCraftingEnabled(NAME_BOX)) {
-      CraftingManager.getInstance().addRecipe(new ItemStack(TwoTility.proxy.itemCraftingBox),
-              "   ",
-              "CFC",
-              "   ",
-              'C', TwoTility.proxy.blockShelf,
-              'F', Blocks.crafting_table);
+      CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(TwoTility.proxy.itemCraftingBox),
+              "SFS",
+              'S', "shelfWood",
+              'F', "craftingTableWood"
+      ));
     }
 //
 //    if (TwoTility.config.isCraftingEnabled(NAME_ADVANCED)) {

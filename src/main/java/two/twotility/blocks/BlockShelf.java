@@ -9,8 +9,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.AxisAlignedBB;
@@ -19,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
 import two.twotility.tiles.TileShelf;
 import two.util.BlockSide;
@@ -46,18 +45,20 @@ public class BlockShelf extends BlockWithInventory {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void initialize() {
     setBaseValues(NAME, soundTypeWood, 1.5F, BlockUtil.HARVEST_TOOL_AXE, BlockUtil.HARVEST_LEVEL_WOOD);
 
-    OreDictionary.registerOre("Shelf", this);
+    OreDictionary.registerOre("shelfWood", this);
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
-      CraftingManager.getInstance().addRecipe(new ItemStack(this),
+      CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(this),
               "WWW",
               "S S",
               "WWW",
-              'W', Blocks.planks,
-              'S', Items.stick);
+              'W', "plankWood",
+              'S', "stickWood"
+      ));
     }
 
   }

@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
 import two.twotility.tiles.TileAdvancedFurnace;
 import two.util.BlockSide;
@@ -51,14 +52,15 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
     setLightLevel(100.0f); // in percent
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
-      CraftingManager.getInstance().addRecipe(new ItemStack(this, 1),
+      CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(this, 1),
               " R ",
               "CFC",
               " B ",
-              'C', Blocks.chest,
+              'C', "chestWood",
               'F', Blocks.furnace,
-              'R', Items.redstone,
-              'B', Items.bucket);
+              'R', "dustRestone",
+              'B', Items.bucket
+      ));
     }
   }
 

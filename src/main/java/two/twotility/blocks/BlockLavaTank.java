@@ -32,6 +32,7 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.Level;
 import two.twotility.TwoTility;
 import two.twotility.items.ItemLavaTank;
@@ -73,12 +74,13 @@ public class BlockLavaTank extends BlockBase implements ITileEntityProvider {
     itemDropped = TwoTility.proxy.itemLavaTank;
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
-      CraftingManager.getInstance().addRecipe(new ItemStack(itemDropped, 1, STATE_EMPTY),
+      CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(itemDropped, 1, STATE_EMPTY),
               "IGI",
               "G G",
               "IGI",
-              'G', Blocks.glass_pane,
-              'I', Items.iron_ingot);
+              'G', "paneGlass",
+              'I', "ingotIron"
+      ));
     }
 
     MinecraftForge.EVENT_BUS.register(this);
