@@ -19,7 +19,7 @@ public class TwoTility {
 
   public static final String MOD_NAME = "TwoTility";
   public static final String MOD_ID = "TwoTility";
-  public static final String MOD_VERSION = "1710.1.3";
+  public static final String MOD_VERSION = "1710.2.0";
   //----------------------------------------------------------------------------
   public static final TwoTilityCreativeTab creativeTab = new TwoTilityCreativeTab();
   @Mod.Instance("TwoTility")

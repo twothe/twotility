@@ -99,7 +99,7 @@ public class TilePowerStorage extends TileWithInventory implements IEnergyHandle
 
   @Override
   public int extractEnergy(final ForgeDirection from, final int maxExtract, final boolean simulate) {
-    int energyExtracted = maxExtract;
+    int energyExtracted = 0;
     ItemStack itemStack;
     for (int i = 0; i < this.getSizeInventory(); ++i) {
       if (energyExtracted >= maxExtract) {
@@ -109,7 +109,7 @@ public class TilePowerStorage extends TileWithInventory implements IEnergyHandle
       if (itemStack != null) {
         if (itemStack.getItem() instanceof IEnergyContainerItem) {
           final IEnergyContainerItem storage = (IEnergyContainerItem) itemStack.getItem();
-          energyExtracted += storage.receiveEnergy(itemStack, maxExtract - energyExtracted, simulate);
+          energyExtracted += storage.extractEnergy(itemStack, maxExtract - energyExtracted, simulate);
         } else {
           FMLLog.log(TwoTility.MOD_ID, Level.WARN, "Found %s inside PowerStorage.", itemStack.getItem() == null ? "null" : itemStack.getItem().getUnlocalizedName());
         }

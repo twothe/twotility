@@ -16,6 +16,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.Level;
 import two.twotility.TwoTility;
 import two.util.ItemUtil;
+import two.util.TwoMath;
 
 /**
  *
@@ -87,7 +88,7 @@ public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IE
   }
 
   @Override
-  public int extractEnergy(final ItemStack itemStack, int maxExtract, boolean simulate) {
+  public int extractEnergy(final ItemStack itemStack, final int maxExtract, final boolean simulate) {
     final int energyExtracted = Math.min(getEnergyStored(itemStack), Math.min(this.maxExtract, maxExtract));
 
     if (!simulate) {
@@ -102,7 +103,7 @@ public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IE
 
   protected ItemStack setEnergyStored(final ItemStack itemStack, final int amount) {
     if (itemStack.hasTagCompound()) {
-      itemStack.getTagCompound().setInteger(NBT_TAG_ENERGY, amount);
+      itemStack.getTagCompound().setInteger(NBT_TAG_ENERGY, TwoMath.withinBounds(amount, 0, capacity));
     } else {
       final NBTTagCompound tagCompound = new NBTTagCompound();
       tagCompound.setInteger(NBT_TAG_ENERGY, amount);
