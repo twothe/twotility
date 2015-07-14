@@ -2,9 +2,11 @@ package two.twotility.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import two.twotility.gui.slots.SlotWithValidation;
 import two.twotility.tiles.TilePowerStorage;
-import two.twotility.tiles.TileShelf;
 
 /**
  *
@@ -38,12 +40,17 @@ public class ContainerPowerStorage extends ContainerBase {
   }
 
   @Override
+  protected Slot createSlot(final IInventory inventory, final int slotIndex, final int x, final int y) {
+    return new SlotWithValidation(inventory, slotIndex, x, y);
+  }
+
+  @Override
   public boolean canInteractWith(final EntityPlayer entityplayer) {
     return tilePowerStorage.isUseableByPlayer(entityplayer);
   }
 
   @Override
   protected boolean mergeItemStackWithInventory(final ItemStack itemStack, final int slotOffset) {
-    return mergeItemStack(itemStack, slotOffset + TileShelf.INVENTORY_START_STORAGE, slotOffset + TileShelf.INVENTORY_START_STORAGE + TileShelf.INVENTORY_SIZE_STORAGE);
+    return mergeItemStack(itemStack, slotOffset + TilePowerStorage.INVENTORY_START_STORAGE, slotOffset + TilePowerStorage.INVENTORY_START_STORAGE + TilePowerStorage.INVENTORY_SIZE_STORAGE);
   }
 }

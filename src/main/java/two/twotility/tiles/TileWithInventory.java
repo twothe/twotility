@@ -177,31 +177,35 @@ public abstract class TileWithInventory extends TileEntity implements ISidedInve
 
   public void spillOutInventory(final ItemStack[] inventory) {
     for (final ItemStack itemstack : inventory) {
-      if (itemstack != null) {
-        final float modX = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-        final float modY = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-        final float modZ = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+      spillOutItem(itemstack);
+    }
+  }
 
-        while (itemstack.stackSize > 0) {
-          int stackSplit = worldObj.rand.nextInt(21) + 10;
+  public void spillOutItem(final ItemStack itemstack) {
+    if (itemstack != null) {
+      final float modX = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+      final float modY = worldObj.rand.nextFloat() * 0.8F + 0.1F;
+      final float modZ = worldObj.rand.nextFloat() * 0.8F + 0.1F;
 
-          if (stackSplit > itemstack.stackSize) {
-            stackSplit = itemstack.stackSize;
-          }
+      while (itemstack.stackSize > 0) {
+        int stackSplit = worldObj.rand.nextInt(21) + 10;
 
-          itemstack.stackSize -= stackSplit;
-          final EntityItem entityitem = new EntityItem(worldObj, (double) ((float) xCoord + modX), (double) ((float) yCoord + modY), (double) ((float) zCoord + modZ), new ItemStack(itemstack.getItem(), stackSplit, itemstack.getItemDamage()));
-
-          if (itemstack.hasTagCompound()) {
-            entityitem.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
-          }
-
-          final float baseVelocity = 0.05F;
-          entityitem.motionX = (double) ((float) worldObj.rand.nextGaussian() * baseVelocity);
-          entityitem.motionY = (double) ((float) worldObj.rand.nextGaussian() * baseVelocity + 0.2F);
-          entityitem.motionZ = (double) ((float) worldObj.rand.nextGaussian() * baseVelocity);
-          worldObj.spawnEntityInWorld(entityitem);
+        if (stackSplit > itemstack.stackSize) {
+          stackSplit = itemstack.stackSize;
         }
+
+        itemstack.stackSize -= stackSplit;
+        final EntityItem entityitem = new EntityItem(worldObj, (double) ((float) xCoord + modX), (double) ((float) yCoord + modY), (double) ((float) zCoord + modZ), new ItemStack(itemstack.getItem(), stackSplit, itemstack.getItemDamage()));
+
+        if (itemstack.hasTagCompound()) {
+          entityitem.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
+        }
+
+        final float baseVelocity = 0.05F;
+        entityitem.motionX = (double) ((float) worldObj.rand.nextGaussian() * baseVelocity);
+        entityitem.motionY = (double) ((float) worldObj.rand.nextGaussian() * baseVelocity + 0.2F);
+        entityitem.motionZ = (double) ((float) worldObj.rand.nextGaussian() * baseVelocity);
+        worldObj.spawnEntityInWorld(entityitem);
       }
     }
   }
