@@ -13,13 +13,14 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
+import two.twotility.tiles.TilePowerStorage;
 import two.util.BlockUtil;
 
 /**
  *
  * @author Two
  */
-public class BlockPowerStorage extends BlockBase {
+public class BlockPowerStorage extends BlockWithInventory {
 
   public static final String NAME = "powerblock";
 //-- Class -------------------------------------------------------------------
@@ -27,7 +28,7 @@ public class BlockPowerStorage extends BlockBase {
   protected IIcon iconDefault;
 
   public BlockPowerStorage() {
-    super(Material.iron);
+    super(Material.iron, TilePowerStorage.class);
   }
 
   @Override

@@ -19,11 +19,11 @@ import two.twotility.tiles.TileShelf;
 public class GUIShelf extends GuiContainer {
 
   protected static final ResourceLocation background = GuiHandler.loadGuiPNG(BlockShelf.NAME);
-  protected final TileShelf tileCraftingBox;
+  protected final TileShelf tileShelf;
 
-  public GUIShelf(final InventoryPlayer inventoryPlayer, final TileShelf tileCraftingBox) {
-    super((new ContainerShelf(inventoryPlayer, tileCraftingBox)).layout());
-    this.tileCraftingBox = tileCraftingBox;
+  public GUIShelf(final InventoryPlayer inventoryPlayer, final TileShelf tileShelf) {
+    super((new ContainerShelf(inventoryPlayer, tileShelf)).layout());
+    this.tileShelf = tileShelf;
     // visible gui part
     this.xSize = 167;
     this.ySize = 156;
