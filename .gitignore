@@ -1,3 +1,10 @@
+/.git
+/.gradle
+/.nb-gradle
+/.settings
+/build
+/eclipse
+/gradle
 /assets/forge
 /cpw
 /ibxm
@@ -7,4 +14,8 @@
 /*.cfg
 /*.properties
 /*.png
+/*.xcf
 /*.java
+.nb-gradle-properties
+gradlew
+gradlew.bat
