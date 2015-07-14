@@ -4,39 +4,16 @@ package two.twotility;
 
 import java.util.ArrayList;
 import net.minecraftforge.common.MinecraftForge;
-import two.twotility.blocks.BlockCraftingBox;
-import two.twotility.blocks.BlockAdvancedFurnace;
-import two.twotility.blocks.BlockLavaTank;
-import two.twotility.blocks.BlockPowerStorage;
-import two.twotility.blocks.BlockShelf;
-import two.twotility.items.ItemCraftingBox;
-import two.twotility.items.ItemLavaTank;
-import two.twotility.items.ItemPouchSmall;
-import two.twotility.items.ItemGrenade;
-import two.twotility.items.ItemTeddy;
+import two.twotility.blocks.*;
+import two.twotility.items.*;
 
 /**
  * @author Two
  */
 public class ProxyBase {
 
-  /* Items */
-  public ItemLavaTank itemLavaTank;
-  public ItemPouchSmall itemPouchSmall;
-  public ItemCraftingBox itemCraftingBox;
-  public ItemTeddy itemTeddy;
-  public ItemGrenade itemGrenade;
-  /* Blocks */
-  public BlockAdvancedFurnace blockAdvancedFurnace;
-  public BlockLavaTank blockLavaTank;
-  public BlockShelf blockShelf;
-  public BlockCraftingBox blockCraftingBox;
-  public BlockPowerStorage blockPowerStorage;
   /* Sound */
   public final String SOUND_FLUIDSUCKIN = TwoTility.getSoundName("fluidsuckin");
-  /* Global Config vars */
-  public float configGrenadeDamageMultiplier;
-  public boolean configGrenadeDestroysBlocks;
   /* Initialization list for content that needs post-initialization. */
   protected ArrayList<InitializableModContent> pendingInitialization = new ArrayList<InitializableModContent>();
 
@@ -44,42 +21,54 @@ public class ProxyBase {
   }
 
   protected void loadGlobalConfigValues() {
-    configGrenadeDamageMultiplier = (float) TwoTility.config.getMiscDouble("Grenade damage multiplier", 1.0);
-    configGrenadeDestroysBlocks = TwoTility.config.getMiscBoolean("Grenade can destroy blocks", true);
+    TwoTilityAssets.configGrenadeDamageMultiplier = (float) TwoTility.config.getMiscDouble("Grenade damage multiplier", 1.0);
+    TwoTilityAssets.configGrenadeDestroysBlocks = TwoTility.config.getMiscBoolean("Grenade can destroy blocks", true);
   }
 
   protected void registerBlocks() {
-    blockAdvancedFurnace = new BlockAdvancedFurnace();
-    pendingInitialization.add(blockAdvancedFurnace);
+    TwoTilityAssets.blockAdvancedFurnace = new BlockAdvancedFurnace();
+    pendingInitialization.add(TwoTilityAssets.blockAdvancedFurnace);
 
-    blockLavaTank = new BlockLavaTank();
-    pendingInitialization.add(blockLavaTank);
+    TwoTilityAssets.blockLavaTank = new BlockLavaTank();
+    pendingInitialization.add(TwoTilityAssets.blockLavaTank);
 
-    blockShelf = new BlockShelf();
-    pendingInitialization.add(blockShelf);
+    TwoTilityAssets.blockShelf = new BlockShelf();
+    pendingInitialization.add(TwoTilityAssets.blockShelf);
 
-    blockCraftingBox = new BlockCraftingBox();
-    pendingInitialization.add(blockCraftingBox);
+    TwoTilityAssets.blockCraftingBox = new BlockCraftingBox();
+    pendingInitialization.add(TwoTilityAssets.blockCraftingBox);
 
-    blockPowerStorage = new BlockPowerStorage();
-    pendingInitialization.add(blockPowerStorage);
+    TwoTilityAssets.blockPowerStorage = new BlockPowerStorage();
+    pendingInitialization.add(TwoTilityAssets.blockPowerStorage);
   }
 
   protected void registerItems() {
-    itemLavaTank = new ItemLavaTank(blockLavaTank);
-    pendingInitialization.add(itemLavaTank);
+    TwoTilityAssets.itemLavaTank = new ItemLavaTank(TwoTilityAssets.blockLavaTank);
+    pendingInitialization.add(TwoTilityAssets.itemLavaTank);
 
-    itemPouchSmall = new ItemPouchSmall();
-    pendingInitialization.add(itemPouchSmall);
+    TwoTilityAssets.itemPouchSmall = new ItemPouchSmall();
+    pendingInitialization.add(TwoTilityAssets.itemPouchSmall);
 
-    itemCraftingBox = new ItemCraftingBox(blockCraftingBox);
-    pendingInitialization.add(itemCraftingBox);
+    TwoTilityAssets.itemCraftingBox = new ItemCraftingBox(TwoTilityAssets.blockCraftingBox);
+    pendingInitialization.add(TwoTilityAssets.itemCraftingBox);
 
-    itemTeddy = new ItemTeddy();
-    pendingInitialization.add(itemTeddy);
+    TwoTilityAssets.itemTeddy = new ItemTeddy();
+    pendingInitialization.add(TwoTilityAssets.itemTeddy);
 
-    itemGrenade = new ItemGrenade();
-    pendingInitialization.add(itemGrenade);
+    TwoTilityAssets.itemGrenade = new ItemGrenade();
+    pendingInitialization.add(TwoTilityAssets.itemGrenade);
+
+    TwoTilityAssets.itemPowerStorageUpgradePotato = new ItemPowerStorageUpgradePotato();
+    pendingInitialization.add(TwoTilityAssets.itemPowerStorageUpgradePotato);
+
+    TwoTilityAssets.itemPowerStorageUpgradeWood = new ItemPowerStorageUpgradeWood();
+    pendingInitialization.add(TwoTilityAssets.itemPowerStorageUpgradeWood);
+
+    TwoTilityAssets.itemPowerStorageUpgradeIron = new ItemPowerStorageUpgradeIron();
+    pendingInitialization.add(TwoTilityAssets.itemPowerStorageUpgradeIron);
+
+    TwoTilityAssets.itemPowerStorageUpgradeDiamond = new ItemPowerStorageUpgradeDiamond();
+    pendingInitialization.add(TwoTilityAssets.itemPowerStorageUpgradeDiamond);
   }
 
   protected void registerRenderers() {

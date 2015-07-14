@@ -1,18 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package two.twotility.blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import two.twotility.ProxyBase;
 import two.twotility.TwoTility;
+import two.twotility.TwoTilityAssets;
 import two.twotility.tiles.TilePowerStorage;
 import two.util.BlockUtil;
 
@@ -22,7 +20,7 @@ import two.util.BlockUtil;
  */
 public class BlockPowerStorage extends BlockWithInventory {
 
-  public static final String NAME = "powerblock";
+  public static final String NAME = "powerStorage";
 //-- Class -------------------------------------------------------------------
   @SideOnly(Side.CLIENT)
   protected IIcon iconDefault;
@@ -38,11 +36,11 @@ public class BlockPowerStorage extends BlockWithInventory {
     if (TwoTility.config.isCraftingEnabled(NAME)) {
       CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(this),
               "IrI",
-              "rRr",
+              "rSr",
               "IrI",
               'I', "ingotIron",
               'r', "dustRedstone",
-              'R', "blockRedstone"
+              'S', new ItemStack(TwoTilityAssets.blockShelf)
       ));
     }
 

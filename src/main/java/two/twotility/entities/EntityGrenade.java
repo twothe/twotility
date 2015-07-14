@@ -9,7 +9,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import two.twotility.TwoTility;
+import two.twotility.TwoTilityAssets;
 import two.twotility.effects.BlockMiningExplosion;
 
 /**
@@ -42,7 +42,7 @@ public class EntityGrenade extends EntityThrowable {
     this.setDead();
     final float size = 3f;
 
-    final BlockMiningExplosion explosion = new BlockMiningExplosion(worldObj, this, posX, posY, posZ, size, TwoTility.proxy.configGrenadeDestroysBlocks, TwoTility.proxy.configGrenadeDamageMultiplier);
+    final BlockMiningExplosion explosion = new BlockMiningExplosion(worldObj, this, posX, posY, posZ, size, TwoTilityAssets.configGrenadeDestroysBlocks, TwoTilityAssets.configGrenadeDamageMultiplier);
     final boolean cancelExplosion = net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, explosion);
     if (cancelExplosion == false) {
       explosion.doExplosionA();

@@ -19,6 +19,6 @@ public class TwoTilityCreativeTab extends CreativeTabs {
   @SideOnly(Side.CLIENT)
   @Override
   public Item getTabIconItem() {
-    return TwoTility.proxy.itemTeddy;
+    return TwoTilityAssets.itemTeddy;
   }
 }

@@ -9,7 +9,7 @@ tile.craftingBox.name=Crafting Box
 tile.craftingBoxAdvanced.name=Advanced Crafting Box
 tile.lavaTank.name=Lava Tank
 tile.advancedFurnace.name=Advanced Furnace
-tile.streamingRadio.name=Radio
+tile.powerStorage.name=Power Storage
 
 item.grenade.name=Grenade
 item.grenade.tooltip=Sophisticated technology
@@ -21,5 +21,14 @@ item.lavaTank.tooltip.filled=Contains %d buckets of lava
 item.pouchSmall.name=Small Pouch
 item.teddy.name=Teddy
 item.teddy.tooltip=It's dangerous to go alone...
+
+item.powerStorageUpgradePotato.name=Potato Power Storage Upgrade
+item.powerStorageUpgradePotato.tooltip=%s / %s RF. Tasty!
+item.powerStorageUpgradeWood.name=Wooden Power Storage Upgrade
+item.powerStorageUpgradeWood.tooltip=%s / %s RF.
+item.powerStorageUpgradeIron.name=Iron Power Storage Upgrade
+item.powerStorageUpgradeIron.tooltip=%s / %s RF.
+item.powerStorageUpgradeDiamond.name=Diamond Power Storage Upgrade
+item.powerStorageUpgradeDiamond.tooltip=%s / %s RF.
 
 entity.grenade=Grenade

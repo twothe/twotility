@@ -28,9 +28,9 @@ public class ProxyClient extends ProxyBase {
     super.registerRenderers();
 
     itemRendererBlock3d = new ItemRendererBlock3d();
-    MinecraftForgeClient.registerItemRenderer(itemLavaTank, itemRendererBlock3d);
-    MinecraftForgeClient.registerItemRenderer(itemCraftingBox, itemRendererBlock3d);
-    RenderingRegistry.registerEntityRenderingHandler(EntityGrenade.class, new RenderSnowball(itemGrenade));
+    MinecraftForgeClient.registerItemRenderer(TwoTilityAssets.itemLavaTank, itemRendererBlock3d);
+    MinecraftForgeClient.registerItemRenderer(TwoTilityAssets.itemCraftingBox, itemRendererBlock3d);
+    RenderingRegistry.registerEntityRenderingHandler(EntityGrenade.class, new RenderSnowball(TwoTilityAssets.itemGrenade));
   }
 
 }

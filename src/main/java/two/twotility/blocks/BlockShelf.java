@@ -48,9 +48,6 @@ public class BlockShelf extends BlockWithInventory {
   @SuppressWarnings("unchecked")
   public void initialize() {
     setBaseValues(NAME, soundTypeWood, 1.5F, BlockUtil.HARVEST_TOOL_AXE, BlockUtil.HARVEST_LEVEL_WOOD);
-
-    OreDictionary.registerOre("shelfWood", this);
-
     if (TwoTility.config.isCraftingEnabled(NAME)) {
       CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(this),
               "WWW",

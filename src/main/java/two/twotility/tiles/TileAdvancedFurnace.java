@@ -21,6 +21,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.IFluidTank;
 import two.twotility.TwoTility;
+import two.twotility.TwoTilityAssets;
 import two.twotility.blocks.BlockAdvancedFurnace;
 import two.twotility.container.ContainerAdvancedFurnace;
 import two.twotility.container.ContainerBase;
@@ -350,7 +351,7 @@ public class TileAdvancedFurnace extends TileWithInventory implements IFluidHand
     ForgeDirection bestLavaDirection;
     boolean hasLavaUp;
 
-    for (int loop = TwoTility.proxy.blockAdvancedFurnace.lavaFlowSearchMax; loop > 0; --loop) {
+    for (int loop = TwoTilityAssets.blockAdvancedFurnace.lavaFlowSearchMax; loop > 0; --loop) {
       if (tryRefillFromLavaBlock(x, y, z)) {
         return true; // we found a source block
       } else {

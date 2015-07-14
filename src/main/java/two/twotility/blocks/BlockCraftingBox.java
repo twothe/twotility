@@ -21,6 +21,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
+import two.twotility.TwoTilityAssets;
 import two.twotility.tiles.TileCraftingBox;
 import two.util.BlockSide;
 import two.util.BlockUtil;
@@ -54,7 +55,7 @@ public class BlockCraftingBox extends BlockWithInventory {
     setBaseValues(NAME_BOX, soundTypeWood, 1.5F, BlockUtil.HARVEST_TOOL_AXE, BlockUtil.HARVEST_LEVEL_WOOD);
 
     if (TwoTility.config.isCraftingEnabled(NAME_BOX)) {
-      CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(TwoTility.proxy.itemCraftingBox),
+      CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(TwoTilityAssets.itemCraftingBox),
               "SFS",
               'S', "shelfWood",
               'F', "craftingTableWood"
@@ -104,7 +105,7 @@ public class BlockCraftingBox extends BlockWithInventory {
       case BOTTOM:
         return iconBottom;
       default:
-        return TwoTility.proxy.blockShelf.getSideIconByState(BlockSide.getBlockDataFromMetadata(metadata));
+        return TwoTilityAssets.blockShelf.getSideIconByState(BlockSide.getBlockDataFromMetadata(metadata));
     }
   }
 
@@ -129,11 +130,11 @@ public class BlockCraftingBox extends BlockWithInventory {
 
   @Override
   public Item getItemDropped(final int metadata, final Random random, final int fortuneLevel) {
-    return TwoTility.proxy.itemCraftingBox;
+    return TwoTilityAssets.itemCraftingBox;
   }
 
   @Override
   public ItemStack getPickBlock(final MovingObjectPosition target, final World world, final int x, final int y, final int z, final EntityPlayer player) {
-    return new ItemStack(TwoTility.proxy.itemCraftingBox);
+    return new ItemStack(TwoTilityAssets.itemCraftingBox);
   }
 }

@@ -45,6 +45,11 @@ public class Config {
     return property.getInt(defaultValue);
   }
 
+  public long getMiscLong(final String key, final long defaultValue) {
+    final Property property = configuration.get(CATEGORY_VARIOUS_SETTINGS, key, (double) defaultValue);
+    return (long) property.getDouble(defaultValue);
+  }
+
   public double getMiscDouble(final String key, final double defaultValue) {
     final Property property = configuration.get(CATEGORY_VARIOUS_SETTINGS, key, defaultValue);
     return property.getDouble(defaultValue);

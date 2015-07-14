@@ -9,6 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import two.twotility.TwoTility;
+import two.twotility.TwoTilityAssets;
 import two.twotility.gui.slots.SlotWithValidation;
 import two.util.ItemUtil;
 
@@ -51,7 +52,7 @@ public class ContainerPouchSmall extends ContainerBase {
   @Override
   protected Slot createSlot(final IInventory inventory, final int slotIndex, final int x, final int y) {
     final ItemStack itemStackInSlot = inventory.getStackInSlot(slotIndex);
-    if (ItemUtil.isSameBaseType(itemStackInSlot, TwoTility.proxy.itemPouchSmall)) {
+    if (ItemUtil.isSameBaseType(itemStackInSlot, TwoTilityAssets.itemPouchSmall)) {
       return new SlotWithValidation(inventory, slotIndex, x, y, false);
     } else {
       return super.createSlot(inventory, slotIndex, x, y);

@@ -103,4 +103,9 @@ public class ItemUtil {
   public static void clearCachedTooltips() {
     tooltipCache.clear();
   }
+
+  public static int energyAmountToDamagePercent(final int amount, final int capacity) {
+    final int percent = (amount * 100) / capacity;
+    return TwoMath.withinBounds(100 - percent, 0, 100);
+  }
 }

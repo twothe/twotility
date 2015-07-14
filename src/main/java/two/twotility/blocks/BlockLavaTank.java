@@ -35,6 +35,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.Level;
 import two.twotility.TwoTility;
+import two.twotility.TwoTilityAssets;
 import two.twotility.items.ItemLavaTank;
 import two.twotility.tiles.TileLavaTank;
 import two.util.BlockSide;
@@ -71,7 +72,7 @@ public class BlockLavaTank extends BlockBase implements ITileEntityProvider {
     setLightOpacity(0);
     setLightLevel(8.0f / 15.0f);
 
-    itemDropped = TwoTility.proxy.itemLavaTank;
+    itemDropped = TwoTilityAssets.itemLavaTank;
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
       CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(itemDropped, 1, STATE_EMPTY),
