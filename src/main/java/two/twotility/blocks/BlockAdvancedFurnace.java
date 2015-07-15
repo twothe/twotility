@@ -56,9 +56,9 @@ public class BlockAdvancedFurnace extends BlockWithInventory {
               " R ",
               "CFC",
               " B ",
-              'C', "chestWood",
+              'C', Blocks.chest,
               'F', Blocks.furnace,
-              'R', "dustRestone",
+              'R', "dustRedstone",
               'B', Items.bucket
       ));
     }
