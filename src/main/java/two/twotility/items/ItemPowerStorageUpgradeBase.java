@@ -8,10 +8,13 @@ import java.util.List;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.Level;
 import two.twotility.TwoTility;
@@ -25,6 +28,7 @@ import two.util.TwoMath;
 public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IEnergyContainerItem {
 
   protected static final String NBT_TAG_ENERGY = "Energy";
+
   protected final String NAME;
   protected final String KEY_TOOLTIP;
   protected final int capacity;
@@ -66,8 +70,47 @@ public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IE
   }
 
   @Override
+  public ItemStack onItemRightClick(final ItemStack itemStack, final World world, final EntityPlayer player) {
+    player.setItemInUse(itemStack, 72000);
+    return itemStack;
+  }
+
+  @Override
+  public int getMaxItemUseDuration(final ItemStack itemStack) {
+    return 72000;
+  }
+
+  @Override
+  public EnumAction getItemUseAction(ItemStack p_77661_1_) {
+    return EnumAction.bow;
+  }
+
+  @Override
   public void onUsingTick(final ItemStack itemStack, final EntityPlayer player, final int count) {
-    //TODO: Recharge rechargable items in inventory or armor
+    rechargeItemsInInventory(itemStack, player);
+  }
+
+  protected void rechargeItemsInInventory(final ItemStack itemStack, final EntityPlayer player) {
+    final InventoryPlayer inventory = player.inventory;
+    int energyRemaining = maxExtract;
+    for (ItemStack armorStack : inventory.armorInventory) {
+      if (energyRemaining <= 0) {
+        break;
+      }
+      if (ItemUtil.isRFPoweredItem(armorStack)) {
+        energyRemaining -= ((IEnergyContainerItem) itemStack.getItem()).receiveEnergy(itemStack, energyRemaining, false);
+      }
+    }
+    for (ItemStack inventoryStack : inventory.mainInventory) {
+      if (energyRemaining <= 0) {
+        break;
+      }
+      if ((inventoryStack != itemStack) && ItemUtil.isRFPoweredItem(inventoryStack)) {
+        energyRemaining -= ((IEnergyContainerItem) inventoryStack.getItem()).receiveEnergy(inventoryStack, energyRemaining, false);
+      }
+    }
+    final int energyTaken = maxReceive - energyRemaining;
+    this.changeEnergyStored(itemStack, -energyTaken);
   }
 
   @Override
@@ -98,7 +141,9 @@ public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IE
   }
 
   protected void changeEnergyStored(final ItemStack itemStack, final int change) {
-    setEnergyStored(itemStack, getEnergyStored(itemStack) + change);
+    if (change != 0) {
+      setEnergyStored(itemStack, getEnergyStored(itemStack) + change);
+    }
   }
 
   protected ItemStack setEnergyStored(final ItemStack itemStack, final int amount) {
@@ -152,4 +197,10 @@ public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IE
   public boolean isDamageable() {
     return true;
   }
+
+  @Override
+  public int getMetadata(int metadata) {
+    return 0;
+  }
+
 }

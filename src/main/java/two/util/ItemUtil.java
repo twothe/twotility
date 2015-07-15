@@ -2,6 +2,7 @@
  */
 package two.util;
 
+import cofh.api.energy.IEnergyContainerItem;
 import cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -107,5 +108,13 @@ public class ItemUtil {
   public static int energyAmountToDamagePercent(final int amount, final int capacity) {
     final int percent = (amount * 100) / capacity;
     return TwoMath.withinBounds(100 - percent, 0, 100);
+  }
+
+  public static boolean isRFPoweredItem(final ItemStack itemStack) {
+    return (itemStack != null) && isPoweredItem(itemStack.getItem());
+  }
+
+  public static boolean isPoweredItem(final Item item) {
+    return (item instanceof IEnergyContainerItem);
   }
 }
