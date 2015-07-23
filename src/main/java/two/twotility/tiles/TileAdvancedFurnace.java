@@ -27,7 +27,7 @@ import two.twotility.container.ContainerAdvancedFurnace;
 import two.twotility.container.ContainerBase;
 import two.twotility.fluid.FluidDrainTarget;
 import two.twotility.gui.GUIAdvancedFurnace;
-import two.util.ItemUtil;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

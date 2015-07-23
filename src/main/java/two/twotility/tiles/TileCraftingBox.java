@@ -11,7 +11,7 @@ import two.twotility.blocks.BlockCraftingBox;
 import two.twotility.container.ContainerBase;
 import two.twotility.container.ContainerCraftingBox;
 import two.twotility.gui.GUICraftingBox;
-import two.util.BlockSide;
+import two.twotility.util.BlockSide;
 
 /**
  * @author Two

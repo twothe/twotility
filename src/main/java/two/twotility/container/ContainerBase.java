@@ -8,7 +8,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import two.util.ItemUtil;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

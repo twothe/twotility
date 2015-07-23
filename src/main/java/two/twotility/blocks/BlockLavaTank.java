@@ -37,9 +37,9 @@ import two.twotility.TwoTility;
 import two.twotility.TwoTilityAssets;
 import two.twotility.items.ItemLavaTank;
 import two.twotility.tiles.TileLavaTank;
-import two.util.BlockSide;
-import static two.util.BlockSide.TOP;
-import two.util.BlockUtil;
+import two.twotility.util.BlockSide;
+import static two.twotility.util.BlockSide.TOP;
+import two.twotility.util.BlockUtil;
 
 /**
  * @author Two

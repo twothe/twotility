@@ -1,6 +1,6 @@
 /*
  */
-package two.util;
+package two.twotility.util;
 
 /**
  * @author Two
@@ -35,4 +35,5 @@ public class TwoMath {
       return value;
     }
   }
+
 }

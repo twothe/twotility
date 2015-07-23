@@ -11,6 +11,7 @@ import two.twotility.GuiHandler;
 import two.twotility.blocks.BlockPowerStorage;
 import two.twotility.container.ContainerPowerStorage;
 import two.twotility.tiles.TilePowerStorage;
+import two.twotility.util.ItemUtil;
 
 /**
  *
@@ -38,8 +39,8 @@ public class GUIPowerStorage extends GuiContainer {
 
   @Override
   protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
-    final String energyCurrently = Integer.toString(tilePowerStorage.getEnergyStored(ForgeDirection.UNKNOWN));
-    final String energyMax = Integer.toString(tilePowerStorage.getMaxEnergyStored(ForgeDirection.UNKNOWN));
+    final String energyCurrently = ItemUtil.energyValueToString(tilePowerStorage.getEnergyStored(ForgeDirection.UNKNOWN));
+    final String energyMax = ItemUtil.energyValueToString(tilePowerStorage.getMaxEnergyStored(ForgeDirection.UNKNOWN));
     this.fontRendererObj.drawString(energyCurrently, 84 - this.fontRendererObj.getStringWidth(energyCurrently) / 2, 8, 0xFFEEEEEE);
     this.fontRendererObj.drawString(energyMax, 84 - this.fontRendererObj.getStringWidth(energyMax) / 2, 24, 0xFFEEEEEE);
   }

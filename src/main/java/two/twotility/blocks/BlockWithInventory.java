@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Level;
 import two.twotility.TwoTility;
 import two.twotility.gui.GUICallback;
 import two.twotility.tiles.TileWithInventory;
-import two.util.InvalidTileEntityException;
+import two.twotility.util.InvalidTileEntityException;
 
 /**
  * @author Two

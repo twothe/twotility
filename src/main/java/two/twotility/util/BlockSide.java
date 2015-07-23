@@ -1,4 +1,4 @@
-package two.util;
+package two.twotility.util;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;

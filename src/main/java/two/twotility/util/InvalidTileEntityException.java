@@ -1,6 +1,6 @@
 /*
  */
-package two.util;
+package two.twotility.util;
 
 import net.minecraft.tileentity.TileEntity;
 

@@ -23,8 +23,8 @@ import net.minecraft.world.World;
 import two.twotility.TwoTility;
 import two.twotility.TwoTilityAssets;
 import two.twotility.tiles.TileCraftingBox;
-import two.util.BlockSide;
-import two.util.BlockUtil;
+import two.twotility.util.BlockSide;
+import two.twotility.util.BlockUtil;
 
 /**
  * @author Two

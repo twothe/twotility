@@ -10,7 +10,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
 import two.twotility.TwoTilityAssets;
 import two.twotility.tiles.TilePowerStorage;
-import two.util.BlockUtil;
+import two.twotility.util.BlockUtil;
 
 /**
  *

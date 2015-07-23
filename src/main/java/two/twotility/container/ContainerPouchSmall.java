@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import two.twotility.TwoTility;
 import two.twotility.TwoTilityAssets;
 import two.twotility.gui.slots.SlotWithValidation;
-import two.util.ItemUtil;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

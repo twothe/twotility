@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.common.MinecraftForge;
 import two.twotility.TwoTility;
-import two.util.ItemUtil;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

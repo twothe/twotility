@@ -1,6 +1,6 @@
 /*
  */
-package two.util;
+package two.twotility.util;
 
 import java.util.Objects;
 import net.minecraft.util.Vec3;

@@ -1,6 +1,6 @@
 /*
  */
-package two.util;
+package two.twotility.util;
 
 import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;

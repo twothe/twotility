@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import two.twotility.gui.GUICallback;
-import two.util.InvalidTileEntityException;
+import two.twotility.util.InvalidTileEntityException;
 import org.apache.logging.log4j.Level;
 /**
  * @author Two

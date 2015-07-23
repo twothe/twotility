@@ -8,7 +8,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
-import two.util.InvalidTileEntityException;
+import two.twotility.util.InvalidTileEntityException;
 
 /**
  *

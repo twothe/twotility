@@ -11,7 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import two.util.BlockSide;
+import two.twotility.util.BlockSide;
 
 /**
  * @author Two

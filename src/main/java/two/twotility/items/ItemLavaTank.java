@@ -12,7 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import two.twotility.TwoTility;
 import two.twotility.blocks.BlockLavaTank;
-import two.util.ItemUtil;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

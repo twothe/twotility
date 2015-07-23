@@ -18,8 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.Level;
 import two.twotility.TwoTility;
-import two.util.ItemUtil;
-import two.util.TwoMath;
+import two.twotility.util.ItemUtil;
+import two.twotility.util.TwoMath;
 
 /**
  *
@@ -188,7 +188,7 @@ public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IE
   public void addInformation(final ItemStack itemStack, final EntityPlayer player, final List strings, final boolean verbose) {
     final String toolTip = ItemUtil.getCachedTooltip(KEY_TOOLTIP);
     if (toolTip != null) {
-      strings.add(String.format(toolTip, new Object[]{Integer.toString(getEnergyStored(itemStack)), Integer.toString(capacity)}));
+      strings.add(String.format(toolTip, new Object[]{ItemUtil.energyValueToString(getEnergyStored(itemStack)), ItemUtil.energyValueToString(capacity)}));
     }
   }
 

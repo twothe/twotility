@@ -1,6 +1,6 @@
 /*
  */
-package two.util;
+package two.twotility.util;
 
 import cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry;
 import cpw.mods.fml.common.registry.GameData;

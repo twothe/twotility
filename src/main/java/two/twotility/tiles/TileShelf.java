@@ -11,7 +11,7 @@ import two.twotility.blocks.BlockShelf;
 import two.twotility.container.ContainerBase;
 import two.twotility.container.ContainerShelf;
 import two.twotility.gui.GUIShelf;
-import two.util.BlockSide;
+import two.twotility.util.BlockSide;
 
 /**
  * @author Two

@@ -16,8 +16,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
 import two.twotility.tiles.TileAdvancedFurnace;
-import two.util.BlockSide;
-import two.util.BlockUtil;
+import two.twotility.util.BlockSide;
+import two.twotility.util.BlockUtil;
 
 /**
  * @author Two

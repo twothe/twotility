@@ -10,7 +10,7 @@ import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.opengl.GL11;
 import two.twotility.items.ItemBlock3d;
-import two.util.BlockSide;
+import two.twotility.util.BlockSide;
 
 /**
  * @author Two

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) by Stefan Feldbinder aka Two
  */
-package two.util;
+package two.twotility.util;
 
 /**
  *

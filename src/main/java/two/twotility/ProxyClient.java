@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraftforge.client.MinecraftForgeClient;
 import two.twotility.entities.EntityGrenade;
 import two.twotility.renderers.ItemRendererBlock3d;
-import two.util.ItemUtil;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

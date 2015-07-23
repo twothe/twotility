@@ -18,8 +18,8 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import two.util.TwoMath;
-import two.util.Vector3d;
+import two.twotility.util.TwoMath;
+import two.twotility.util.Vector3d;
 
 /**
  * @author Two

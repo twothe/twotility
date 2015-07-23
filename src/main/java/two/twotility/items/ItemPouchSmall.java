@@ -17,8 +17,8 @@ import two.twotility.container.ContainerPouchSmall;
 import two.twotility.gui.GUICallback;
 import two.twotility.gui.GUIPouchSmall;
 import two.twotility.tiles.TilePouchSmall;
-import two.util.InvalidTileEntityException;
-import two.util.ItemUtil;
+import two.twotility.util.InvalidTileEntityException;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

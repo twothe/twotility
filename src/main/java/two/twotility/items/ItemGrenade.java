@@ -13,7 +13,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.world.World;
 import two.twotility.TwoTility;
 import two.twotility.entities.EntityGrenade;
-import two.util.ItemUtil;
+import two.twotility.util.ItemUtil;
 
 /**
  * @author Two

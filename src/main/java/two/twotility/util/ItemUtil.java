@@ -1,6 +1,6 @@
 /*
  */
-package two.util;
+package two.twotility.util;
 
 import cofh.api.energy.IEnergyContainerItem;
 import cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry;
@@ -8,6 +8,7 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.item.Item;
@@ -116,5 +117,11 @@ public class ItemUtil {
 
   public static boolean isPoweredItem(final Item item) {
     return (item instanceof IEnergyContainerItem);
+  }
+  
+  
+  protected static final DecimalFormat energyFormat = new DecimalFormat("#,##0");
+  public static String energyValueToString(final long energy) {
+    return energyFormat.format(energy);
   }
 }
