@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -68,7 +67,7 @@ public class BlockLavaTank extends BlockBase implements ITileEntityProvider {
   @Override
   public void initialize() {
     setBaseValues(NAME, soundTypeMetal, 2.5F, BlockUtil.HARVEST_TOOL_PICKAXE, BlockUtil.HARVEST_LEVEL_STONE);
-    GameRegistry.registerTileEntity(TileLavaTank.class, TileLavaTank.class.getName());
+    GameRegistry.registerTileEntity(TileLavaTank.class, TileLavaTank.class.getName()); // required as this is not derived from BlockWithInventory
     setLightOpacity(0);
     setLightLevel(8.0f / 15.0f);
 

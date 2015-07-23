@@ -10,6 +10,8 @@ tile.craftingBoxAdvanced.name=Advanced Crafting Box
 tile.lavaTank.name=Lava Tank
 tile.advancedFurnace.name=Advanced Furnace
 tile.powerStorage.name=Power Storage
+tile.storageBoxWood.name=Wooden Storage Box
+tile.storageBoxIron.name=Iron Storage Box
 
 item.grenade.name=Grenade
 item.grenade.tooltip=Sophisticated technology

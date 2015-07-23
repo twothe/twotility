@@ -8,6 +8,8 @@ import two.twotility.blocks.BlockCraftingBox;
 import two.twotility.blocks.BlockLavaTank;
 import two.twotility.blocks.BlockPowerStorage;
 import two.twotility.blocks.BlockShelf;
+import two.twotility.blocks.BlockStorageBoxIron;
+import two.twotility.blocks.BlockStorageBoxWood;
 import two.twotility.items.ItemCraftingBox;
 import two.twotility.items.ItemGrenade;
 import two.twotility.items.ItemLavaTank;
@@ -30,6 +32,8 @@ public class TwoTilityAssets {
   public static BlockShelf blockShelf;
   public static BlockCraftingBox blockCraftingBox;
   public static BlockPowerStorage blockPowerStorage;
+  public static BlockStorageBoxWood blockStorageBoxWood;
+  public static BlockStorageBoxIron blockStorageBoxIron;
   /* Items */
   public static ItemTeddy itemTeddy;
   public static ItemLavaTank itemLavaTank;

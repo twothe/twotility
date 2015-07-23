@@ -40,6 +40,12 @@ public class ProxyBase {
 
     TwoTilityAssets.blockPowerStorage = new BlockPowerStorage();
     pendingInitialization.add(TwoTilityAssets.blockPowerStorage);
+
+    TwoTilityAssets.blockStorageBoxWood = new BlockStorageBoxWood();
+    pendingInitialization.add(TwoTilityAssets.blockStorageBoxWood);
+
+    TwoTilityAssets.blockStorageBoxIron = new BlockStorageBoxIron();
+    pendingInitialization.add(TwoTilityAssets.blockStorageBoxIron);
   }
 
   protected void registerItems() {

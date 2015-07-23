@@ -72,7 +72,7 @@ public abstract class BlockWithInventory extends BlockBase implements ITileEntit
 
   @Override
   public void breakBlock(World world, int x, int y, int z, Block block, int metadata) {
-    final TileEntity tileEntity = (TileEntity) world.getTileEntity(x, y, z);
+    final TileEntity tileEntity = world.getTileEntity(x, y, z);
     if (tileEntityClass.isInstance(tileEntity)) {
       tileEntityClass.cast(tileEntity).spillOutInventory();
     }
