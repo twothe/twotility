@@ -5,8 +5,10 @@ package two.twotility.blocks;
 
 import static net.minecraft.block.Block.soundTypeWood;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import two.twotility.TwoTility;
 import two.twotility.tiles.TileStorageBoxWood;
@@ -39,4 +41,13 @@ public class BlockStorageBoxWood extends BlockWithInventory {
       ));
     }
   }
+
+  @Override
+  public boolean onBlockActivated(final World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+    if (world.isRemote == false) {
+      world.playSoundEffect(x, (double) y + 0.5D, z, "random.chestopen", 0.5F, world.rand.nextFloat() * 0.1F + 0.9F);
+    }
+    return super.onBlockActivated(world, x, y, z, player, side, hitX, hitY, hitZ);
+  }
+
 }

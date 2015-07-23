@@ -58,8 +58,12 @@ public abstract class ItemPowerStorageUpgradeBase extends ItemBase implements IE
     setHasSubtypes(true);
 
     if (TwoTility.config.isCraftingEnabled(NAME)) {
-      CraftingManager.getInstance().getRecipeList().add(getRecipe(setEnergyStored(new ItemStack(this), 0)));
+      CraftingManager.getInstance().getRecipeList().add(getRecipe(setEnergyStored(new ItemStack(this), getCraftedEnergy())));
     }
+  }
+  
+  protected int getCraftedEnergy() {
+    return 0;
   }
 
   @Override

@@ -27,7 +27,7 @@ public class GUIStorageBoxWood extends GuiContainer {
     this.tileStorageBoxWood = tileStorageBoxWood;
     // visible gui part
     this.xSize = 167;
-    this.ySize = 156;
+    this.ySize = 139;
   }
 
   @Override

@@ -15,7 +15,7 @@ public class ContainerStorageBoxWood extends ContainerBase {
   protected final TileStorageBoxWood tileStorageWood;
 
   public ContainerStorageBoxWood(final InventoryPlayer inventoryPlayer, final TileStorageBoxWood tileStorageBox) {
-    super(inventoryPlayer, 4, 137, 4, 82);
+    super(inventoryPlayer, 4, 120, 4, 65);
     this.tileStorageWood = tileStorageBox;
   }
 

@@ -9,8 +9,10 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
  */
 public class ItemPowerStorageUpgradePotato extends ItemPowerStorageUpgradeBase {
 
+  protected static final int POWER_CAPACITY = 10000;
+
   public ItemPowerStorageUpgradePotato() {
-    super("powerStorageUpgradePotato", 10000);
+    super("powerStorageUpgradePotato", POWER_CAPACITY);
   }
 
   @Override
@@ -23,6 +25,11 @@ public class ItemPowerStorageUpgradePotato extends ItemPowerStorageUpgradeBase {
             'r', "dustRedstone",
             'P', "cropPotato"
     );
+  }
+
+  @Override
+  protected int getCraftedEnergy() {
+    return POWER_CAPACITY;
   }
 
 }
