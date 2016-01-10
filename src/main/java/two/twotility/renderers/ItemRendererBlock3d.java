@@ -96,46 +96,58 @@ public class ItemRendererBlock3d implements IItemRenderer {
     }
 
     IIcon icon = item.getIcon(BlockSide.WEST.ordinal(), metadata);
-    tessellator.setNormal(1.0F, 0.0F, 0.0F);
-    tessellator.addVertexWithUV(1.0, 0.0, 0.0, (double) icon.getMaxU(), (double) icon.getMaxV());
-    tessellator.addVertexWithUV(1.0, 1.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(1.0, 1.0, 1.0, (double) icon.getMinU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(1.0, 0.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    if (icon != null) {
+      tessellator.setNormal(1.0F, 0.0F, 0.0F);
+      tessellator.addVertexWithUV(1.0, 0.0, 0.0, (double) icon.getMaxU(), (double) icon.getMaxV());
+      tessellator.addVertexWithUV(1.0, 1.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(1.0, 1.0, 1.0, (double) icon.getMinU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(1.0, 0.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    }
 
     icon = item.getIcon(BlockSide.EAST.ordinal(), metadata);
-    tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-    tessellator.addVertexWithUV(0.0, 0.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
-    tessellator.addVertexWithUV(0.0, 1.0, 1.0, (double) icon.getMaxU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(0.0, 1.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(0.0, 0.0, 0.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    if (icon != null) {
+      tessellator.setNormal(-1.0F, 0.0F, 0.0F);
+      tessellator.addVertexWithUV(0.0, 0.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
+      tessellator.addVertexWithUV(0.0, 1.0, 1.0, (double) icon.getMaxU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(0.0, 1.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(0.0, 0.0, 0.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    }
 
     icon = item.getIcon(BlockSide.SOUTH.ordinal(), metadata);
-    tessellator.setNormal(0.0F, 0.0F, -1.0F);
-    tessellator.addVertexWithUV(0.0, 0.0, 0.0, (double) icon.getMaxU(), (double) icon.getMaxV());
-    tessellator.addVertexWithUV(0.0, 1.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(1.0, 1.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(1.0, 0.0, 0.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    if (icon != null) {
+      tessellator.setNormal(0.0F, 0.0F, -1.0F);
+      tessellator.addVertexWithUV(0.0, 0.0, 0.0, (double) icon.getMaxU(), (double) icon.getMaxV());
+      tessellator.addVertexWithUV(0.0, 1.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(1.0, 1.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(1.0, 0.0, 0.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    }
 
     icon = item.getIcon(BlockSide.NORTH.ordinal(), metadata);
-    tessellator.setNormal(0.0F, 0.0F, 1.0F);
-    tessellator.addVertexWithUV(1.0, 0.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
-    tessellator.addVertexWithUV(1.0, 1.0, 1.0, (double) icon.getMaxU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(0.0, 1.0, 1.0, (double) icon.getMinU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(0.0, 0.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    if (icon != null) {
+      tessellator.setNormal(0.0F, 0.0F, 1.0F);
+      tessellator.addVertexWithUV(1.0, 0.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
+      tessellator.addVertexWithUV(1.0, 1.0, 1.0, (double) icon.getMaxU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(0.0, 1.0, 1.0, (double) icon.getMinU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(0.0, 0.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    }
 
     icon = item.getIcon(BlockSide.TOP.ordinal(), metadata);
-    tessellator.setNormal(0.0F, 1.0F, 0.0F);
-    tessellator.addVertexWithUV(1.0, 1.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
-    tessellator.addVertexWithUV(1.0, 1.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(0.0, 1.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(0.0, 1.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    if (icon != null) {
+      tessellator.setNormal(0.0F, 1.0F, 0.0F);
+      tessellator.addVertexWithUV(1.0, 1.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
+      tessellator.addVertexWithUV(1.0, 1.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(0.0, 1.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(0.0, 1.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    }
 
     icon = item.getIcon(BlockSide.BOTTOM.ordinal(), metadata);
-    tessellator.setNormal(0.0F, -1.0F, 0.0F);
-    tessellator.addVertexWithUV(0.0, 0.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
-    tessellator.addVertexWithUV(0.0, 0.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(1.0, 0.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
-    tessellator.addVertexWithUV(1.0, 0.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    if (icon != null) {
+      tessellator.setNormal(0.0F, -1.0F, 0.0F);
+      tessellator.addVertexWithUV(0.0, 0.0, 1.0, (double) icon.getMaxU(), (double) icon.getMaxV());
+      tessellator.addVertexWithUV(0.0, 0.0, 0.0, (double) icon.getMaxU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(1.0, 0.0, 0.0, (double) icon.getMinU(), (double) icon.getMinV());
+      tessellator.addVertexWithUV(1.0, 0.0, 1.0, (double) icon.getMinU(), (double) icon.getMaxV());
+    }
 
     tessellator.draw();
 
