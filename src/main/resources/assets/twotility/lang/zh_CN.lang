@@ -1,0 +1,35 @@
+itemGroup.TwoTility=Two Tility
+##############永恒乐园汉化组——ilson_alex翻译##############
+language.name=中文
+language.region=CH
+language.code=zh_CH
+tile.shelf.name=展示架
+tile.craftingBox.name=展示架工作台
+tile.craftingBoxAdvanced.name=高级展示架工作台
+tile.lavaTank.name=熔岩罐
+tile.advancedFurnace.name=高级熔炉
+tile.powerStorage.name=能源存储器
+tile.storageBoxWood.name=木质收纳盒
+tile.storageBoxIron.name=铁质收纳盒
+
+item.grenade.name=手榴弹
+item.grenade.tooltip=复杂的技术
+item.craftingBox.name=展示架工作台
+item.craftingBoxAdvanced.name=高级展示架工作台
+item.lavaTank.name=熔岩罐
+item.lavaTank.tooltip.empty=空的
+item.lavaTank.tooltip.filled=包含 %d 桶岩浆
+item.pouchSmall.name=小袋子
+item.teddy.name=泰迪
+item.teddy.tooltip=一个人去是很危险的……
+
+item.powerStorageUpgradePotato.name=马铃薯储电升级
+item.powerStorageUpgradePotato.tooltip=%s / %s RF.好吃!
+item.powerStorageUpgradeWood.name=木制电力存储升级
+item.powerStorageUpgradeWood.tooltip=%s / %s RF.
+item.powerStorageUpgradeIron.name=铁制电力存储升级
+item.powerStorageUpgradeIron.tooltip=%s / %s RF.
+item.powerStorageUpgradeDiamond.name=钻石制电力存储升级
+item.powerStorageUpgradeDiamond.tooltip=%s / %s RF.
+
+entity.grenade=手榴弹
