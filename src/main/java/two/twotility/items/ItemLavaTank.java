@@ -43,9 +43,15 @@ public class ItemLavaTank extends ItemBlock3d {
   public void addInformation(final ItemStack itemStack, final EntityPlayer player, final List strings, final boolean verbose) {
     final int numBuckets = getMetadata(itemStack.getItemDamage());
     if (numBuckets == 0) {
-      strings.add(ItemUtil.getCachedTooltip(KEY_TOOLTIP_EMPTY));
+      final String tooltip = ItemUtil.getCachedTooltip(KEY_TOOLTIP_EMPTY);
+      if (tooltip != null) {
+        strings.add(tooltip);
+      }
     } else {
-      strings.add(String.format(ItemUtil.getCachedTooltip(KEY_TOOLTIP_FILLED), numBuckets));
+      final String tooltip = ItemUtil.getCachedTooltip(KEY_TOOLTIP_FILLED);
+      if (tooltip != null) {
+        strings.add(String.format(tooltip, numBuckets));
+      }
     }
   }
 }

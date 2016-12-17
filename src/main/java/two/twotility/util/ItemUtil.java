@@ -90,12 +90,12 @@ public class ItemUtil {
     String result = tooltipCache.get(key);
     if (result == null) {
       result = LanguageRegistry.instance().getStringLocalization(key);
-      if (result == null) {
-        result = ""; // this prevents further lookups
+        if (result == null) {
+          result = ""; // this prevents further lookups
       }
       tooltipCache.put(key, result);
     }
-    if (result.length() == 0) {
+    if (result.isEmpty()) {
       return null;
     }
     return result;
@@ -118,9 +118,9 @@ public class ItemUtil {
   public static boolean isPoweredItem(final Item item) {
     return (item instanceof IEnergyContainerItem);
   }
-  
-  
+
   protected static final DecimalFormat energyFormat = new DecimalFormat("#,##0");
+
   public static String energyValueToString(final long energy) {
     return energyFormat.format(energy);
   }

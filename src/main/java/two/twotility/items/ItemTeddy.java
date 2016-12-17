@@ -41,6 +41,9 @@ public class ItemTeddy extends ItemBase {
 
   @Override
   public void addInformation(final ItemStack itemStack, final EntityPlayer player, final List strings, final boolean verbose) {
-    strings.add(ItemUtil.getCachedTooltip(KEY_TOOLTIP));
+    final String tooltip = ItemUtil.getCachedTooltip(KEY_TOOLTIP);
+    if (tooltip != null) {
+      strings.add(tooltip);
+    }
   }
 }

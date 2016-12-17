@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1710.2.2"
+version = "1710.2.3"
 group= "two.twotility" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "twotility"
 
