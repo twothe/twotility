@@ -2,8 +2,6 @@
  */
 package two.util;
 
-import net.minecraft.util.Vec3;
-
 /**
  * @author Two
  */
