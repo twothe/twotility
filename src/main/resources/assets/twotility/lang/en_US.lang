@@ -1,0 +1,36 @@
+itemGroup.TwoTility=TwoTility
+
+language.name=English
+language.region=US
+language.code=en_US
+
+tile.shelf.name=Shelf
+tile.craftingBox.name=Crafting Box
+tile.craftingBoxAdvanced.name=Advanced Crafting Box
+tile.lavaTank.name=Lava Tank
+tile.advancedFurnace.name=Advanced Furnace
+tile.powerStorage.name=Power Storage
+tile.storageBoxWood.name=Wooden Storage Box
+tile.storageBoxIron.name=Iron Storage Box
+
+item.grenade.name=Grenade
+item.grenade.tooltip=Sophisticated technology
+item.craftingBox.name=Crafting Box
+item.craftingBoxAdvanced.name=Advanced Crafting Box
+item.lavaTank.name=Lava Tank
+item.lavaTank.tooltip.empty=Empty
+item.lavaTank.tooltip.filled=Contains %d buckets of lava
+item.pouchSmall.name=Small Pouch
+item.teddy.name=Teddy
+item.teddy.tooltip=It's dangerous to go alone...
+
+item.powerStorageUpgradePotato.name=Potato Power Storage Upgrade
+item.powerStorageUpgradePotato.tooltip=%s / %s RF. Tasty!
+item.powerStorageUpgradeWood.name=Wooden Power Storage Upgrade
+item.powerStorageUpgradeWood.tooltip=%s / %s RF.
+item.powerStorageUpgradeIron.name=Iron Power Storage Upgrade
+item.powerStorageUpgradeIron.tooltip=%s / %s RF.
+item.powerStorageUpgradeDiamond.name=Diamond Power Storage Upgrade
+item.powerStorageUpgradeDiamond.tooltip=%s / %s RF.
+
+entity.grenade=Grenade

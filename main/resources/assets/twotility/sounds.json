@@ -1,9 +1,0 @@
-{
-	"fluidsuckin": {
-		"category": "block",
-		"sounds": [{
-			"name": "fluidsuckin", 
-			"stream": false
-		}]
-	}
-}
